@@ -1,8 +1,4 @@
 import React, { useState } from "react";
-import {
-  useLocation,
-  useNavigate,
-} from "react-router-dom";
 
 interface LandingProps {
   onStartCreating: () => void;
