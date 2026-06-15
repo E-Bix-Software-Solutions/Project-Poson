@@ -2,8 +2,6 @@ import React, { useState } from "react";
 import {
   useLocation,
   useNavigate,
-  useNavigation,
-  useRoutes,
 } from "react-router-dom";
 
 interface LandingProps {
@@ -34,14 +32,6 @@ const Landing: React.FC<LandingProps> = ({ onStartCreating }) => {
     },
   };
 
-  const handleNavigation = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    const location = useLocation();
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    const navigate = useNavigate();
-    navigate("/create", { state: { from: location } });
-  };
 
   return (
     <div className="min-h-screen bg-[#050913] text-white font-sans selection:bg-amber-400 selection:text-black antialiased">
@@ -111,6 +101,8 @@ const Landing: React.FC<LandingProps> = ({ onStartCreating }) => {
           <div className="pt-2 flex flex-col sm:flex-row gap-4">
             <a href="/create">
               <button
+                type="button"
+                onClick={onStartCreating}
                 className="px-8 py-4 bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-600 text-black font-extrabold rounded-xl shadow-lg shadow-amber-500/10 hover:scale-[1.01] active:scale-[0.99] transition-all duration-200"
               >
                 Initialize Card Generator
