@@ -33,25 +33,25 @@ const CardGenerator: React.FC<CardGeneratorProps> = ({ onBackToLanding }) => {
   // Visual Theme Presets mimicking high-end digital styling
   const themes: CardTemplate[] = [
     {
-      id: "mihintale-morning",
-      name: "Mihintale Morning (Soft Lavender & Rose)",
-      className: "bg-gradient-to-br from-[#f5f3ff] via-[#fdf2f8] to-[#fef3c7]",
-      textColor: "text-indigo-950",
-      accentColor: "text-amber-700",
+      id: "amber-classic",
+      name: "Amber Classic (White & Amber Accent)",
+      className: "bg-white",
+      textColor: "text-black",
+      accentColor: "text-amber-600",
     },
     {
-      id: "wewai-light",
-      name: "Dhamma Lotus (Serene Aqua & Mint)",
-      className: "bg-gradient-to-br from-[#ecfeff] via-[#e0f2fe] to-[#f0fdf4]",
-      textColor: "text-cyan-950",
+      id: "cyan-serene",
+      name: "Cyan Serene (White & Cyan Accent)",
+      className: "bg-white",
+      textColor: "text-black",
       accentColor: "text-cyan-600",
     },
     {
-      id: "golden-light",
-      name: "Auspicious Sunrise (Amber & Cream)",
-      className: "bg-gradient-to-br from-[#fffbeb] via-[#fef3c7] to-[#ffedd5]",
-      textColor: "text-amber-950",
-      accentColor: "text-amber-700",
+      id: "gold-auspicious",
+      name: "Gold Auspicious (White & Gold Accent)",
+      className: "bg-white",
+      textColor: "text-black",
+      accentColor: "text-yellow-600",
     },
   ];
 
@@ -198,7 +198,7 @@ const CardGenerator: React.FC<CardGeneratorProps> = ({ onBackToLanding }) => {
                 >
                   <span>{theme.name}</span>
                   <div
-                    className={`w-3 h-3 rounded-full ${theme.className.split(" ")[1]}`}
+                    className={`w-3 h-3 rounded-full ${theme.accentColor.replace("text-", "bg-")}`}
                   ></div>
                 </button>
               ))}
@@ -306,7 +306,8 @@ const CardGenerator: React.FC<CardGeneratorProps> = ({ onBackToLanding }) => {
               />
             </div>
           </div>
-        </section>.tar        {/* RIGHT COLUMN: REALTIME WYSIWYG PREVIEW VIEWPORT FRAME (7 COLUMNS) */}
+        </section>
+        {/* RIGHT COLUMN: REALTIME WYSIWYG PREVIEW VIEWPORT FRAME (7 COLUMNS) */}
         <section className="lg:col-span-7 flex flex-col justify-between space-y-6">
           {/* VIEWPORT TOP CONTAINER */}
           <div className="space-y-2">
