@@ -476,7 +476,7 @@ export default function ThreeCanvas() {
       moonGlowMat.opacity = 0.15 + 0.1 * Math.sin(t * 0.5);
       halo2Mat.opacity = 0.04 + 0.03 * Math.sin(t * 0.3 + 1);
       moonPointLight.intensity = 3.8 + 0.9 * Math.sin(t * 0.4);
-      moonFillLight.intensity = 2.0 + 0.5 * Math.sin(t * 0.35 + 0.8);
+      // moonFillLight.intensity = 2.0 + 0.5 * Math.sin(t * 0.35 + 0.8);
 
       controls.update();
       renderer.render(scene, camera);
