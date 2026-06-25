@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import ThreeCanvas from "./components/ThreeCanvas";
 import PosonCardShare from "./components/PosonCard";
+import HangingLantern from "./components/HangingLantern";
 
 // ─── Dharma Wheel SVG ────────────────────────────────────────────────────────
 const DharmaWheel = ({
@@ -334,7 +335,7 @@ export default function App() {
     <>
       {/* Google Fonts */}
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Inter:wght@300;400;500&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Inter:wght@300;400;500&family=Noto+Serif+Sinhala:wght@400;700;900&display=swap');
 
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -450,6 +451,9 @@ export default function App() {
       <div style={{ position: "fixed", inset: 0, zIndex: 0 }}>
         <ThreeCanvas />
       </div>
+
+      {/* ── Fixed Hanging 3D Lantern (Top-Left under Navbar) ── */}
+      <HangingLantern />
 
       {/* ── Share Card Modal ── */}
       {showShareCard && (
@@ -573,169 +577,63 @@ export default function App() {
             textAlign: "center",
             padding: "80px 24px 40px",
             opacity: heroOpacity,
-            transition: "opacity 0.1s linear",
+            transition: "opacity 0.25s ease-out",
+            pointerEvents: "none",
           }}
         >
-          {/* Eyebrow */}
-          <div className="fade-up" style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 20 }}>
-            <div style={{ height: 1, width: 40, background: "linear-gradient(90deg, transparent, #c9923a)" }} />
-            <span style={{ fontFamily: "Inter", fontSize: 11, fontWeight: 500, letterSpacing: "0.25em", textTransform: "uppercase", color: "#f5c26b", opacity: 0.85 }}>
-              June Full Moon · 2026
-            </span>
-            <div style={{ height: 1, width: 40, background: "linear-gradient(90deg, #c9923a, transparent)" }} />
-          </div>
-
-          {/* Main Title */}
+          {/* Main Sinhala Greeting Title */}
           <h1
-            className="hero-title fade-up delay-1 gold-text"
+            className="hero-title fade-up gold-text"
             style={{
-              fontFamily: "Cinzel",
+              fontFamily: "'Noto Serif Sinhala', serif",
               fontWeight: 900,
-              fontSize: "clamp(2.8rem, 8vw, 6rem)",
-              lineHeight: 1.05,
-              letterSpacing: "-0.01em",
-              textShadow: "0 0 6px #c9923a55",
+              fontSize: "clamp(2.2rem, 6vw, 4.8rem)",
+              lineHeight: 1.25,
+              letterSpacing: "0.02em",
+              textShadow: "0 0 15px rgba(245, 194, 107, 0.65), 0 0 30px rgba(245, 194, 107, 0.25)",
               color: "#f5c26b",
-              marginBottom: 8,
+              marginBottom: 16,
+              maxWidth: "960px",
+              pointerEvents: "auto",
             }}
           >
-            Poson Poya
+            පින්බර පොසොන් මංගල්‍යයක් වේවා!
           </h1>
 
-          {/* Sinhala / Pali subtitle */}
           <p
-            className="fade-up delay-2"
+            className="fade-up delay-1"
             style={{
-              fontFamily: "Cinzel",
-              fontWeight: 400,
-              fontSize: "clamp(0.95rem, 2.5vw, 1.35rem)",
-              letterSpacing: "0.18em",
+              fontFamily: "'Inter', sans-serif",
+              fontSize: "clamp(0.9rem, 2vw, 1.15rem)",
+              letterSpacing: "0.25em",
+              textTransform: "uppercase",
               color: "#f0ede0",
-              opacity: 0.6,
-              marginBottom: 28,
+              opacity: 0.85,
+              marginBottom: 40,
+              pointerEvents: "auto",
             }}
           >
-            පොසොන් පෝය &nbsp;·&nbsp; ධර්මය ශ්‍රී ලංකාවට පැමිණේ
+            Poson Poya Day! Keep it glowing 🙏
           </p>
-
-          {/* Buddhist flag stripe */}
-          <div className="fade-up delay-2" style={{ width: 220, marginBottom: 32 }}>
-            <FlagStripes />
-          </div>
-
-          {/* Description */}
-          <p
-            className="fade-up delay-3"
-            style={{
-              maxWidth: 540,
-              lineHeight: 1.75,
-              fontSize: "clamp(0.9rem, 2vw, 1.05rem)",
-              color: "#f0ede0",
-              opacity: 0.72,
-              marginBottom: 44,
-            }}
-          >
-            The second most sacred full moon in the Buddhist calendar —
-            commemorating the arrival of the Dhamma in Sri Lanka through the
-            Arahant Mahinda at the sacred rock of Mihintale.
-          </p>
-
-          {/* CTA row */}
-          <div
-            className="fade-up delay-4 hero-cta-row"
-            style={{ display: "flex", gap: 12, flexWrap: "wrap", justifyContent: "center" }}
-          >
-            <a
-              href="#about"
-              style={{
-                display: "inline-flex", alignItems: "center", gap: 8,
-                padding: "13px 28px", borderRadius: 3,
-                background: "linear-gradient(135deg, #c9923a, #f5c26b)",
-                color: "#060d1f", fontFamily: "Cinzel", fontWeight: 700,
-                fontSize: 13, letterSpacing: "0.1em", textTransform: "uppercase",
-                textDecoration: "none",
-                boxShadow: "0 4px 24px rgba(201,146,58,0.35)",
-                transition: "transform 0.2s, box-shadow 0.2s",
-              }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(-2px)";
-                (e.currentTarget as HTMLAnchorElement).style.boxShadow = "0 8px 32px rgba(201,146,58,0.55)";
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLAnchorElement).style.transform = "";
-                (e.currentTarget as HTMLAnchorElement).style.boxShadow = "0 4px 24px rgba(201,146,58,0.35)";
-              }}
-            >
-              Explore the Festival
-            </a>
-
-            <a
-              href="#observe"
-              style={{
-                display: "inline-flex", alignItems: "center", gap: 8,
-                padding: "13px 28px", borderRadius: 3,
-                background: "transparent", color: "#f5c26b",
-                fontFamily: "Cinzel", fontWeight: 600, fontSize: 13,
-                letterSpacing: "0.1em", textTransform: "uppercase",
-                textDecoration: "none",
-                border: "1px solid rgba(245,194,107,0.4)",
-                transition: "border-color 0.2s, background 0.2s",
-              }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLAnchorElement).style.borderColor = "#f5c26b";
-                (e.currentTarget as HTMLAnchorElement).style.background = "rgba(245,194,107,0.08)";
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLAnchorElement).style.borderColor = "rgba(245,194,107,0.4)";
-                (e.currentTarget as HTMLAnchorElement).style.background = "transparent";
-              }}
-            >
-              How to Observe
-            </a>
-
-            <button
-              className="share-card-btn"
-              onClick={() => setShowShareCard(true)}
-              style={{
-                display: "inline-flex", alignItems: "center", gap: 9,
-                padding: "13px 28px", borderRadius: 3,
-                background: "rgba(212,132,154,0.1)", color: "#d4849a",
-                fontFamily: "Cinzel", fontWeight: 700, fontSize: 13,
-                letterSpacing: "0.1em", textTransform: "uppercase",
-                border: "1px solid rgba(212,132,154,0.45)",
-                cursor: "pointer", transition: "all 0.2s",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = "rgba(212,132,154,0.18)";
-                e.currentTarget.style.borderColor = "rgba(212,132,154,0.75)";
-                e.currentTarget.style.transform = "translateY(-2px)";
-                e.currentTarget.style.boxShadow = "0 8px 28px rgba(212,132,154,0.25)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = "rgba(212,132,154,0.1)";
-                e.currentTarget.style.borderColor = "rgba(212,132,154,0.45)";
-                e.currentTarget.style.transform = "";
-                e.currentTarget.style.boxShadow = "";
-              }}
-            >
-              <span style={{ fontSize: 15 }}>🪷</span>
-              Share a Poson Card
-            </button>
-          </div>
 
           {/* Scroll hint */}
           <div
             style={{
-              position: "absolute", bottom: 32, left: "50%",
+              position: "absolute",
+              bottom: 40,
+              left: "50%",
               transform: "translateX(-50%)",
-              display: "flex", flexDirection: "column", alignItems: "center", gap: 6,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: 8,
               animation: "shimmer 2s ease-in-out infinite",
             }}
           >
-            <span style={{ fontSize: 10, letterSpacing: "0.2em", textTransform: "uppercase", opacity: 0.4, color: "#f0ede0" }}>
-              Scroll
+            <span style={{ fontSize: 10, letterSpacing: "0.3em", textTransform: "uppercase", opacity: 0.5, color: "#f0ede0" }}>
+              Scroll Down
             </span>
-            <div style={{ width: 1, height: 40, background: "linear-gradient(180deg, rgba(201,146,58,0.6) 0%, transparent 100%)" }} />
+            <div style={{ width: 1, height: 50, background: "linear-gradient(180deg, #f5c26b 0%, transparent 100%)" }} />
           </div>
         </section>
 
@@ -898,7 +796,7 @@ export default function App() {
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             <DharmaWheel size={18} color="#c9923a88" />
             <span style={{ fontFamily: "Cinzel", fontSize: 12, color: "#f5c26b", opacity: 0.6 }}>
-              Poson Poya · Sādhu Sādhu Sādhu
+              Poson Poya · 
             </span>
           </div>
           <FlagStripes />

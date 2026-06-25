@@ -3,26 +3,32 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
+import backgroundVideo from '../assets/video_202606251959.mp4';
 
 export default function ThreeCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     if (!canvasRef.current) return;
 
     // ── 1. SCENE ──────────────────────────────────────────────────────────────
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color('#060d1f');
-    scene.fog = new THREE.FogExp2('#060d1f', 0.016);
+    scene.fog = new THREE.FogExp2('#060d1f', 0.012); // Fog blends models into the dark background
 
     // ── 2. CAMERA ─────────────────────────────────────────────────────────────
     const camera = new THREE.PerspectiveCamera(52, window.innerWidth / window.innerHeight, 0.1, 300);
-    camera.position.set(0, 3.0, 9.0);
+    camera.position.set(0, 2.2, 9.0); // Aligned with initial scrollY = 0
 
     // ── 3. RENDERER ───────────────────────────────────────────────────────────
-    const renderer = new THREE.WebGLRenderer({ canvas: canvasRef.current, antialias: true, powerPreference: "high-performance" });
+    const renderer = new THREE.WebGLRenderer({ 
+      canvas: canvasRef.current, 
+      antialias: true, 
+      alpha: true, 
+      powerPreference: "high-performance" 
+    });
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5)); // Optimized pixel ratio
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -30,9 +36,8 @@ export default function ThreeCanvas() {
 
     // ── 4. CONTROLS ───────────────────────────────────────────────────────────
     const controls = new OrbitControls(camera, renderer.domElement);
-    // Disable damping so we don't need a continuous frame loop for controls updating
     controls.enableDamping = false;
-    controls.target.set(0, 1.8, 0);
+    controls.target.set(0, 1.3, 0); // Aligned with initial scrollY = 0
     controls.maxPolarAngle = Math.PI * 0.72;
     controls.minDistance = 2.5;
     controls.maxDistance = 22;
@@ -63,7 +68,6 @@ export default function ThreeCanvas() {
     rimLight.position.set(0, 5, -10);
     scene.add(rimLight);
 
-    // Warm lamps - now static
     const lampLight = new THREE.PointLight(0xffcc55, 3.5, 14);
     lampLight.position.set(2, 1.5, 3);
     scene.add(lampLight);
@@ -84,9 +88,9 @@ export default function ThreeCanvas() {
       scene.add(pl);
     });
 
-    // ── 6. GROUND PLANE ───────────────────────────────────────────────────────
+    // ── 6. GROUND PLANE (SHADOW CATCHER) ──────────────────────────────────────
     const groundGeo = new THREE.PlaneGeometry(80, 80);
-    const groundMat = new THREE.MeshStandardMaterial({ color: '#060d1f', roughness: 0.95 });
+    const groundMat = new THREE.ShadowMaterial({ opacity: 0.4 });
     const ground = new THREE.Mesh(groundGeo, groundMat);
     ground.rotation.x = -Math.PI / 2;
     ground.receiveShadow = true;
@@ -120,7 +124,7 @@ export default function ThreeCanvas() {
     scene.add(moonPointLight);
 
     // ── 8. STARS ──────────────────────────────────────────────────────────────
-    const starCount = 600; // Further optimized star count
+    const starCount = 600;
     const starPositions = new Float32Array(starCount * 3);
     for (let i = 0; i < starCount; i++) {
       starPositions[i * 3 + 0] = (Math.random() - 0.5) * 200;
@@ -132,13 +136,37 @@ export default function ThreeCanvas() {
     const starMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.14, sizeAttenuation: true });
     scene.add(new THREE.Points(starGeo, starMat));
 
-    // ── 9. ON-DEMAND RENDERING SYSTEM ──────────────────────────────────────────
-    // Renders the scene only when needed, avoiding constant CPU/GPU execution
+    // ── 9. ON-DEMAND RENDERING SYSTEM & SCROLL ANIMATION ────────────────────────
+    let heroModel: THREE.Group | null = null;
+
     const render = () => {
       renderer.render(scene, camera);
     };
 
-    // Trigger render when controls change (zoom, pan, rotate)
+    const onScroll = () => {
+      const scrollY = window.scrollY;
+      const t = Math.min(scrollY / 800, 1); // Normalize scroll over 800px
+
+      if (heroModel) {
+        // Rotate the model slightly for parallax depth on scroll
+        heroModel.rotation.y = t * 0.45;
+      }
+
+      // Camera starts at (0, 2.2, 9.0) and smoothly interpolates to (2.2, 3.6, 5.5)
+      const startPos = new THREE.Vector3(0, 2.2, 9.0);
+      const endPos = new THREE.Vector3(2.2, 3.6, 5.5);
+      camera.position.lerpVectors(startPos, endPos, t);
+
+      // Camera target shifts from the center of the scene to Arahant Mahinda
+      const startTarget = new THREE.Vector3(0, 1.3, 0);
+      const endTarget = new THREE.Vector3(0.3, 2.3, -0.3);
+      controls.target.lerpVectors(startTarget, endTarget, t);
+
+      controls.update();
+      render();
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
     controls.addEventListener('change', render);
 
     // ── 10. DRACO LOADER & GLTF LOADING ───────────────────────────────────────
@@ -147,109 +175,36 @@ export default function ThreeCanvas() {
     const loader = new GLTFLoader();
     loader.setDRACOLoader(dracoLoader);
 
-    // Load Hero Model (Aggressively compressed)
+    // Load Hero Model (King, Monk, and Deer)
     loader.load(
       '/Hitem3d-opt.glb',
       (gltf) => {
         const model = gltf.scene;
+        heroModel = model; // Save reference for scroll animation
+        
         const box    = new THREE.Box3().setFromObject(model);
         const size   = box.getSize(new THREE.Vector3());
         const center = box.getCenter(new THREE.Vector3());
-        const sf     = 4.5 / Math.max(size.x, size.y, size.z);
+        
+        // Scale: Make it significantly larger for "another level user experience"
+        const sf = 6.4 / Math.max(size.x, size.y, size.z);
         model.scale.setScalar(sf);
-        model.position.set(-center.x * sf, -box.min.y * sf, -center.z * sf);
+        
+        // Position: Lower it so that the King and deer sit perfectly on the grass floor of the video background!
+        model.position.set(-center.x * sf, -2.1 - box.min.y * sf, -center.z * sf);
+        
         model.traverse((o) => {
           if ((o as THREE.Mesh).isMesh) { o.castShadow = true; o.receiveShadow = true; }
         });
         scene.add(model);
         
-        const nb = new THREE.Box3().setFromObject(model);
-        const nc = nb.getCenter(new THREE.Vector3());
-        controls.target.set(nc.x, nc.y, nc.z);
-        controls.update();
-        render(); // Render once model is loaded
+        // Update positions immediately on load based on current scroll
+        onScroll();
       },
       undefined,
       (err) => console.error('Hero load error:', err)
     );
 
-    // Load Vesak Lanterns (Aggressively compressed)
-    loader.load(
-      '/vesak-lanterns-opt.glb',
-      (gltf) => {
-        const l     = gltf.scene;
-        const box   = new THREE.Box3().setFromObject(l);
-        const size  = box.getSize(new THREE.Vector3());
-        const ctr   = box.getCenter(new THREE.Vector3());
-        const scale = 1.8 / Math.max(size.x, size.y, size.z);
-        l.scale.setScalar(scale);
-        l.position.set(-ctr.x * scale, 7.5 + (-box.min.y * scale), -ctr.z * scale - 3.0);
-        
-        l.traverse((o) => {
-          if ((o as THREE.Mesh).isMesh) { 
-            const mesh = o as THREE.Mesh;
-            mesh.castShadow = false; 
-            mesh.receiveShadow = false; 
-            if (mesh.material && 'emissive' in mesh.material) {
-              const mat = mesh.material as THREE.MeshStandardMaterial;
-              mat.emissive = new THREE.Color(0xffaa44);
-              mat.emissiveIntensity = 1.5;
-            }
-          }
-        });
-        scene.add(l);
-
-        // Collective glow PointLight
-        const lanternGlow = new THREE.PointLight(0xffaa44, 3.5, 10);
-        lanternGlow.position.set(l.position.x, l.position.y + 0.2, l.position.z);
-        scene.add(lanternGlow);
-        
-        render(); // Render once lanterns are loaded
-      },
-      undefined,
-      (err) => console.error('Vesak lanterns load error:', err)
-    );
-
-    // Load Mango Tree Forest (Aggressively compressed)
-    const forestLayout: [number, number, number, number][] = [
-      [ -8,  -9,  0.30, 1.00],
-      [ -4, -11,  0.10, 1.10],
-      [  0, -12,  0.00, 1.15],
-      [  4, -11, -0.10, 1.05],
-      [  8,  -9, -0.30, 0.95],
-      [-11, -15,  0.20, 1.25],
-      [ -4, -16,  0.00, 1.20],
-      [  4, -16,  0.00, 1.20],
-      [ 11, -15, -0.20, 1.30],
-      [-13,  -5,  0.80, 1.00],
-      [ 13,  -5, -0.80, 0.95],
-      [-10,   0,  0.60, 0.78],
-      [ 10,   0, -0.60, 0.75],
-    ];
-
-    loader.load(
-      '/mango-tree-opt.glb',
-      (gltf) => {
-        forestLayout.forEach(([x, z, rotY, sc]) => {
-          const tree = gltf.scene.clone(true);
-          const box  = new THREE.Box3().setFromObject(tree);
-          const size = box.getSize(new THREE.Vector3());
-          const base = (5.5 / Math.max(size.x, size.y, size.z)) * sc;
-          tree.scale.setScalar(base);
-          const rb = new THREE.Box3().setFromObject(tree);
-          tree.position.set(x, -rb.min.y, z);
-          tree.rotation.y = rotY;
-          tree.traverse((o) => {
-            if ((o as THREE.Mesh).isMesh) { o.castShadow = false; o.receiveShadow = false; }
-          });
-          scene.add(tree);
-        });
-        
-        render(); // Render once trees are loaded
-      },
-      undefined,
-      (err) => console.error('Mango tree load error:', err)
-    );
 
     // Initial render
     render();
@@ -266,6 +221,7 @@ export default function ThreeCanvas() {
     // ── 12. CLEANUP ───────────────────────────────────────────────────────────
     return () => {
       window.removeEventListener('resize', onResize);
+      window.removeEventListener('scroll', onScroll);
       controls.removeEventListener('change', render);
       
       scene.traverse((object) => {
@@ -287,9 +243,40 @@ export default function ThreeCanvas() {
   }, []);
 
   return (
-    <canvas
-      ref={canvasRef}
-      style={{ display: 'block', width: '100vw', height: '100vh' }}
-    />
+    <div style={{ position: 'relative', width: '100vw', height: '100vh', overflow: 'hidden', backgroundColor: '#060d1f' }}>
+      {/* HTML Background Video playing behind the transparent 3D scene */}
+      <video
+        ref={videoRef}
+        src={backgroundVideo}
+        autoPlay
+        loop
+        muted
+        playsInline
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
+          zIndex: 0,
+        }}
+      />
+      
+      {/* Transparent WebGL Canvas sitting on top of the video */}
+      <canvas
+        ref={canvasRef}
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          display: 'block',
+          zIndex: 1,
+          pointerEvents: 'auto',
+        }}
+      />
+    </div>
   );
 }
