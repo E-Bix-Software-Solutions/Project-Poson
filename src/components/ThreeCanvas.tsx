@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
@@ -8,6 +8,10 @@ import backgroundVideo from '../assets/video_202606251959.mp4';
 export default function ThreeCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  
+  // Loading Framework Metrics State
+  const [loadingProgress, setLoadingProgress] = useState<number>(0);
+  const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
   useEffect(() => {
     if (!canvasRef.current) return;
@@ -46,20 +50,6 @@ export default function ThreeCanvas() {
     const ambientLight = new THREE.AmbientLight(0xb8ccff, 1.6);
     scene.add(ambientLight);
 
-    const moonLight = new THREE.DirectionalLight(0xddeeff, 4.5);
-    moonLight.position.set(-5, 14, -6);
-    moonLight.castShadow = true;
-    moonLight.shadow.mapSize.width  = 1024;
-    moonLight.shadow.mapSize.height = 1024;
-    moonLight.shadow.camera.near   = 0.5;
-    moonLight.shadow.camera.far    = 100;
-    moonLight.shadow.camera.left   = -18;
-    moonLight.shadow.camera.right  =  18;
-    moonLight.shadow.camera.top    =  18;
-    moonLight.shadow.camera.bottom = -18;
-    moonLight.shadow.bias = -0.0005;
-    scene.add(moonLight);
-
     const keyLight = new THREE.DirectionalLight(0xfff8e8, 4.0);
     keyLight.position.set(0, 5, 10);
     scene.add(keyLight);
@@ -95,33 +85,6 @@ export default function ThreeCanvas() {
     ground.rotation.x = -Math.PI / 2;
     ground.receiveShadow = true;
     scene.add(ground);
-
-    // ── 7. FULL MOON ──────────────────────────────────────────────────────────
-    const MOON_POS = new THREE.Vector3(-5, 9, -16);
-
-    const halo2Geo = new THREE.SphereGeometry(2.8, 32, 32);
-    const halo2Mat = new THREE.MeshBasicMaterial({ color: 0xfff0a0, transparent: true, opacity: 0.05 });
-    const halo2 = new THREE.Mesh(halo2Geo, halo2Mat);
-    halo2.position.copy(MOON_POS);
-    scene.add(halo2);
-
-    const moonGlowGeo = new THREE.SphereGeometry(1.8, 32, 32);
-    const moonGlowMat = new THREE.MeshBasicMaterial({ color: 0xfff6c8, transparent: true, opacity: 0.18 });
-    const moonGlow = new THREE.Mesh(moonGlowGeo, moonGlowMat);
-    moonGlow.position.copy(MOON_POS);
-    scene.add(moonGlow);
-
-    const moonGeo = new THREE.SphereGeometry(1.2, 48, 48);
-    const moonMat = new THREE.MeshStandardMaterial({
-      color: 0xfffee4, emissive: 0xfff8c0, emissiveIntensity: 1.2, roughness: 0.8,
-    });
-    const moon = new THREE.Mesh(moonGeo, moonMat);
-    moon.position.copy(MOON_POS);
-    scene.add(moon);
-
-    const moonPointLight = new THREE.PointLight(0xfff5cc, 3.0, 70);
-    moonPointLight.position.copy(MOON_POS);
-    scene.add(moonPointLight);
 
     // ── 8. STARS ──────────────────────────────────────────────────────────────
     const starCount = 600;
@@ -177,7 +140,7 @@ export default function ThreeCanvas() {
 
     // Load Hero Model (King, Monk, and Deer)
     loader.load(
-      '/Hitem3d-opt.glb',
+      '/Hitem3d-1781983799154.glb',
       (gltf) => {
         const model = gltf.scene;
         heroModel = model; // Save reference for scroll animation
@@ -200,11 +163,19 @@ export default function ThreeCanvas() {
         
         // Update positions immediately on load based on current scroll
         onScroll();
+
+        // Flag loading as fully completed to trigger smooth UI entry transition
+        setIsLoaded(true);
       },
-      undefined,
+      (xhr) => {
+        // Track download metrics progress hook
+        if (xhr.total > 0) {
+          const progress = Math.round((xhr.loaded / xhr.total) * 100);
+          setLoadingProgress(progress);
+        }
+      },
       (err) => console.error('Hero load error:', err)
     );
-
 
     // Initial render
     render();
@@ -244,6 +215,80 @@ export default function ThreeCanvas() {
 
   return (
     <div style={{ position: 'relative', width: '100vw', height: '100vh', overflow: 'hidden', backgroundColor: '#060d1f' }}>
+      
+      {/* ── LOADER OVERLAY INTERFACE SECTION ───────────────────────────────── */}
+      {!isLoaded && (
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            backgroundColor: '#060d1fc0',
+            backdropFilter: 'blur(12px)',
+            WebkitBackdropFilter: 'blur(12px)',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 10,
+            transition: 'opacity 0.6s ease-out',
+            fontFamily: 'sans-serif',
+            color: '#ffffff'
+          }}
+        >
+          {/* Spiritual/Cultural Loading Accent Ring */}
+          <div style={{ position: 'relative', marginBottom: '24px' }}>
+            <div
+              style={{
+                width: '64px',
+                height: '64px',
+                borderRadius: '50%',
+                border: '3px solid rgba(245, 158, 11, 0.1)',
+                borderTop: '3px solid #f59e0b',
+                animation: 'spin 1s linear infinite',
+              }}
+            />
+            <span style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', fontSize: '20px' }}>
+              🪷
+            </span>
+          </div>
+
+          <h2 style={{ fontSize: '18px', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#f3f4f6', margin: '0 0 8px 0' }}>
+            Initializing Engine
+          </h2>
+          <p style={{ fontSize: '12px', color: '#9ca3af', margin: '0 0 20px 0', fontFamily: 'monospace' }}>
+            Assembling 3D Heritage Matrix Layer...
+          </p>
+
+          {/* Graphical Progress Fill Tube */}
+          <div style={{ width: '200px', height: '4px', backgroundColor: 'rgba(255, 255, 255, 0.05)', borderRadius: '999px', overflow: 'hidden' }}>
+            <div
+              style={{
+                width: `${loadingProgress}%`,
+                height: '100%',
+                background: 'linear-gradient(90deg, #f59e0b, #eab308)',
+                boxShadow: '0 0 12px #f59e0b',
+                transition: 'width 0.2s ease-out'
+              }}
+            />
+          </div>
+          
+          <span style={{ fontSize: '11px', fontFamily: 'monospace', color: '#eab308', marginTop: '8px', fontWeight: 'bold' }}>
+            {loadingProgress}%
+          </span>
+        </div>
+      )}
+
+      {/* CSS Spin Animation Style Node Vector Rule */}
+      <style>{`
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `}</style>
+
       {/* HTML Background Video playing behind the transparent 3D scene */}
       <video
         ref={videoRef}

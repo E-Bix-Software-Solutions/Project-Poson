@@ -66,50 +66,80 @@ const CardGenerator: React.FC<CardGeneratorProps> = ({ onBackToLanding }) => {
   const [showBranding, setShowBranding] = useState<boolean>(true);
   const [isExporting, setIsExporting] = useState<boolean>(false);
   const [exportSuccess, setExportSuccess] = useState<boolean>(false);
+  const [statusMessage, setStatusMessage] = useState<string>("");
 
   const cardPreviewRef = useRef<HTMLDivElement>(null);
 
-  // Fallback simulation framework for client-side raster download loops
-  const handleExportCard = () => {
-  if (!cardPreviewRef.current) return;
+  // Native Web Share & Image Compile Framework
+  const handleShareCard = () => {
+    if (!cardPreviewRef.current) return;
 
-  setIsExporting(true);
-  setExportSuccess(false);
+    setIsExporting(true);
+    setExportSuccess(false);
 
-  // download the image after a simulated processing delay to provide UI feedback
-  setTimeout(async () => {
-    try {
-      const cardElement = cardPreviewRef.current!;
-      
-      // Dynamically import html2canvas for code-splitting efficiency
-      const { default: html2canvas } = await import("html2canvas");
+    // Minor execution buffer window for interactive UI response
+    setTimeout(async () => {
+      try {
+        const cardElement = cardPreviewRef.current!;
+        const { default: html2canvas } = await import("html2canvas");
 
-      // Generate the canvas directly from html2canvas with optimum rendering rules
-      const canvas = await html2canvas(cardElement, {
-        scale: 2,               // Captures the component at double resolution (Retina/High-Res)
-        useCORS: true,          // Permissive asset loading for external icons or avatars
-        allowTaint: false,      // Protects canvas cross-origin integrity
-        backgroundColor: null,  // Respects the container's built-in rounded corners and gradients
-        logging: false,         // Disables console debugging noise
-      });
+        const canvas = await html2canvas(cardElement, {
+          scale: 2,
+          useCORS: true,
+          allowTaint: false,
+          backgroundColor: null,
+          logging: false,
+        });
 
-      // Directly convert html2canvas output into high-quality image format
-      const dataUrl = canvas.toDataURL("image/png", 1.0);
-      
-      // Generate immediate trigger link for local download
-      const link = document.createElement("a");
-      link.download = "E-BIX-Poson-Greeting-Card.png";
-      link.href = dataUrl;
-      link.click();
+        // Convert generated canvas payload to blob binary allocation array
+        canvas.toBlob(async (blob) => {
+          if (!blob) {
+            throw new Error("Canvas compilation produced an empty buffer framework.");
+          }
 
-      setExportSuccess(true);
-    } catch (error) {
-      console.error("Canvas collection system pipeline error:", error);
-    } finally {
-      setIsExporting(false);
-    }
-  }, 500);
-};
+          const shareUrl = window.location.origin; // Dynamically fetches your website domain link
+          const file = new File([blob], "E-BIX-Poson-Greeting.png", { type: "image/png" });
+
+          // Structural evaluation wrapper check for platform native share compatibility
+          if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            try {
+              await navigator.share({
+                title: "Poson Poya Greeting",
+                text: "Wishing you a blessed Poson Poya! Generated via E-BIX Platform.",
+                url: shareUrl,
+                files: [file],
+              });
+              setStatusMessage("Card asset shared successfully through system channel targets!");
+              setExportSuccess(true);
+            } catch (shareError) {
+              // Handle instances where user manually aborts native target system dialog paths
+              console.log("System share pipeline aborted or closed by client action:", shareError);
+            }
+          } else {
+            // Fallback Engine execution routine loops for isolated environment scopes
+            const link = document.createElement("a");
+            link.download = "E-BIX-Poson-Greeting-Card.png";
+            link.href = canvas.toDataURL("image/png", 1.0);
+            link.click();
+
+            // Seamless link copy to clipboard fallback mechanism
+            try {
+              await navigator.clipboard.writeText(shareUrl);
+              setStatusMessage("Native sharing not supported. Image downloaded and website link copied to clipboard!");
+            } catch {
+              setStatusMessage("Image downloaded successfully!");
+            }
+            setExportSuccess(true);
+          }
+        }, "image/png");
+
+      } catch (error) {
+        console.error("Canvas collection system pipeline error:", error);
+      } finally {
+        setIsExporting(false);
+      }
+    }, 500);
+  };
 
   return (
     <div className="min-h-screen bg-[#050913] text-white font-sans antialiased selection:bg-amber-400 selection:text-black">
@@ -143,8 +173,7 @@ const CardGenerator: React.FC<CardGeneratorProps> = ({ onBackToLanding }) => {
               <span>⚙️</span> Configuration Node
             </h2>
             <p className="text-xs text-slate-400 mt-1">
-              Adjust vector constraints, cultural parameters, and typography
-              strings.
+              Adjust vector constraints, cultural parameters, and typography strings.
             </p>
           </div>
 
@@ -212,7 +241,6 @@ const CardGenerator: React.FC<CardGeneratorProps> = ({ onBackToLanding }) => {
             </label>
 
             <div className="grid grid-cols-2 gap-3">
-              {/* Toggle 1: Stupa */}
               <button
                 onClick={() => setShowStupa(!showStupa)}
                 className={`p-2.5 rounded-xl border text-xs flex items-center justify-between transition-all ${
@@ -222,12 +250,9 @@ const CardGenerator: React.FC<CardGeneratorProps> = ({ onBackToLanding }) => {
                 }`}
               >
                 <span>🛕 Mihintale Stupa</span>
-                <span className="font-mono text-[10px]">
-                  {showStupa ? "ON" : "OFF"}
-                </span>
+                <span className="font-mono text-[10px]">{showStupa ? "ON" : "OFF"}</span>
               </button>
 
-              {/* Toggle 2: Deer */}
               <button
                 onClick={() => setShowDeer(!showDeer)}
                 className={`p-2.5 rounded-xl border text-xs flex items-center justify-between transition-all ${
@@ -237,12 +262,9 @@ const CardGenerator: React.FC<CardGeneratorProps> = ({ onBackToLanding }) => {
                 }`}
               >
                 <span>🦌 Wisdom Deer</span>
-                <span className="font-mono text-[10px]">
-                  {showDeer ? "ON" : "OFF"}
-                </span>
+                <span className="font-mono text-[10px]">{showDeer ? "ON" : "OFF"}</span>
               </button>
 
-              {/* Toggle 3: Lotus Bloom */}
               <button
                 onClick={() => setShowLotus(!showLotus)}
                 className={`p-2.5 rounded-xl border text-xs flex items-center justify-between transition-all ${
@@ -252,12 +274,9 @@ const CardGenerator: React.FC<CardGeneratorProps> = ({ onBackToLanding }) => {
                 }`}
               >
                 <span>🪷 Lotus Purity</span>
-                <span className="font-mono text-[10px]">
-                  {showLotus ? "ON" : "OFF"}
-                </span>
+                <span className="font-mono text-[10px]">{showLotus ? "ON" : "OFF"}</span>
               </button>
 
-              {/* Toggle 4: Corporate Metadata Branding Signature */}
               <button
                 onClick={() => setShowBranding(!showBranding)}
                 className={`p-2.5 rounded-xl border text-xs flex items-center justify-between transition-all ${
@@ -267,9 +286,7 @@ const CardGenerator: React.FC<CardGeneratorProps> = ({ onBackToLanding }) => {
                 }`}
               >
                 <span>🛡️ E-BIX Signature</span>
-                <span className="font-mono text-[10px]">
-                  {showBranding ? "ON" : "OFF"}
-                </span>
+                <span className="font-mono text-[10px]">{showBranding ? "ON" : "OFF"}</span>
               </button>
             </div>
           </div>
@@ -310,7 +327,6 @@ const CardGenerator: React.FC<CardGeneratorProps> = ({ onBackToLanding }) => {
 
         {/* RIGHT COLUMN: REALTIME WYSIWYG PREVIEW VIEWPORT FRAME (7 COLUMNS) */}
         <section className="lg:col-span-7 flex flex-col justify-between space-y-6">
-          {/* VIEWPORT TOP CONTAINER */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-mono uppercase tracking-widest text-slate-400">
@@ -322,7 +338,7 @@ const CardGenerator: React.FC<CardGeneratorProps> = ({ onBackToLanding }) => {
               </div>
             </div>
 
-            {/* REAL GREETING CARD PREVIEW CONTAINER BOX */}
+            {/* GREETING CARD PREVIEW CONTAINER BOX */}
             <div
               ref={cardPreviewRef}
               style={{ padding: `${paddingSize}px` }}
@@ -330,7 +346,6 @@ const CardGenerator: React.FC<CardGeneratorProps> = ({ onBackToLanding }) => {
             >
               {/* BACKDROP HIGH INTENSITY FULL MOON VECTOR SOURCE */}
               <div className="absolute top-8 right-12 w-28 h-28 sm:w-36 sm:h-36 bg-gradient-to-br from-yellow-100 via-white to-amber-200 rounded-full opacity-80 blur-[2px] shadow-[0_0_50px_rgba(254,243,199,0.4)] flex items-center justify-center -z-0">
-                {/* Internal Moon surface shadow detail mock */}
                 <div className="w-full h-full bg-black/5 rounded-full filter contrast-125 mix-blend-multiply opacity-30"></div>
               </div>
 
@@ -363,7 +378,6 @@ const CardGenerator: React.FC<CardGeneratorProps> = ({ onBackToLanding }) => {
 
               {/* PREVIEW BOTTOM ALIGNMENT LAYER: HOUSES SILHOUETTES & COMPANY BRANDING LOGOS */}
               <div className="w-full flex justify-between items-end pt-4 border-t border-white/10 z-10 relative">
-                {/* Left Side Group: Traditional Silhouettes Simulation */}
                 <div className="flex items-end space-x-4 min-h-[36px]">
                   {showStupa && (
                     <div className="flex flex-col items-center select-none text-white/80 filter drop-shadow-md">
@@ -383,12 +397,9 @@ const CardGenerator: React.FC<CardGeneratorProps> = ({ onBackToLanding }) => {
                   )}
                 </div>
 
-                {/* Right Side Group: E-BIX Software Signature Node Rendering */}
                 {showBranding ? (
                   <div className="text-right flex flex-col items-end opacity-90">
-                    <span
-                      className={`text-[10px] font-extrabold tracking-widest uppercase ${selectedTheme.accentColor}`}
-                    >
+                    <span className={`text-[10px] font-extrabold tracking-widest uppercase ${selectedTheme.accentColor}`}>
                       E-BIX Solutions
                     </span>
                     <span className="text-[8px] font-mono text-white/40 uppercase tracking-tighter">
@@ -411,20 +422,19 @@ const CardGenerator: React.FC<CardGeneratorProps> = ({ onBackToLanding }) => {
             </div>
           </div>
 
-          {/* VIEWPORT BOTTOM ACTION BAR TRUMPETS */}
+          {/* VIEWPORT BOTTOM ACTION BAR */}
           <div className="bg-slate-900/40 border border-slate-900/80 rounded-xl p-4 flex flex-col sm:flex-row justify-between items-center gap-4">
             <div className="text-xs text-slate-400 text-center sm:text-left">
               <p className="font-mono text-[11px] text-slate-300 uppercase font-semibold">
-                Ready to compile deployment asset?
+                Ready to transmit digital asset?
               </p>
               <p className="text-[10px]">
-                Outputs high-fidelity web canvas distribution packages optimized
-                for mobile messaging frames.
+                Compiles card architecture to system sharing sheets to push image files and website links together.
               </p>
             </div>
 
             <button
-              onClick={handleExportCard}
+              onClick={handleShareCard}
               disabled={isExporting}
               className={`w-full sm:w-auto px-6 py-3 font-bold rounded-xl text-xs tracking-wide transition-all uppercase flex items-center justify-center space-x-2 ${
                 isExporting
@@ -435,10 +445,13 @@ const CardGenerator: React.FC<CardGeneratorProps> = ({ onBackToLanding }) => {
               {isExporting ? (
                 <>
                   <span className="w-3 h-3 border-2 border-slate-500 border-t-transparent rounded-full animate-spin"></span>
-                  <span>Compiling Asset...</span>
+                  <span>Compiling Node...</span>
                 </>
               ) : (
-                <span>Download Greeting Card Asset</span>
+                <>
+                  <span>🔗</span>
+                  <span>Share Greeting Asset</span>
+                </>
               )}
             </button>
           </div>
@@ -446,15 +459,13 @@ const CardGenerator: React.FC<CardGeneratorProps> = ({ onBackToLanding }) => {
           {/* STATUS TOAST ANNOUNCEMENT BLOCK */}
           {exportSuccess && (
             <div className="p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-xl flex items-start space-x-3 text-xs text-emerald-400 animate-fadeIn">
-              <span className="mt-0.5">🚀</span>
+              <span className="mt-0.5">✨</span>
               <div>
                 <p className="font-bold uppercase tracking-wide">
-                  Compilation Successful!
+                  Operation Complete!
                 </p>
                 <p className="text-slate-400 text-[11px] mt-0.5">
-                  The compiled E-Poson Card bundle matrix signature layer was
-                  captured correctly. Ready to be sent to your team, colleagues,
-                  and community.
+                  {statusMessage}
                 </p>
               </div>
             </div>
@@ -465,8 +476,7 @@ const CardGenerator: React.FC<CardGeneratorProps> = ({ onBackToLanding }) => {
       {/* CORE STRUCTURAL FOOTER HUB */}
       <footer className="bg-[#02050b] border-t border-slate-950/60 py-8 text-center text-slate-600 text-xs mt-16">
         <p>
-          © 2026 E-BIX Software Solutions Engine Deck. Designed with reverence
-          for Sri Lankan cultural lineage.
+          © 2026 E-BIX Software Solutions Engine Deck. Designed with reverence for Sri Lankan cultural lineage.
         </p>
       </footer>
     </div>
