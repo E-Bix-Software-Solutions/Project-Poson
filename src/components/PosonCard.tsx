@@ -16,16 +16,40 @@ interface CardVariant {
 // ─── Constants ────────────────────────────────────────────────────────────────
 const ACCENT_CYCLE = ["#f5c26b", "#f5c26b", "#8ef5c0", "#a8d8ea", "#f5c26b"];
 
-const FALLBACK_TEMPLATES: Template[] = [
-  { id: "greeting1", label: "Poson Poya",   image: "/greetings/1.jpeg", accent: "#f5c26b" },
-  { id: "greeting2", label: "Blessed Day",  image: "/greetings/2.jpeg", accent: "#f5c26b" },
-  { id: "greeting3", label: "Lotus Garden", image: "/greetings/3.jpeg", accent: "#8ef5c0" },
+
+// 1. Define your custom labels in order (add more or let them fallback)
+const TEMPLATE_LABELS = [
+  "Poson Poya",
+  "Blessed Day",
+  "Lotus Garden",
+  "Dhamma Light",
+  "Peaceful Mind",
+  // You can add unique labels up to 19 here. 
+  // If there are fewer labels than images, the code below will provide a fallback.
 ];
+
+// 2. Dynamically generate the 19 templates
+const FALLBACK_TEMPLATES: Template[] = Array.from({ length: 19 }, (_, index) => {
+  const idNum = index + 1;
+  
+  // Cycle through your accent colors safely
+  const accent = ACCENT_CYCLE[index % ACCENT_CYCLE.length];
+  
+  // Pick a label if defined, otherwise fallback to a generic one
+  const label = TEMPLATE_LABELS[index] || `Greeting ${idNum}`;
+
+  return {
+    id: `greeting${idNum}`,
+    label: label,
+    image: `/greetings/${idNum}.jpeg`,
+    accent: accent,
+  };
+});
 
 const MESSAGES = [
   "May the light of the Dhamma guide your path.",
   "Wishing you peace, wisdom & compassion.",
-  "Sādhu · Sādhu · Sādhu",
+  "Sādhu • Sādhu • Sādhu",
   "May merit flow to all beings.",
 ];
 
