@@ -137,7 +137,7 @@ const translations = {
 const LangContext = createContext<{
   lang: Lang;
   toggle: () => void;
-  t: typeof translations.si;
+  t: typeof translations.en | typeof translations.si;
 }>({
   lang: "si",
   toggle: () => {},
