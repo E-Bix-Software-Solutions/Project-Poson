@@ -137,7 +137,7 @@ const translations = {
 const LangContext = createContext<{
   lang: Lang;
   toggle: () => void;
-  t: typeof translations.si;
+  t: typeof translations.en | typeof translations.si;
 }>({
   lang: "si",
   toggle: () => {},
@@ -479,7 +479,7 @@ export default function App() {
   const [loaded, setLoaded] = useState(false);
   const [showShareCard, setShowShareCard] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [lang, setLang] = useState<Lang>("en");
+  const [lang, setLang] = useState<Lang>("si");
 
   const toggle = () => setLang((l) => (l === "en" ? "si" : "en"));
   const t = translations[lang];
