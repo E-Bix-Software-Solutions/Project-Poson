@@ -1,0 +1,41 @@
+# Project Poson - E-Poson Card Generator
+
+An interactive, 3D-enhanced bilingual web platform developed by E-Bix Software Solutions to design, customize, and generate Poson Poya greeting cards. The application blends traditional cultural artistry with modern software technologies, featuring AI-assisted greeting generation and localized multi-language layouts.
+
+## Core Technology Stack
+- **Frontend Framework:** React.js, TypeScript, Vite
+- **3D Graphics & Rendering:** Three.js, `@react-three/fiber`, `@react-three/drei`
+- **AI Integration:** Google Gemini API (`@google/genai` SDK)
+- **Backend Architecture:** Node.js, Express server environment
+- **Client-Side Exporting:** Canvas-to-image capturing via `html2canvas`
+
+## Key Architectural Modules
+
+### 1. Bilingual Internationalization System
+The application implements an ultra-lightweight, local state-driven dictionary layout providing instantaneous language switching between English and Sinhala (`si` / `en`) without heavy runtime dependencies. Native web typography handles full Sinhala Unicode rendering seamlessly.
+
+### 2. Gemini API Engine & Prompt Orchestration
+- **Backend Gateway:** A secure Express-based endpoint channels user customization criteria securely into the Gemini API model.
+- **Dynamic Greeting Layouts:** Parses inputs dynamically into beautiful, context-aware traditional greetings.
+- **Pre-modeled Prompt Presets:**
+  - *Mihintale Spiritual Night Sky Theme* (පින්බර පොසොන් මංගල්‍යයක් වේවා)
+  - *The Mirror Lake Theme / වැවයි දාගැබයි* (ධර්මයේ ආලෝකය ඔබ සැමට ලැබේවා)
+  - *Lotus/Bodhi Canopy Minimalist Vector Theme*
+
+### 3. High-Performance 3D Scene Optimizations
+To combat GPU/CPU bottlenecks stemming from detailed 3D meshes (such as traditional Atapattam lanterns, glowing stupas, and deer silhouettes), the platform implements:
+- Vertex-count reduction and Draco compression (`.glb`/`.gltf` pipelines).
+- WebP/JPEG texture mapping optimizations down to 1K/2K resolutions.
+- Lazy-loading strategies for components wrapped in React Suspense boundaries.
+
+## Company & Social Resources
+- **Organization:** E-Bix Software Solutions
+- **GitHub Repository:** https://github.com/E-Bix-Software-Solutions
+- **LinkedIn Profile:** https://www.linkedin.com/in/e-bix-software-solutions-a92545410/
+- **Facebook Hub:** https://www.facebook.com/profile.php?id=61590342414359
+- **TikTok Channel:** https://www.tiktok.com/@ebixsoftwaresolutions
+
+## Founders & Core Engineering Team
+- **Mr. Sahan Dhanujaya** (Co-Founder & Software Engineer) - https://www.linkedin.com/in/sahan-dhanujaya-040aa4359/
+- **Mr. Mahesh Hansaka** (Co-Founder & Software Engineer) - https://www.linkedin.com/in/mahesh-hansaka-1069a3310/
+- **Mr. Sherul Dhanushka** (Co-Founder & Software Engineer) - https://www.linkedin.com/in/sherul-dhanushka-204a58202/
