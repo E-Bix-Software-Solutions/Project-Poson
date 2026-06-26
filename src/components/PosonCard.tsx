@@ -1,36 +1,36 @@
 import { useState, useRef, useCallback } from 'react';
 
 // ─── Dharma Wheel SVG ────────────────────────────────────────────────────────
-const DharmaWheel = ({ size = 32, color = '#c9923a' }: { size?: number; color?: string }) => (
-  <svg width={size} height={size} viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="32" cy="32" r="28" stroke={color} strokeWidth="2.5" fill="none" />
-    <circle cx="32" cy="32" r="6" stroke={color} strokeWidth="2.5" fill="none" />
+const DharmaWheel = ({   size = 32,   color = '#c9923a' }: {   size?: number;   color?: string }) => (
+  <svg     width={size}     height={size}     viewBox="0 0 64 64"     fill="none"     xmlns="http://www.w3.org/2000/svg"  >
+    <circle       cx="32"       cy="32"       r="28"       stroke={color}       strokeWidth="2.5"       fill="none"     />
+    <circle       cx="32"       cy="32"       r="6"       stroke={color}       strokeWidth="2.5"       fill="none"     />
     {[0, 45, 90, 135, 180, 225, 270, 315].map((deg, i) => {
       const rad = (deg * Math.PI) / 180;
       const x1 = 32 + 6 * Math.cos(rad);
       const y1 = 32 + 6 * Math.sin(rad);
       const x2 = 32 + 26 * Math.cos(rad);
       const y2 = 32 + 26 * Math.sin(rad);
-      return <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke={color} strokeWidth="2" strokeLinecap="round" />;
+      return         <line           key={i}           x1={x1}           y1={y1}           x2={x2}           y2={y2}           stroke={color}           strokeWidth="2"           strokeLinecap="round" />;
     })}
   </svg>
 );
 
 // ─── Lantern SVG ─────────────────────────────────────────────────────────────
-const LanternSVG = ({ color = '#f5c26b', size = 36 }: { color?: string; size?: number }) => (
+const LanternSVG = ({   color = '#f5c26b',   size = 36 }: {   color?: string;   size?: number }) => (
   <svg width={size} height={size * 1.55} viewBox="0 0 18 28" fill="none">
     <rect x="6" y="0" width="6" height="3" rx="1" fill={color} opacity="0.7" />
-    <rect x="2" y="3" width="14" height="18" rx="5" fill={color} opacity="0.5" stroke={color} strokeWidth="1.5" />
+    <rect       x="2"       y="3"       width="14"       height="18"       rx="5"       fill={color}       opacity="0.5"       stroke={color}       strokeWidth="1.5"     />
     <ellipse cx="9" cy="12" rx="4" ry="5" fill={color} opacity="0.35" />
-    <line x1="7" y1="21" x2="6" y2="28" stroke={color} strokeWidth="1.2" strokeLinecap="round" />
-    <line x1="9" y1="21" x2="9" y2="28" stroke={color} strokeWidth="1.2" strokeLinecap="round" />
-    <line x1="11" y1="21" x2="12" y2="28" stroke={color} strokeWidth="1.2" strokeLinecap="round" />
+    <line       x1="7"       y1="21"       x2="6"       y2="28"       stroke={color}       strokeWidth="1.2"       strokeLinecap="round"     />
+    <line       x1="9"       y1="21"       x2="9"       y2="28"       stroke={color}       strokeWidth="1.2"       strokeLinecap="round"     />
+    <line       x1="11"       y1="21"       x2="12"       y2="28"       stroke={color}       strokeWidth="1.2"       strokeLinecap="round"     />
   </svg>
 );
 
 // ─── Star / Sparkle ───────────────────────────────────────────────────────────
-const StarDot = ({ cx, cy, r, opacity }: { cx: number; cy: number; r: number; opacity: number }) => (
-  <circle cx={cx} cy={cy} r={r} fill="#f0ede0" opacity={opacity} />
+const StarDot = ({   cx,   cy, r,   opacity }: {   cx: number;   cy: number;   r: number;   opacity: number }) => (
+<circle cx={cx} cy={cy} r={r} fill="#f0ede0" opacity={opacity} />
 );
 
 // ─── Card Templates ───────────────────────────────────────────────────────────
@@ -185,13 +185,13 @@ const CardPreview = ({
               letterSpacing: '0.22em',
               textTransform: 'uppercase',
               color: template.accent,
-              fontWeight: 500,
+fontWeight: 500,
             }}
           >
             Poson Poya · June Full Moon
           </span>
         </div>
-
+        
         <h2
           style={{
             fontFamily: 'Cinzel, serif',
@@ -286,10 +286,10 @@ const ShareBtn = ({
 // ─── Spinner ──────────────────────────────────────────────────────────────────
 const Spinner = ({ color = '#c9923a' }: { color?: string }) => (
   <svg
-    width="18" height="18" viewBox="0 0 24 24" fill="none"
+    width="18"     height="18"     viewBox="0 0 24 24"     fill="none"
     style={{ animation: 'spinFast 0.7s linear infinite' }}
   >
-    <circle cx="12" cy="12" r="10" stroke={color} strokeWidth="3" strokeDasharray="40 20" strokeLinecap="round" />
+    <circle       cx="12"       cy="12"       r="10"       stroke={color}       strokeWidth="3"       strokeDasharray="40 20"       strokeLinecap="round"     />
   </svg>
 );
 
@@ -313,21 +313,21 @@ const TwitterIcon = () => (
 );
 
 const LinkIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg     width="14"     height="14"     viewBox="0 0 24 24"     fill="none"     stroke="currentColor"     strokeWidth="2"     strokeLinecap="round"     strokeLinejoin="round"  >
     <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/>
     <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/>
   </svg>
 );
 
 const CheckIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+  <svg     width="14"     height="14"     viewBox="0 0 24 24"     fill="none"     stroke="currentColor"     strokeWidth="2.5"     strokeLinecap="round"     strokeLinejoin="round"  >
     <polyline points="20 6 9 17 4 12"/>
   </svg>
 );
 
 const ShareIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+  <svg     width="14"     height="14"     viewBox="0 0 24 24"     fill="none"     stroke="currentColor"     strokeWidth="2"     strokeLinecap="round"     strokeLinejoin="round"  >
+    <circle cx="18" cy="5" r="3"/>    <circle cx="6" cy="12" r="3"/>    <circle cx="18" cy="19" r="3"/>
     <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
     <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
   </svg>
@@ -367,20 +367,20 @@ export default function PosonCard({ onClose }: { onClose?: () => void }) {
   const cardRef = useRef<HTMLDivElement>(null);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const showToast = useCallback((msg: string, type: 'success' | 'error' = 'success') => {
-    setToastMsg(msg);
-    setToastType(type);
-    if (toastTimer.current) clearTimeout(toastTimer.current);
-    toastTimer.current = setTimeout(() => setToastMsg(''), 3500);
-  }, []);
+  const showToast = useCallback(    (msg: string, type: 'success' | 'error' = 'success') => {
+      setToastMsg(msg);
+      setToastType(type);
+      if (toastTimer.current) clearTimeout(toastTimer.current);
+      toastTimer.current = setTimeout(() => setToastMsg(''), 3500);
+    }, []  );
 
-  const pickRandom = useCallback((currentUsed: number[]): { variant: CardVariant; idx: number; newUsed: number[] } => {
-    let pool = currentUsed;
-    if (pool.length >= DECK.length) pool = [];
-    const available = DECK.map((_, i) => i).filter(i => !pool.includes(i));
-    const idx = available[Math.floor(Math.random() * available.length)];
-    return { variant: DECK[idx], idx, newUsed: [...pool, idx] };
-  }, []);
+  const pickRandom = useCallback((      currentUsed: number[]    ): { variant: CardVariant; idx: number; newUsed: number[] } => {
+      let pool = currentUsed;
+      if (pool.length >= DECK.length) pool = [];
+      const available = DECK.map((_, i) => i).filter(i => !pool.includes(i));
+      const idx = available[Math.floor(Math.random() * available.length)];
+      return { variant: DECK[idx], idx, newUsed: [...pool, idx] };
+    }, []  );
 
   const handleGenerate = () => {
     setGenerating(true);
@@ -415,7 +415,7 @@ export default function PosonCard({ onClose }: { onClose?: () => void }) {
       backgroundColor: null,
       logging: false,
     });
-    return new Promise(resolve => canvas.toBlob(b => resolve(b), 'image/png'));
+    return new Promise(resolve =>       canvas.toBlob(b => resolve(b), 'image/png')    );
   };
 
   // ─── Native share (image + link) ───
@@ -425,12 +425,12 @@ export default function PosonCard({ onClose }: { onClose?: () => void }) {
     try {
       const blob = await captureCard();
       if (!blob) throw new Error('Capture failed');
-      const file = new File([blob], 'Poson-Greeting.png', { type: 'image/png' });
+      const file = new File([blob], 'Poson-Greeting.png', {         type: 'image/png'       });
       const shareUrl = window.location.href;
       const shareText = `🪷 Poson Poya Greetings 🌕\n\n"${currentCard?.message}"\n\nLearn about Poson Poya — the sacred full moon that brought the Dhamma to Sri Lanka.`;
 
       if (navigator.canShare && navigator.canShare({ files: [file] })) {
-        await navigator.share({ title: 'Poson Poya Greeting', text: shareText, url: shareUrl, files: [file] });
+        await navigator.share({           title: 'Poson Poya Greeting',           text: shareText,           url: shareUrl,           files: [file]         });
         setShareSuccess('Shared!');
         setTimeout(() => setShareSuccess(''), 2500);
       } else {
@@ -457,13 +457,13 @@ export default function PosonCard({ onClose }: { onClose?: () => void }) {
   };
 
   const handleFacebook = () => {
-    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`, '_blank');
+    window.open(      `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`, '_blank'    );
   };
 
   const handleTwitter = () => {
     if (!currentCard) return;
     const text = `🌕 Poson Poya — the full moon that brought Buddhism to Sri Lanka.\n\n"${currentCard.message}"\n\n#PosonPoya #Buddhism #SriLanka`;
-    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(window.location.href)}`, '_blank');
+    window.open(      `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(window.location.href)}`, '_blank'    );
   };
 
   const handleCopyLink = () => {
@@ -575,16 +575,16 @@ export default function PosonCard({ onClose }: { onClose?: () => void }) {
                 justifyContent: 'center',
                 transition: 'background 0.15s',
               }}
-              onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.12)')}
-              onMouseLeave={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.06)')}
+              onMouseEnter={e =>                 (e.currentTarget.style.background = 'rgba(255,255,255,0.12)')              }
+              onMouseLeave={e =>                 (e.currentTarget.style.background = 'rgba(255,255,255,0.06)')              }
             >
               ✕
             </button>
           )}
 
           {/* Header */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 28 }}>
-            <div style={{ animation: 'spinSlow 18s linear infinite', display: 'flex' }}>
+          <div             style={{               display: 'flex',               alignItems: 'center',               gap: 12,               marginBottom: 28 }}          >
+            <div               style={{                 animation: 'spinSlow 18s linear infinite',                 display: 'flex' }}            >
               <DharmaWheel size={28} color="#c9923a" />
             </div>
             <div>
@@ -600,7 +600,7 @@ export default function PosonCard({ onClose }: { onClose?: () => void }) {
               >
                 Poson Poya Greeting Card
               </h2>
-              <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: '#f0ede0', opacity: 0.45, letterSpacing: '0.05em' }}>
+              <p                 style={{                   fontFamily: 'Inter, sans-serif',                   fontSize: 12,                   color: '#f0ede0',                   opacity: 0.45,                   letterSpacing: '0.05em' }}              >
                 Generate a card · share the Dhamma's light
               </p>
             </div>
@@ -610,10 +610,10 @@ export default function PosonCard({ onClose }: { onClose?: () => void }) {
           <div style={{ marginBottom: 28, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
 
             {/* Card preview or empty state */}
-            <div ref={cardRef} style={{ width: '100%', maxWidth: 540, position: 'relative' }}>
+            <div               ref={cardRef}               style={{ width: '100%', maxWidth: 540, position: 'relative' }}            >
               {generated && currentCard ? (
                 <div style={{ position: 'relative' }}>
-                  <CardPreview template={currentCard.template} message={currentCard.message} />
+                  <CardPreview                     template={currentCard.template}                     message={currentCard.message}                   />
                   {/* Retrying overlay */}
                   {retrying && (
                     <div
@@ -653,7 +653,7 @@ export default function PosonCard({ onClose }: { onClose?: () => void }) {
                   ) : (
                     <>
                       <DharmaWheel size={32} color="rgba(201,146,58,0.3)" />
-                      <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: 'rgba(240,237,224,0.3)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+                      <p                         style={{                           fontFamily: 'Inter, sans-serif',                           fontSize: 12,                           color: 'rgba(240,237,224,0.3)',                           letterSpacing: '0.1em',                           textTransform: 'uppercase' }}                      >
                         Your card will appear here
                       </p>
                     </>
@@ -664,8 +664,8 @@ export default function PosonCard({ onClose }: { onClose?: () => void }) {
 
             {/* Card counter */}
             {generated && (
-              <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(240,237,224,0.35)', letterSpacing: '0.08em' }}>
-                Card {cardCount} · {currentCard?.template.label} · {DECK.length} combinations available
+              <p                 style={{                   fontFamily: 'Inter, sans-serif',                   fontSize: 11,                   color: 'rgba(240,237,224,0.35)',                   letterSpacing: '0.08em' }}              >
+                Card {cardCount} · {currentCard?.template.label} · {DECK.length}                 combinations available
               </p>
             )}
           </div>
@@ -822,7 +822,7 @@ export default function PosonCard({ onClose }: { onClose?: () => void }) {
                 />
                 {'share' in navigator && (
                   <ShareBtn
-                    icon={capturing ? <Spinner color="#c9923a" /> : <ShareIcon />}
+                    icon={                      capturing ? <Spinner color="#c9923a" /> : <ShareIcon />                    }
                     label={shareSuccess || 'More…'}
                     onClick={handleNativeShare}
                     color="#c9923a"
@@ -843,7 +843,7 @@ export default function PosonCard({ onClose }: { onClose?: () => void }) {
                 gap: 10,
                 padding: '11px 16px',
                 borderRadius: 8,
-                background: toastType === 'success' ? 'rgba(142,245,192,0.1)' : 'rgba(245,100,100,0.1)',
+                background:                   toastType === 'success' ? 'rgba(142,245,192,0.1)' : 'rgba(245,100,100,0.1)',
                 border: `1px solid ${toastType === 'success' ? 'rgba(142,245,192,0.3)' : 'rgba(245,100,100,0.3)'}`,
                 color: toastType === 'success' ? '#8ef5c0' : '#f58080',
                 fontFamily: 'Inter, sans-serif',
