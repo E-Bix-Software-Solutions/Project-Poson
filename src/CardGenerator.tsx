@@ -1,483 +1,367 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useCallback } from "react";
 
 interface CardGeneratorProps {
   onBackToLanding: () => void;
 }
 
-interface CardTemplate {
-  id: string;
+interface GreetingCard {
+  file: string;
   name: string;
-  className: string;
-  textColor: string;
-  accentColor: string;
 }
 
+// ─── Update this list with your actual filenames from ./public/greetings ───
+const CARDS: GreetingCard[] = [
+  { file: "poson-1.jpg", name: "Mihintale Sunrise" },
+  { file: "poson-2.jpg", name: "Lantern Festival" },
+  { file: "poson-3.jpg", name: "Dhamma Light" },
+  { file: "poson-4.jpg", name: "Sacred Bloom" },
+  { file: "poson-5.jpg", name: "Moonlit Stupa" },
+  { file: "poson-6.jpg", name: "Wisdom Path" },
+];
+
+const SHARE_TEXT = "Wishing you a blessed Poson Poya! 🙏✨";
+const BASE_PATH = "/greetings/";
+
+type ShareStatus = "idle" | "loading" | "done" | "error";
+
 const CardGenerator: React.FC<CardGeneratorProps> = ({ onBackToLanding }) => {
-  // Preset traditional blessings configuration
-  const presetMessages = [
-    { label: "Sinhala Classic", text: "පින්බර පොසොන් පෝය දිනක් වේවා!" },
-    {
-      label: "Dhamma Wisdom",
-      text: "ධර්මයේ ආලෝකය ඔබ සැමට නිවන් මඟ පාදයි විදහා පෙන්වනු ඇත. පින්බර පොසොන් මංගල්‍යයක් වේවා!",
+  const [currentCard, setCurrentCard] = useState<GreetingCard | null>(null);
+  const [cardIndex, setCardIndex] = useState<number>(0);
+  const [usedIndices, setUsedIndices] = useState<number[]>([]);
+  const [generated, setGenerated] = useState(false);
+  const [generating, setGenerating] = useState(false);
+  const [retrying, setRetrying] = useState(false);
+  const [shareStatus, setShareStatus] = useState<ShareStatus>("idle");
+  const [toastMsg, setToastMsg] = useState("");
+  const [imgLoaded, setImgLoaded] = useState(false);
+
+  const cardRef = useRef<HTMLDivElement>(null);
+  const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const showToast = useCallback((msg: string) => {
+    setToastMsg(msg);
+    setShareStatus("done");
+    if (toastTimer.current) clearTimeout(toastTimer.current);
+    toastTimer.current = setTimeout(() => setShareStatus("idle"), 3500);
+  }, []);
+
+  const pickRandom = useCallback(
+    (currentUsed: number[]): { card: GreetingCard; idx: number; newUsed: number[] } => {
+      let pool = currentUsed;
+      if (pool.length >= CARDS.length) pool = [];
+      const available = CARDS.map((_, i) => i).filter((i) => !pool.includes(i));
+      const idx = available[Math.floor(Math.random() * available.length)];
+      return { card: CARDS[idx], idx, newUsed: [...pool, idx] };
     },
-    {
-      label: "English Spiritual",
-      text: "May the light of wisdom guide your path and the peace of the Dhamma fill your heart.",
-    },
-    {
-      label: "Mindfulness & Peace",
-      text: "Wishing you a blessed Poson Poya filled with harmony, pure mindfulness, and compassion.",
-    },
-  ];
+    []
+  );
 
-  // Visual Theme Presets mimicking high-end digital styling
-  const themes: CardTemplate[] = [
-    {
-      id: "mihintale-dawn",
-      name: "Mihintale Dawn (Deep Indigo & Violet)",
-      className: "bg-gradient-to-br from-[#060b19] via-[#0f172a] to-[#1e1145]",
-      textColor: "text-slate-100",
-      accentColor: "text-amber-400",
-    },
-    {
-      id: "wewai-blue",
-      name: "Dhamma Cyan (Serene River & Sky)",
-      className: "bg-gradient-to-br from-[#020617] via-[#071e3d] to-[#0f3460]",
-      textColor: "text-cyan-50",
-      accentColor: "text-cyan-400",
-    },
-    {
-      id: "golden-aura",
-      name: "Auspicious Glow (Charcoal & Amber)",
-      className: "bg-gradient-to-br from-[#0a0a0a] via-[#171717] to-[#2d1a04]",
-      textColor: "text-neutral-100",
-      accentColor: "text-yellow-400",
-    },
-  ];
-
-  // State Management for the Card Customizer Engine
-  const [selectedTheme, setSelectedTheme] = useState<CardTemplate>(themes[0]);
-  const [customText, setCustomText] = useState<string>(presetMessages[0].text);
-  const [fontSize, setFontSize] = useState<number>(24);
-  const [paddingSize, setPaddingSize] = useState<number>(40);
-  const [showStupa, setShowStupa] = useState<boolean>(true);
-  const [showDeer, setShowDeer] = useState<boolean>(true);
-  const [showLotus, setShowLotus] = useState<boolean>(true);
-  const [showBranding, setShowBranding] = useState<boolean>(true);
-  const [isExporting, setIsExporting] = useState<boolean>(false);
-  const [exportSuccess, setExportSuccess] = useState<boolean>(false);
-  const [statusMessage, setStatusMessage] = useState<string>("");
-
-  const cardPreviewRef = useRef<HTMLDivElement>(null);
-
-  // Native Web Share & Image Compile Framework
-  const handleShareCard = () => {
-    if (!cardPreviewRef.current) return;
-
-    setIsExporting(true);
-    setExportSuccess(false);
-
-    // Minor execution buffer window for interactive UI response
-    setTimeout(async () => {
-      try {
-        const cardElement = cardPreviewRef.current!;
-        const { default: html2canvas } = await import("html2canvas");
-
-        const canvas = await html2canvas(cardElement, {
-          scale: 2,
-          useCORS: true,
-          allowTaint: false,
-          backgroundColor: null,
-          logging: false,
-        });
-
-        // Convert generated canvas payload to blob binary allocation array
-        canvas.toBlob(async (blob) => {
-          if (!blob) {
-            throw new Error("Canvas compilation produced an empty buffer framework.");
-          }
-
-          const shareUrl = window.location.origin; // Dynamically fetches your website domain link
-          const file = new File([blob], "E-BIX-Poson-Greeting.png", { type: "image/png" });
-
-          // Structural evaluation wrapper check for platform native share compatibility
-          if (navigator.canShare && navigator.canShare({ files: [file] })) {
-            try {
-              await navigator.share({
-                title: "Poson Poya Greeting",
-                text: "Wishing you a blessed Poson Poya! Generated via E-BIX Platform.",
-                url: shareUrl,
-                files: [file],
-              });
-              setStatusMessage("Card asset shared successfully through system channel targets!");
-              setExportSuccess(true);
-            } catch (shareError) {
-              // Handle instances where user manually aborts native target system dialog paths
-              console.log("System share pipeline aborted or closed by client action:", shareError);
-            }
-          } else {
-            // Fallback Engine execution routine loops for isolated environment scopes
-            const link = document.createElement("a");
-            link.download = "E-BIX-Poson-Greeting-Card.png";
-            link.href = canvas.toDataURL("image/png", 1.0);
-            link.click();
-
-            // Seamless link copy to clipboard fallback mechanism
-            try {
-              await navigator.clipboard.writeText(shareUrl);
-              setStatusMessage("Native sharing not supported. Image downloaded and website link copied to clipboard!");
-            } catch {
-              setStatusMessage("Image downloaded successfully!");
-            }
-            setExportSuccess(true);
-          }
-        }, "image/png");
-
-      } catch (error) {
-        console.error("Canvas collection system pipeline error:", error);
-      } finally {
-        setIsExporting(false);
-      }
-    }, 500);
+  const handleGenerate = () => {
+    setGenerating(true);
+    setImgLoaded(false);
+    setTimeout(() => {
+      const { card, idx, newUsed } = pickRandom(usedIndices);
+      setCurrentCard(card);
+      setCardIndex(idx);
+      setUsedIndices(newUsed);
+      setGenerated(true);
+      setGenerating(false);
+    }, 600);
   };
+
+  const handleRetry = () => {
+    setRetrying(true);
+    setImgLoaded(false);
+    setShareStatus("idle");
+    setTimeout(() => {
+      const { card, idx, newUsed } = pickRandom(usedIndices);
+      setCurrentCard(card);
+      setCardIndex(idx);
+      setUsedIndices(newUsed);
+      setRetrying(false);
+    }, 400);
+  };
+
+  // ─── Capture card image using html2canvas, return blob ───
+  const captureCard = async (): Promise<Blob | null> => {
+    if (!cardRef.current) return null;
+    const { default: html2canvas } = await import("html2canvas");
+    const canvas = await html2canvas(cardRef.current, {
+      scale: 2,
+      useCORS: true,
+      allowTaint: false,
+      backgroundColor: null,
+      logging: false,
+    });
+    return new Promise((resolve) => canvas.toBlob((b) => resolve(b), "image/png"));
+  };
+
+  const handleNativeShare = async () => {
+    setShareStatus("loading");
+    try {
+      const blob = await captureCard();
+      if (!blob) throw new Error("Failed to capture card.");
+      const file = new File([blob], "Poson-Greeting.png", { type: "image/png" });
+      const shareUrl = window.location.origin;
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          title: "Poson Poya Greeting",
+          text: SHARE_TEXT,
+          url: shareUrl,
+          files: [file],
+        });
+        showToast("Card shared successfully!");
+      } else {
+        // fallback: download
+        const link = document.createElement("a");
+        link.download = "Poson-Greeting.png";
+        link.href = URL.createObjectURL(blob);
+        link.click();
+        showToast("Card downloaded to your device!");
+      }
+    } catch (err: any) {
+      if (err?.name !== "AbortError") {
+        setShareStatus("error");
+        setTimeout(() => setShareStatus("idle"), 3000);
+      } else {
+        setShareStatus("idle");
+      }
+    }
+  };
+
+  const handleSocialShare = (platform: "whatsapp" | "twitter" | "facebook") => {
+    const url = encodeURIComponent(window.location.origin);
+    const text = encodeURIComponent(SHARE_TEXT);
+    const links: Record<string, string> = {
+      whatsapp: `https://wa.me/?text=${text}%20${url}`,
+      twitter: `https://twitter.com/intent/tweet?text=${text}&url=${url}`,
+      facebook: `https://www.facebook.com/sharer/sharer.php?u=${url}`,
+    };
+    window.open(links[platform], "_blank", "noopener,noreferrer");
+  };
+
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.origin);
+      showToast("Link copied to clipboard!");
+    } catch {
+      showToast("Copy your browser URL to share.");
+    }
+  };
+
+  const cardNumber = usedIndices.length;
 
   return (
     <div className="min-h-screen bg-[#050913] text-white font-sans antialiased selection:bg-amber-400 selection:text-black">
-      {/* APP INTERFACE NAVIGATION HEADER */}
-      <nav className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center border-b border-slate-900">
+
+      {/* ── NAV ── */}
+      <nav className="max-w-3xl mx-auto px-6 py-4 flex justify-between items-center border-b border-slate-900">
         <button
           onClick={onBackToLanding}
-          className="flex items-center space-x-2 text-sm text-slate-400 hover:text-amber-400 transition-colors group"
+          className="flex items-center gap-2 text-sm text-slate-400 hover:text-amber-400 transition-colors group"
         >
-          <span className="group-hover:-translate-x-1 transition-transform">
-            ←
-          </span>
-          <span>Return to Hub</span>
+          <span className="group-hover:-translate-x-0.5 transition-transform">←</span>
+          <span>Return to hub</span>
         </button>
-        <div className="flex flex-col items-end">
-          <span className="text-xs font-mono tracking-widest text-cyan-400">
-            E-BIX CANVAS ENGINE v2.0
-          </span>
-          <span className="text-[10px] text-slate-500">
-            STABLE NODE PIPELINE
-          </span>
-        </div>
+        <span className="text-[10px] font-mono tracking-widest text-cyan-400 uppercase">
+          E-BIX Card Studio
+        </span>
       </nav>
 
-      {/* CORE BUILDER GRAPHICAL WORKSPACE */}
-      <main className="max-w-7xl mx-auto px-6 py-10 grid grid-cols-1 lg:grid-cols-12 gap-10">
-        {/* LEFT COLUMN: CONTROL PARAMETERS INTERFACE PANEL (5 COLUMNS) */}
-        <section className="lg:col-span-5 space-y-6 bg-slate-900/20 border border-slate-900 p-6 rounded-2xl h-fit">
-          <div>
-            <h2 className="text-xl font-bold tracking-tight text-white flex items-center gap-2">
-              <span>⚙️</span> Configuration Node
-            </h2>
-            <p className="text-xs text-slate-400 mt-1">
-              Adjust vector constraints, cultural parameters, and typography strings.
-            </p>
-          </div>
+      {/* ── MAIN ── */}
+      <main className="max-w-3xl mx-auto px-6 py-12 flex flex-col items-center gap-10">
 
-          {/* 1. SELECT PRESSED GREETING STRING */}
-          <div className="space-y-2">
-            <label className="block text-xs font-mono uppercase text-slate-400 tracking-wider">
-              Select Preset Blessing String
-            </label>
-            <div className="grid grid-cols-2 gap-2">
-              {presetMessages.map((msg, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setCustomText(msg.text)}
-                  className="px-3 py-2 bg-slate-900/60 border border-slate-800 text-left text-xs rounded-lg hover:border-slate-700 hover:bg-slate-900 transition-all truncate text-slate-300"
-                >
-                  {msg.label}
-                </button>
-              ))}
-            </div>
-          </div>
+        {/* Header */}
+        <div className="text-center space-y-2">
+          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-white">
+            Poson Poya cards
+          </h1>
+          <p className="text-slate-400 text-sm max-w-sm mx-auto">
+            Generate a Poson greeting card and share it with family and friends.
+          </p>
+        </div>
 
-          {/* 2. REALTIME TEXTAREA INJECTOR */}
-          <div className="space-y-2">
-            <label className="block text-xs font-mono uppercase text-slate-400 tracking-wider">
-              Edit Customized Greeting (Unicode Supported)
-            </label>
-            <textarea
-              value={customText}
-              onChange={(e) => setCustomText(e.target.value)}
-              rows={4}
-              className="w-full bg-[#03060c] border border-slate-800 rounded-xl p-3 text-sm text-slate-200 focus:outline-none focus:border-amber-500/50 resize-none font-sans leading-relaxed"
-              placeholder="Enter your custom Poson Poya blessing message here..."
-            />
-          </div>
-
-          {/* 3. VISUAL THEME SELECTION DROPDOWN */}
-          <div className="space-y-2">
-            <label className="block text-xs font-mono uppercase text-slate-400 tracking-wider">
-              Background Vector Matrix Theme
-            </label>
-            <div className="space-y-2">
-              {themes.map((theme) => (
-                <button
-                  key={theme.id}
-                  onClick={() => setSelectedTheme(theme)}
-                  className={`w-full p-3 rounded-xl border flex items-center justify-between text-xs transition-all ${
-                    selectedTheme.id === theme.id
-                      ? "bg-slate-900 border-amber-500/40 text-amber-400 font-semibold"
-                      : "bg-slate-900/40 border-slate-800/80 text-slate-400 hover:bg-slate-900/80"
-                  }`}
-                >
-                  <span>{theme.name}</span>
-                  <div
-                    className={`w-3 h-3 rounded-full ${theme.className.split(" ")[1]}`}
-                  ></div>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* 4. HERITAGE SYMBOLIC CAROUSEL TOGGLES */}
-          <div className="space-y-3 pt-2 border-t border-slate-900">
-            <label className="block text-xs font-mono uppercase text-slate-400 tracking-wider">
-              Traditional Heritage Motif Controls
-            </label>
-
-            <div className="grid grid-cols-2 gap-3">
-              <button
-                onClick={() => setShowStupa(!showStupa)}
-                className={`p-2.5 rounded-xl border text-xs flex items-center justify-between transition-all ${
-                  showStupa
-                    ? "bg-amber-500/10 border-amber-500/30 text-amber-400"
-                    : "bg-slate-900/40 border-transparent text-slate-500"
-                }`}
-              >
-                <span>🛕 Mihintale Stupa</span>
-                <span className="font-mono text-[10px]">{showStupa ? "ON" : "OFF"}</span>
-              </button>
-
-              <button
-                onClick={() => setShowDeer(!showDeer)}
-                className={`p-2.5 rounded-xl border text-xs flex items-center justify-between transition-all ${
-                  showDeer
-                    ? "bg-amber-500/10 border-amber-500/30 text-amber-400"
-                    : "bg-slate-900/40 border-transparent text-slate-500"
-                }`}
-              >
-                <span>🦌 Wisdom Deer</span>
-                <span className="font-mono text-[10px]">{showDeer ? "ON" : "OFF"}</span>
-              </button>
-
-              <button
-                onClick={() => setShowLotus(!showLotus)}
-                className={`p-2.5 rounded-xl border text-xs flex items-center justify-between transition-all ${
-                  showLotus
-                    ? "bg-cyan-500/10 border-cyan-500/30 text-cyan-400"
-                    : "bg-slate-900/40 border-transparent text-slate-500"
-                }`}
-              >
-                <span>🪷 Lotus Purity</span>
-                <span className="font-mono text-[10px]">{showLotus ? "ON" : "OFF"}</span>
-              </button>
-
-              <button
-                onClick={() => setShowBranding(!showBranding)}
-                className={`p-2.5 rounded-xl border text-xs flex items-center justify-between transition-all ${
-                  showBranding
-                    ? "bg-slate-800 border-slate-700 text-white"
-                    : "bg-slate-900/40 border-transparent text-slate-500"
-                }`}
-              >
-                <span>🛡️ E-BIX Signature</span>
-                <span className="font-mono text-[10px]">{showBranding ? "ON" : "OFF"}</span>
-              </button>
-            </div>
-          </div>
-
-          {/* 5. TYPOGRAPHIC RENDERING DIMENSIONS (SLIDERS) */}
-          <div className="space-y-4 pt-2 border-t border-slate-900">
-            <div className="space-y-1">
-              <div className="flex justify-between text-xs font-mono text-slate-400">
-                <span>FONT SCALING LAYER</span>
-                <span className="text-amber-400">{fontSize}px</span>
+        {/* ── CARD PREVIEW ── */}
+        <div className="w-full">
+          <div
+            ref={cardRef}
+            className={`w-full aspect-[16/9] rounded-2xl border border-white/5 overflow-hidden relative transition-all duration-300 ${
+              generated ? "shadow-2xl shadow-black/60" : "shadow-none"
+            }`}
+          >
+            {/* Empty state */}
+            {!generated && (
+              <div className="absolute inset-0 bg-slate-900/60 flex flex-col items-center justify-center gap-3 text-slate-600">
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <p className="text-sm font-mono uppercase tracking-widest">Your card will appear here</p>
               </div>
-              <input
-                type="range"
-                min="16"
-                max="36"
-                value={fontSize}
-                onChange={(e) => setFontSize(Number(e.target.value))}
-                className="w-full accent-amber-500 bg-slate-950 h-1.5 rounded-lg appearance-none cursor-pointer"
-              />
-            </div>
+            )}
 
-            <div className="space-y-1">
-              <div className="flex justify-between text-xs font-mono text-slate-400">
-                <span>VIEWPORT PADDING</span>
-                <span className="text-amber-400">{paddingSize}px</span>
-              </div>
-              <input
-                type="range"
-                min="20"
-                max="60"
-                value={paddingSize}
-                onChange={(e) => setPaddingSize(Number(e.target.value))}
-                className="w-full accent-amber-500 bg-slate-950 h-1.5 rounded-lg appearance-none cursor-pointer"
-              />
-            </div>
-          </div>
-        </section>
-
-        {/* RIGHT COLUMN: REALTIME WYSIWYG PREVIEW VIEWPORT FRAME (7 COLUMNS) */}
-        <section className="lg:col-span-7 flex flex-col justify-between space-y-6">
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <h3 className="text-sm font-mono uppercase tracking-widest text-slate-400">
-                Active Canvas Viewport (16:9 Scale Bound)
-              </h3>
-              <div className="flex items-center space-x-2 text-xs text-slate-500">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
-                <span>Live Hot-Reload Enabled</span>
-              </div>
-            </div>
-
-            {/* GREETING CARD PREVIEW CONTAINER BOX */}
-            <div
-              ref={cardPreviewRef}
-              style={{ padding: `${paddingSize}px` }}
-              className={`w-full aspect-[16/10] sm:aspect-[16/9] ${selectedTheme.className} rounded-2xl border border-white/5 relative flex flex-col justify-between overflow-hidden shadow-2xl transition-all duration-300 group`}
-            >
-              {/* BACKDROP HIGH INTENSITY FULL MOON VECTOR SOURCE */}
-              <div className="absolute top-8 right-12 w-28 h-28 sm:w-36 sm:h-36 bg-gradient-to-br from-yellow-100 via-white to-amber-200 rounded-full opacity-80 blur-[2px] shadow-[0_0_50px_rgba(254,243,199,0.4)] flex items-center justify-center -z-0">
-                <div className="w-full h-full bg-black/5 rounded-full filter contrast-125 mix-blend-multiply opacity-30"></div>
-              </div>
-
-              {/* WATER ripple/lantern ambient background highlights */}
-              <div className="absolute bottom-0 inset-x-0 h-1/3 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none"></div>
-
-              {/* CARD PREVIEW TOP META BAND */}
-              <div className="w-full flex justify-between items-start z-10 relative">
-                <div>
-                  {showLotus && (
-                    <div className="text-2xl drop-shadow-[0_0_10px_rgba(34,211,238,0.5)] animate-pulse">
-                      🪷
-                    </div>
-                  )}
-                </div>
-                <div className="text-right font-mono text-[9px] uppercase tracking-widest text-white/30">
-                  June Full Moon Festival
-                </div>
-              </div>
-
-              {/* MIDDLE HERO CUSTOM COMPILATION BODY TEXT DISPLAY */}
-              <div className="w-full max-w-xl my-auto z-10 relative py-4">
-                <p
-                  style={{ fontSize: `${fontSize}px` }}
-                  className={`font-sans font-bold leading-relaxed tracking-wide drop-shadow-xl text-balance ${selectedTheme.textColor}`}
-                >
-                  {customText || "..."}
-                </p>
-              </div>
-
-              {/* PREVIEW BOTTOM ALIGNMENT LAYER: HOUSES SILHOUETTES & COMPANY BRANDING LOGOS */}
-              <div className="w-full flex justify-between items-end pt-4 border-t border-white/10 z-10 relative">
-                <div className="flex items-end space-x-4 min-h-[36px]">
-                  {showStupa && (
-                    <div className="flex flex-col items-center select-none text-white/80 filter drop-shadow-md">
-                      <span className="text-2xl leading-none">🛕</span>
-                      <span className="text-[8px] font-mono tracking-tighter uppercase opacity-40 mt-0.5">
-                        Mihintale
-                      </span>
-                    </div>
-                  )}
-                  {showDeer && (
-                    <div className="flex flex-col items-center select-none text-amber-400/90 filter drop-shadow-md">
-                      <span className="text-2xl leading-none">🦌</span>
-                      <span className="text-[8px] font-mono tracking-tighter uppercase opacity-40 mt-0.5">
-                        Wisdom
-                      </span>
-                    </div>
-                  )}
-                </div>
-
-                {showBranding ? (
-                  <div className="text-right flex flex-col items-end opacity-90">
-                    <span className={`text-[10px] font-extrabold tracking-widest uppercase ${selectedTheme.accentColor}`}>
-                      E-BIX Solutions
-                    </span>
-                    <span className="text-[8px] font-mono text-white/40 uppercase tracking-tighter">
-                      Software Ecosystem Pipeline
-                    </span>
-                  </div>
-                ) : (
-                  <div className="w-4 h-4 rounded bg-white/5"></div>
+            {/* Generated card image */}
+            {generated && currentCard && (
+              <>
+                {/* Skeleton shimmer while image loads */}
+                {!imgLoaded && (
+                  <div className="absolute inset-0 bg-slate-800 animate-pulse" />
                 )}
-              </div>
+                <img
+                  src={`${BASE_PATH}${currentCard.file}`}
+                  alt={currentCard.name}
+                  onLoad={() => setImgLoaded(true)}
+                  className={`w-full h-full object-cover transition-opacity duration-500 ${imgLoaded ? "opacity-100" : "opacity-0"}`}
+                />
+                {/* Card label badge */}
+                <div className="absolute bottom-3 left-3 bg-black/50 backdrop-blur-sm text-white text-[10px] font-mono uppercase tracking-widest px-3 py-1 rounded-full">
+                  Poson Poya 2026
+                </div>
+                {/* Card name badge top-right */}
+                <div className="absolute top-3 right-3 bg-black/40 backdrop-blur-sm text-white/70 text-[10px] font-mono px-2.5 py-1 rounded-full">
+                  {currentCard.name}
+                </div>
+              </>
+            )}
 
-              {/* Ambient Buddhist Flag Aspect Gradient Border Bar Accent */}
-              <div className="absolute top-0 inset-x-0 h-1 grid grid-cols-5 opacity-40">
-                <div className="bg-blue-600"></div>
-                <div className="bg-yellow-400"></div>
-                <div className="bg-red-600"></div>
-                <div className="bg-white"></div>
-                <div className="bg-orange-500"></div>
+            {/* Generating overlay */}
+            {generating && (
+              <div className="absolute inset-0 bg-slate-900/80 flex items-center justify-center">
+                <div className="flex flex-col items-center gap-3 text-slate-300">
+                  <svg className="w-7 h-7 animate-spin text-amber-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                  </svg>
+                  <span className="text-xs font-mono uppercase tracking-widest">Selecting card…</span>
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
-          {/* VIEWPORT BOTTOM ACTION BAR */}
-          <div className="bg-slate-900/40 border border-slate-900/80 rounded-xl p-4 flex flex-col sm:flex-row justify-between items-center gap-4">
-            <div className="text-xs text-slate-400 text-center sm:text-left">
-              <p className="font-mono text-[11px] text-slate-300 uppercase font-semibold">
-                Ready to transmit digital asset?
-              </p>
-              <p className="text-[10px]">
-                Compiles card architecture to system sharing sheets to push image files and website links together.
-              </p>
-            </div>
+          {/* Card counter */}
+          {generated && (
+            <p className="mt-2 text-center text-xs text-slate-500 font-mono">
+              Card {cardNumber} of {CARDS.length} — {currentCard?.name}
+            </p>
+          )}
+        </div>
 
+        {/* ── ACTIONS ── */}
+        <div className="w-full flex flex-col gap-4">
+
+          {/* Generate button — hidden after first generation */}
+          {!generated && (
             <button
-              onClick={handleShareCard}
-              disabled={isExporting}
-              className={`w-full sm:w-auto px-6 py-3 font-bold rounded-xl text-xs tracking-wide transition-all uppercase flex items-center justify-center space-x-2 ${
-                isExporting
-                  ? "bg-slate-800 text-slate-500 cursor-not-allowed"
-                  : "bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-600 text-black hover:scale-[1.01] font-extrabold shadow-md"
-              }`}
+              onClick={handleGenerate}
+              disabled={generating}
+              className="w-full py-4 rounded-xl bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 text-black font-extrabold text-sm tracking-wide uppercase flex items-center justify-center gap-2 hover:brightness-105 active:scale-[0.99] transition-all disabled:opacity-60 disabled:cursor-not-allowed shadow-lg shadow-amber-900/30"
             >
-              {isExporting ? (
+              {generating ? (
                 <>
-                  <span className="w-3 h-3 border-2 border-slate-500 border-t-transparent rounded-full animate-spin"></span>
-                  <span>Compiling Node...</span>
+                  <svg className="w-4 h-4 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                  </svg>
+                  Generating…
                 </>
               ) : (
                 <>
-                  <span>🔗</span>
-                  <span>Share Greeting Asset</span>
+                  <span>✨</span>
+                  Generate your Poson card
                 </>
               )}
             </button>
-          </div>
+          )}
 
-          {/* STATUS TOAST ANNOUNCEMENT BLOCK */}
-          {exportSuccess && (
-            <div className="p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-xl flex items-start space-x-3 text-xs text-emerald-400 animate-fadeIn">
-              <span className="mt-0.5">✨</span>
-              <div>
-                <p className="font-bold uppercase tracking-wide">
-                  Operation Complete!
-                </p>
-                <p className="text-slate-400 text-[11px] mt-0.5">
-                  {statusMessage}
-                </p>
-              </div>
+          {/* Retry + Download row — shown after generation */}
+          {generated && (
+            <div className="flex gap-3">
+              <button
+                onClick={handleRetry}
+                disabled={retrying}
+                className="flex-1 py-3.5 rounded-xl border border-slate-700 bg-slate-900/60 text-white text-sm font-semibold flex items-center justify-center gap-2 hover:bg-slate-800 active:scale-[0.99] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <span className={retrying ? "animate-spin inline-block" : ""}>↺</span>
+                Try another
+              </button>
+
+              <button
+                onClick={handleNativeShare}
+                disabled={shareStatus === "loading"}
+                className="flex-1 py-3.5 rounded-xl bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 text-black text-sm font-extrabold flex items-center justify-center gap-2 hover:brightness-105 active:scale-[0.99] transition-all disabled:opacity-60 disabled:cursor-not-allowed shadow-md shadow-amber-900/30"
+              >
+                {shareStatus === "loading" ? (
+                  <>
+                    <svg className="w-4 h-4 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                    </svg>
+                    Preparing…
+                  </>
+                ) : (
+                  <>
+                    <span>🔗</span>
+                    Share card
+                  </>
+                )}
+              </button>
             </div>
           )}
-        </section>
+
+          {/* Social share row */}
+          {generated && (
+            <div className="space-y-3">
+              <p className="text-[10px] font-mono uppercase tracking-widest text-slate-500 text-center">
+                Share on social media
+              </p>
+              <div className="grid grid-cols-3 gap-3">
+                {(
+                  [
+                    { platform: "whatsapp", label: "WhatsApp", color: "hover:border-green-500 hover:text-green-400", icon: "📱" },
+                    { platform: "twitter",  label: "X / Twitter", color: "hover:border-sky-500 hover:text-sky-400",   icon: "🐦" },
+                    { platform: "facebook", label: "Facebook",  color: "hover:border-blue-500 hover:text-blue-400",  icon: "📘" },
+                  ] as const
+                ).map(({ platform, label, color, icon }) => (
+                  <button
+                    key={platform}
+                    onClick={() => handleSocialShare(platform)}
+                    className={`py-3 rounded-xl border border-slate-800 bg-slate-900/40 text-slate-300 text-xs font-medium flex flex-col items-center gap-1.5 transition-all ${color} hover:bg-slate-900`}
+                  >
+                    <span className="text-lg leading-none">{icon}</span>
+                    {label}
+                  </button>
+                ))}
+              </div>
+
+              {/* Copy link */}
+              <button
+                onClick={handleCopyLink}
+                className="w-full py-3 rounded-xl border border-slate-800 bg-slate-900/40 text-slate-400 text-xs font-medium flex items-center justify-center gap-2 hover:border-slate-700 hover:text-slate-200 hover:bg-slate-900 transition-all"
+              >
+                <span>🔗</span>
+                Copy link to share
+              </button>
+            </div>
+          )}
+
+          {/* Toast */}
+          {(shareStatus === "done" || shareStatus === "error") && (
+            <div
+              className={`flex items-start gap-3 px-4 py-3 rounded-xl text-xs font-medium border transition-all ${
+                shareStatus === "done"
+                  ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400"
+                  : "bg-red-500/10 border-red-500/30 text-red-400"
+              }`}
+            >
+              <span className="mt-0.5">{shareStatus === "done" ? "✓" : "✕"}</span>
+              <span>{shareStatus === "done" ? toastMsg : "Something went wrong. Please try again."}</span>
+            </div>
+          )}
+        </div>
       </main>
 
-      {/* CORE STRUCTURAL FOOTER HUB */}
-      <footer className="bg-[#02050b] border-t border-slate-950/60 py-8 text-center text-slate-600 text-xs mt-16">
-        <p>
-          © 2026 E-BIX Software Solutions Engine Deck. Designed with reverence for Sri Lankan cultural lineage.
-        </p>
+      {/* ── FOOTER ── */}
+      <footer className="border-t border-slate-950 py-8 text-center text-slate-600 text-xs mt-8">
+        © 2026 E-BIX Software Solutions. Designed with reverence for Sri Lankan cultural lineage.
       </footer>
     </div>
   );

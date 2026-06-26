@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useCallback } from 'react';
 
 // ─── Dharma Wheel SVG ────────────────────────────────────────────────────────
 const DharmaWheel = ({ size = 32, color = '#c9923a' }: { size?: number; color?: string }) => (
@@ -66,13 +66,10 @@ const MESSAGES = [
 const CardPreview = ({
   template,
   message,
-  recipientName,
 }: {
   template: typeof TEMPLATES[0];
   message: string;
-  recipientName: string;
 }) => {
-  // Stars scattered across the card
   const stars = [
     { cx: 40, cy: 30, r: 1.2, opacity: 0.7 },
     { cx: 90, cy: 55, r: 0.8, opacity: 0.5 },
@@ -109,9 +106,7 @@ const CardPreview = ({
         viewBox="0 0 380 215"
         preserveAspectRatio="xMidYMid slice"
       >
-        {stars.map((s, i) => (
-          <StarDot key={i} {...s} />
-        ))}
+        {stars.map((s, i) => <StarDot key={i} {...s} />)}
       </svg>
 
       {/* Moon glow */}
@@ -156,25 +151,15 @@ const CardPreview = ({
           pointerEvents: 'none',
         }}
       >
-        {['#f5c26b', '#d4849a', '#8da1cd', '#8ef5c0'].map((c, i) => (
+        {(['#f5c26b', '#d4849a', '#8da1cd', '#8ef5c0'] as string[]).map((c, i) => (
           <div key={i} style={{ opacity: 0.7 + i * 0.08 }}>
             <LanternSVG color={c} size={20 + i * 3} />
           </div>
         ))}
       </div>
 
-      {/* Buddhist flag stripe — thin bottom bar */}
-      <div
-        style={{
-          position: 'absolute',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          height: 4,
-          display: 'flex',
-          pointerEvents: 'none',
-        }}
-      >
+      {/* Buddhist flag stripe */}
+      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 4, display: 'flex', pointerEvents: 'none' }}>
         {['#1a4fd4', '#e6b800', '#e63c00', '#ffffff', '#e87c2a'].map((c, i) => (
           <div key={i} style={{ flex: 1, background: c }} />
         ))}
@@ -191,7 +176,6 @@ const CardPreview = ({
           padding: 'clamp(18px, 5%, 36px)',
         }}
       >
-        {/* Wheel + label */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10, opacity: 0.75 }}>
           <DharmaWheel size={16} color={template.accent} />
           <span
@@ -208,7 +192,6 @@ const CardPreview = ({
           </span>
         </div>
 
-        {/* Main title */}
         <h2
           style={{
             fontFamily: 'Cinzel, serif',
@@ -223,7 +206,6 @@ const CardPreview = ({
           Poson Poya
         </h2>
 
-        {/* Sinhala subtitle */}
         <p
           style={{
             fontFamily: 'Cinzel, serif',
@@ -237,23 +219,6 @@ const CardPreview = ({
           පොසොන් පෝය &nbsp;·&nbsp; ශ්‍රී ලංකා
         </p>
 
-        {/* Recipient */}
-        {recipientName && (
-          <p
-            style={{
-              fontFamily: 'Inter, sans-serif',
-              fontSize: 'clamp(8px, 1.6vw, 10px)',
-              color: '#f0ede0',
-              opacity: 0.6,
-              marginBottom: 6,
-              letterSpacing: '0.05em',
-            }}
-          >
-            Dear {recipientName},
-          </p>
-        )}
-
-        {/* Greeting message */}
         <p
           style={{
             fontFamily: 'Cinzel, serif',
@@ -278,16 +243,19 @@ const ShareBtn = ({
   label,
   onClick,
   color,
+  disabled = false,
 }: {
   icon: React.ReactNode;
   label: string;
   onClick: () => void;
   color: string;
+  disabled?: boolean;
 }) => {
   const [hovered, setHovered] = useState(false);
   return (
     <button
       onClick={onClick}
+      disabled={disabled}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
@@ -299,13 +267,14 @@ const ShareBtn = ({
         background: hovered ? `${color}22` : 'rgba(255,255,255,0.04)',
         border: `1px solid ${hovered ? color : 'rgba(255,255,255,0.1)'}`,
         color: hovered ? color : '#f0ede0',
-        cursor: 'pointer',
+        cursor: disabled ? 'not-allowed' : 'pointer',
         fontSize: 13,
         fontFamily: 'Inter, sans-serif',
         fontWeight: 500,
         letterSpacing: '0.04em',
         transition: 'all 0.18s ease',
         whiteSpace: 'nowrap',
+        opacity: disabled ? 0.5 : 1,
       }}
     >
       {icon}
@@ -314,24 +283,176 @@ const ShareBtn = ({
   );
 };
 
+// ─── Spinner ──────────────────────────────────────────────────────────────────
+const Spinner = ({ color = '#c9923a' }: { color?: string }) => (
+  <svg
+    width="18" height="18" viewBox="0 0 24 24" fill="none"
+    style={{ animation: 'spinFast 0.7s linear infinite' }}
+  >
+    <circle cx="12" cy="12" r="10" stroke={color} strokeWidth="3" strokeDasharray="40 20" strokeLinecap="round" />
+  </svg>
+);
+
+// ─── Inline Icons ─────────────────────────────────────────────────────────────
+const WhatsAppIcon = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+  </svg>
+);
+
+const FacebookIcon = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+  </svg>
+);
+
+const TwitterIcon = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+  </svg>
+);
+
+const LinkIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/>
+    <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/>
+  </svg>
+);
+
+const CheckIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="20 6 9 17 4 12"/>
+  </svg>
+);
+
+const ShareIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+    <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+  </svg>
+);
+
+// ─── Combination of all card variants: template × message ────────────────────
+interface CardVariant {
+  template: typeof TEMPLATES[0];
+  message: string;
+}
+
+function buildDeck(): CardVariant[] {
+  const deck: CardVariant[] = [];
+  for (const template of TEMPLATES) {
+    for (const message of MESSAGES) {
+      deck.push({ template, message });
+    }
+  }
+  return deck;
+}
+
+const DECK = buildDeck(); // 12 unique combinations
+
 // ─── Main PosonCard Page ──────────────────────────────────────────────────────
 export default function PosonCard({ onClose }: { onClose?: () => void }) {
-  const [template, setTemplate] = useState(TEMPLATES[0]);
-  const [message, setMessage] = useState(MESSAGES[0]);
-  const [recipientName, setRecipientName] = useState('');
+  const [currentCard, setCurrentCard] = useState<CardVariant | null>(null);
+  const [usedIndices, setUsedIndices] = useState<number[]>([]);
+  const [generated, setGenerated] = useState(false);
+  const [generating, setGenerating] = useState(false);
+  const [retrying, setRetrying] = useState(false);
   const [copied, setCopied] = useState(false);
   const [shareSuccess, setShareSuccess] = useState('');
+  const [capturing, setCapturing] = useState(false);
+  const [toastMsg, setToastMsg] = useState('');
+  const [toastType, setToastType] = useState<'success' | 'error'>('success');
 
-  const handleCopyLink = () => {
-    const url = `${window.location.origin}${window.location.pathname}?card=poson&msg=${encodeURIComponent(message)}&theme=${template.id}`;
-    navigator.clipboard.writeText(url).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const showToast = useCallback((msg: string, type: 'success' | 'error' = 'success') => {
+    setToastMsg(msg);
+    setToastType(type);
+    if (toastTimer.current) clearTimeout(toastTimer.current);
+    toastTimer.current = setTimeout(() => setToastMsg(''), 3500);
+  }, []);
+
+  const pickRandom = useCallback((currentUsed: number[]): { variant: CardVariant; idx: number; newUsed: number[] } => {
+    let pool = currentUsed;
+    if (pool.length >= DECK.length) pool = [];
+    const available = DECK.map((_, i) => i).filter(i => !pool.includes(i));
+    const idx = available[Math.floor(Math.random() * available.length)];
+    return { variant: DECK[idx], idx, newUsed: [...pool, idx] };
+  }, []);
+
+  const handleGenerate = () => {
+    setGenerating(true);
+    setTimeout(() => {
+      const { variant, idx, newUsed } = pickRandom(usedIndices);
+      setCurrentCard(variant);
+      setUsedIndices(newUsed);
+      setGenerated(true);
+      setGenerating(false);
+    }, 550);
+  };
+
+  const handleRetry = () => {
+    setRetrying(true);
+    setToastMsg('');
+    setTimeout(() => {
+      const { variant, idx, newUsed } = pickRandom(usedIndices);
+      setCurrentCard(variant);
+      setUsedIndices(newUsed);
+      setRetrying(false);
+    }, 380);
+  };
+
+  // ─── Capture card to blob via html2canvas ───
+  const captureCard = async (): Promise<Blob | null> => {
+    if (!cardRef.current) return null;
+    const { default: html2canvas } = await import('html2canvas');
+    const canvas = await html2canvas(cardRef.current, {
+      scale: 2,
+      useCORS: true,
+      allowTaint: false,
+      backgroundColor: null,
+      logging: false,
     });
+    return new Promise(resolve => canvas.toBlob(b => resolve(b), 'image/png'));
+  };
+
+  // ─── Native share (image + link) ───
+  const handleNativeShare = async () => {
+    if (!generated) return;
+    setCapturing(true);
+    try {
+      const blob = await captureCard();
+      if (!blob) throw new Error('Capture failed');
+      const file = new File([blob], 'Poson-Greeting.png', { type: 'image/png' });
+      const shareUrl = window.location.href;
+      const shareText = `🪷 Poson Poya Greetings 🌕\n\n"${currentCard?.message}"\n\nLearn about Poson Poya — the sacred full moon that brought the Dhamma to Sri Lanka.`;
+
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({ title: 'Poson Poya Greeting', text: shareText, url: shareUrl, files: [file] });
+        setShareSuccess('Shared!');
+        setTimeout(() => setShareSuccess(''), 2500);
+      } else {
+        // fallback: download image
+        const link = document.createElement('a');
+        link.download = 'Poson-Greeting.png';
+        link.href = URL.createObjectURL(blob);
+        link.click();
+        showToast('Card downloaded to your device!');
+      }
+    } catch (err: any) {
+      if (err?.name !== 'AbortError') {
+        showToast('Something went wrong. Please try again.', 'error');
+      }
+    } finally {
+      setCapturing(false);
+    }
   };
 
   const handleWhatsApp = () => {
-    const text = `🪷 *Poson Poya Greetings* 🌕\n\n"${message}"\n\nLearn about Poson Poya — the sacred full moon that brought the Dhamma to Sri Lanka.\n${window.location.href}`;
+    if (!currentCard) return;
+    const text = `🪷 *Poson Poya Greetings* 🌕\n\n"${currentCard.message}"\n\nLearn about Poson Poya — the sacred full moon that brought the Dhamma to Sri Lanka.\n${window.location.href}`;
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
   };
 
@@ -340,34 +461,28 @@ export default function PosonCard({ onClose }: { onClose?: () => void }) {
   };
 
   const handleTwitter = () => {
-    const text = `🌕 Poson Poya — the full moon that brought Buddhism to Sri Lanka.\n\n"${message}"\n\n#PosonPoya #Buddhism #SriLanka`;
+    if (!currentCard) return;
+    const text = `🌕 Poson Poya — the full moon that brought Buddhism to Sri Lanka.\n\n"${currentCard.message}"\n\n#PosonPoya #Buddhism #SriLanka`;
     window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(window.location.href)}`, '_blank');
   };
 
-  const handleNativeShare = () => {
-    if (navigator.share) {
-      navigator.share({
-        title: 'Poson Poya Greetings',
-        text: `"${message}" — Poson Poya · Sri Lanka`,
-        url: window.location.href,
-      }).then(() => {
-        setShareSuccess('Shared!');
-        setTimeout(() => setShareSuccess(''), 2500);
-      }).catch(() => {});
-    } else {
-      handleCopyLink();
-    }
+  const handleCopyLink = () => {
+    if (!currentCard) return;
+    const url = `${window.location.origin}${window.location.pathname}?card=poson&msg=${encodeURIComponent(currentCard.message)}&theme=${currentCard.template.id}`;
+    navigator.clipboard.writeText(url).then(() => {
+      setCopied(true);
+      showToast('Link copied to clipboard!');
+      setTimeout(() => setCopied(false), 2000);
+    });
   };
+
+  const cardCount = usedIndices.length;
 
   return (
     <>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Inter:wght@300;400;500&display=swap');
         * { box-sizing: border-box; }
-        .msg-opt:hover { border-color: rgba(245,194,107,0.6) !important; background: rgba(245,194,107,0.07) !important; }
-        .tmpl-btn:hover { border-color: rgba(245,194,107,0.5) !important; }
-        textarea:focus { outline: none; border-color: rgba(201,146,58,0.6) !important; }
-        input:focus { outline: none; border-color: rgba(201,146,58,0.6) !important; }
         @keyframes slideUp {
           from { opacity: 0; transform: translateY(40px) scale(0.97); }
           to   { opacity: 1; transform: translateY(0) scale(1); }
@@ -380,11 +495,28 @@ export default function PosonCard({ onClose }: { onClose?: () => void }) {
           from { transform: rotate(0deg); }
           to   { transform: rotate(360deg); }
         }
+        @keyframes spinFast {
+          from { transform: rotate(0deg); }
+          to   { transform: rotate(360deg); }
+        }
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(6px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes shimmer {
+          0%   { background-position: -400px 0; }
+          100% { background-position: 400px 0; }
+        }
         .modal-anim { animation: slideUp 0.45s cubic-bezier(.22,.68,0,1.15) both; }
         .backdrop-anim { animation: backdropIn 0.3s ease both; }
+        .toast-anim { animation: fadeInUp 0.22s ease both; }
+        .share-btn-row { display: flex; gap: 10px; flex-wrap: wrap; }
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(201,146,58,0.3); border-radius: 99px; }
+        .retry-btn:hover { background: rgba(255,255,255,0.08) !important; border-color: rgba(255,255,255,0.25) !important; }
+        .generate-btn:hover { filter: brightness(1.08); }
+        .generate-btn:active { transform: scale(0.99); }
       `}</style>
 
       {/* Backdrop */}
@@ -466,180 +598,188 @@ export default function PosonCard({ onClose }: { onClose?: () => void }) {
                   marginBottom: 3,
                 }}
               >
-                Share a Poson Greeting
+                Poson Poya Greeting Card
               </h2>
               <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: '#f0ede0', opacity: 0.45, letterSpacing: '0.05em' }}>
-                Craft a card · share the Dhamma's light
+                Generate a card · share the Dhamma's light
               </p>
             </div>
           </div>
 
-          {/* Card Preview */}
-          <div style={{ marginBottom: 28, display: 'flex', justifyContent: 'center' }}>
-            <div style={{ width: '100%', maxWidth: 540 }}>
-              <CardPreview template={template} message={message} recipientName={recipientName} />
-            </div>
-          </div>
+          {/* ── Card Stage ── */}
+          <div style={{ marginBottom: 28, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
 
-          {/* ── Customise section ── */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 22 }}>
-
-            {/* Template picker */}
-            <div>
-              <label
-                style={{
-                  display: 'block',
-                  fontFamily: 'Inter, sans-serif',
-                  fontSize: 11,
-                  fontWeight: 500,
-                  letterSpacing: '0.2em',
-                  textTransform: 'uppercase',
-                  color: '#c9923a',
-                  marginBottom: 10,
-                }}
-              >
-                Card Theme
-              </label>
-              <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-                {TEMPLATES.map(t => (
-                  <button
-                    key={t.id}
-                    className="tmpl-btn"
-                    onClick={() => setTemplate(t)}
-                    style={{
-                      padding: '7px 16px',
-                      borderRadius: 5,
-                      border: `1.5px solid ${template.id === t.id ? t.accent : 'rgba(255,255,255,0.12)'}`,
-                      background: template.id === t.id ? `${t.accent}18` : 'rgba(255,255,255,0.03)',
-                      color: template.id === t.id ? t.accent : '#f0ede0',
-                      cursor: 'pointer',
-                      fontSize: 12,
-                      fontFamily: 'Inter, sans-serif',
-                      fontWeight: 500,
-                      letterSpacing: '0.04em',
-                      transition: 'all 0.15s ease',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 6,
-                    }}
-                  >
+            {/* Card preview or empty state */}
+            <div ref={cardRef} style={{ width: '100%', maxWidth: 540, position: 'relative' }}>
+              {generated && currentCard ? (
+                <div style={{ position: 'relative' }}>
+                  <CardPreview template={currentCard.template} message={currentCard.message} />
+                  {/* Retrying overlay */}
+                  {retrying && (
                     <div
                       style={{
-                        width: 10,
-                        height: 10,
-                        borderRadius: '50%',
-                        background: t.bg,
-                        border: `1px solid ${t.accent}55`,
-                        flexShrink: 0,
+                        position: 'absolute',
+                        inset: 0,
+                        borderRadius: 12,
+                        background: 'rgba(6,13,31,0.75)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        backdropFilter: 'blur(2px)',
                       }}
-                    />
-                    {t.label}
-                  </button>
-                ))}
-              </div>
+                    >
+                      <Spinner color="#f5c26b" />
+                    </div>
+                  )}
+                </div>
+              ) : (
+                /* Empty placeholder */
+                <div
+                  style={{
+                    width: '100%',
+                    aspectRatio: '16/9',
+                    borderRadius: 12,
+                    border: '1px dashed rgba(201,146,58,0.25)',
+                    background: 'rgba(201,146,58,0.04)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 10,
+                  }}
+                >
+                  {generating ? (
+                    <Spinner color="#f5c26b" />
+                  ) : (
+                    <>
+                      <DharmaWheel size={32} color="rgba(201,146,58,0.3)" />
+                      <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: 'rgba(240,237,224,0.3)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+                        Your card will appear here
+                      </p>
+                    </>
+                  )}
+                </div>
+              )}
             </div>
 
-            {/* Recipient */}
-            <div>
-              <label
+            {/* Card counter */}
+            {generated && (
+              <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(240,237,224,0.35)', letterSpacing: '0.08em' }}>
+                Card {cardCount} · {currentCard?.template.label} · {DECK.length} combinations available
+              </p>
+            )}
+          </div>
+
+          {/* ── Primary actions ── */}
+          <div style={{ display: 'flex', gap: 12, marginBottom: 24 }}>
+            {/* Generate / hidden after first press */}
+            {!generated && (
+              <button
+                className="generate-btn"
+                onClick={handleGenerate}
+                disabled={generating}
                 style={{
-                  display: 'block',
+                  flex: 1,
+                  padding: '14px 24px',
+                  borderRadius: 8,
+                  border: 'none',
+                  background: 'linear-gradient(135deg, #c9923a 0%, #f5c26b 50%, #c9923a 100%)',
+                  color: '#1a0a00',
                   fontFamily: 'Inter, sans-serif',
-                  fontSize: 11,
-                  fontWeight: 500,
-                  letterSpacing: '0.2em',
-                  textTransform: 'uppercase',
-                  color: '#c9923a',
-                  marginBottom: 8,
-                }}
-              >
-                Recipient's Name <span style={{ opacity: 0.45, textTransform: 'none', letterSpacing: 0 }}>(optional)</span>
-              </label>
-              <input
-                type="text"
-                placeholder="e.g. Nimal, Kumari…"
-                value={recipientName}
-                onChange={e => setRecipientName(e.target.value)}
-                style={{
-                  width: '100%',
-                  background: 'rgba(255,255,255,0.04)',
-                  border: '1px solid rgba(201,146,58,0.22)',
-                  borderRadius: 6,
-                  padding: '10px 14px',
-                  fontFamily: 'Inter, sans-serif',
+                  fontWeight: 700,
                   fontSize: 14,
-                  color: '#f0ede0',
-                  transition: 'border-color 0.15s',
-                }}
-              />
-            </div>
-
-            {/* Message picker */}
-            <div>
-              <label
-                style={{
-                  display: 'block',
-                  fontFamily: 'Inter, sans-serif',
-                  fontSize: 11,
-                  fontWeight: 500,
-                  letterSpacing: '0.2em',
+                  letterSpacing: '0.06em',
                   textTransform: 'uppercase',
-                  color: '#c9923a',
-                  marginBottom: 10,
+                  cursor: generating ? 'not-allowed' : 'pointer',
+                  opacity: generating ? 0.7 : 1,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 8,
+                  transition: 'all 0.15s ease',
+                  boxShadow: '0 4px 20px rgba(201,146,58,0.35)',
                 }}
               >
-                Greeting Message
-              </label>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 12 }}>
-                {MESSAGES.map(m => (
-                  <button
-                    key={m}
-                    className="msg-opt"
-                    onClick={() => setMessage(m)}
+                {generating ? <Spinner color="#1a0a00" /> : '✨'}
+                {generating ? 'Generating…' : 'Generate your Poson card'}
+              </button>
+            )}
+
+            {/* Retry + Share row — shown after generation */}
+            {generated && (
+              <>
+                <button
+                  className="retry-btn"
+                  onClick={handleRetry}
+                  disabled={retrying}
+                  style={{
+                    flex: 1,
+                    padding: '13px 18px',
+                    borderRadius: 8,
+                    border: '1px solid rgba(255,255,255,0.15)',
+                    background: 'rgba(255,255,255,0.04)',
+                    color: '#f0ede0',
+                    fontFamily: 'Inter, sans-serif',
+                    fontWeight: 500,
+                    fontSize: 13,
+                    letterSpacing: '0.04em',
+                    cursor: retrying ? 'not-allowed' : 'pointer',
+                    opacity: retrying ? 0.6 : 1,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 8,
+                    transition: 'all 0.15s ease',
+                  }}
+                >
+                  <span
                     style={{
-                      textAlign: 'left',
-                      padding: '10px 14px',
-                      borderRadius: 6,
-                      border: `1px solid ${message === m ? 'rgba(245,194,107,0.5)' : 'rgba(255,255,255,0.08)'}`,
-                      background: message === m ? 'rgba(245,194,107,0.1)' : 'rgba(255,255,255,0.02)',
-                      color: message === m ? '#f5c26b' : '#f0ede0',
-                      cursor: 'pointer',
-                      fontSize: 13,
-                      fontFamily: 'Cinzel, serif',
-                      fontStyle: 'italic',
-                      lineHeight: 1.5,
-                      transition: 'all 0.15s ease',
+                      display: 'inline-block',
+                      animation: retrying ? 'spinFast 0.6s linear infinite' : 'none',
+                      fontSize: 16,
                     }}
                   >
-                    "{m}"
-                  </button>
-                ))}
-              </div>
+                    ↺
+                  </span>
+                  Try another
+                </button>
 
-              {/* Custom message textarea */}
-              <textarea
-                rows={2}
-                placeholder="Or write your own message…"
-                value={MESSAGES.includes(message) ? '' : message}
-                onChange={e => setMessage(e.target.value || MESSAGES[0])}
-                style={{
-                  width: '100%',
-                  resize: 'vertical',
-                  background: 'rgba(255,255,255,0.04)',
-                  border: '1px solid rgba(201,146,58,0.22)',
-                  borderRadius: 6,
-                  padding: '10px 14px',
-                  fontFamily: 'Inter, sans-serif',
-                  fontSize: 13,
-                  color: '#f0ede0',
-                  transition: 'border-color 0.15s',
-                  lineHeight: 1.6,
-                }}
-              />
-            </div>
+                <button
+                  className="generate-btn"
+                  onClick={handleNativeShare}
+                  disabled={capturing}
+                  style={{
+                    flex: 1,
+                    padding: '13px 18px',
+                    borderRadius: 8,
+                    border: 'none',
+                    background: 'linear-gradient(135deg, #c9923a 0%, #f5c26b 50%, #c9923a 100%)',
+                    color: '#1a0a00',
+                    fontFamily: 'Inter, sans-serif',
+                    fontWeight: 700,
+                    fontSize: 13,
+                    letterSpacing: '0.05em',
+                    textTransform: 'uppercase',
+                    cursor: capturing ? 'not-allowed' : 'pointer',
+                    opacity: capturing ? 0.7 : 1,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 8,
+                    transition: 'all 0.15s ease',
+                    boxShadow: '0 4px 20px rgba(201,146,58,0.3)',
+                  }}
+                >
+                  {capturing ? <Spinner color="#1a0a00" /> : '🔗'}
+                  {capturing ? 'Preparing…' : 'Share card'}
+                </button>
+              </>
+            )}
+          </div>
 
-            {/* Share buttons */}
-            <div>
+          {/* ── Social share row ── */}
+          {generated && (
+            <div style={{ marginBottom: 24 }}>
               <label
                 style={{
                   display: 'block',
@@ -650,11 +790,12 @@ export default function PosonCard({ onClose }: { onClose?: () => void }) {
                   textTransform: 'uppercase',
                   color: '#c9923a',
                   marginBottom: 12,
+                  opacity: 0.8,
                 }}
               >
-                Share Via
+                Share via
               </label>
-              <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+              <div className="share-btn-row">
                 <ShareBtn
                   icon={<WhatsAppIcon />}
                   label="WhatsApp"
@@ -675,33 +816,57 @@ export default function PosonCard({ onClose }: { onClose?: () => void }) {
                 />
                 <ShareBtn
                   icon={copied ? <CheckIcon /> : <LinkIcon />}
-                  label={copied ? 'Copied!' : 'Copy Link'}
+                  label={copied ? 'Copied!' : 'Copy link'}
                   onClick={handleCopyLink}
                   color={copied ? '#8ef5c0' : '#c9923a'}
                 />
                 {'share' in navigator && (
                   <ShareBtn
-                    icon={<ShareIcon />}
+                    icon={capturing ? <Spinner color="#c9923a" /> : <ShareIcon />}
                     label={shareSuccess || 'More…'}
                     onClick={handleNativeShare}
                     color="#c9923a"
+                    disabled={capturing}
                   />
                 )}
               </div>
             </div>
+          )}
 
-          </div>
+          {/* ── Toast ── */}
+          {toastMsg && (
+            <div
+              className="toast-anim"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 10,
+                padding: '11px 16px',
+                borderRadius: 8,
+                background: toastType === 'success' ? 'rgba(142,245,192,0.1)' : 'rgba(245,100,100,0.1)',
+                border: `1px solid ${toastType === 'success' ? 'rgba(142,245,192,0.3)' : 'rgba(245,100,100,0.3)'}`,
+                color: toastType === 'success' ? '#8ef5c0' : '#f58080',
+                fontFamily: 'Inter, sans-serif',
+                fontSize: 13,
+                fontWeight: 500,
+                marginBottom: 4,
+              }}
+            >
+              <span>{toastType === 'success' ? '✓' : '✕'}</span>
+              {toastMsg}
+            </div>
+          )}
 
           {/* Footer note */}
           <p
             style={{
-              marginTop: 28,
-              paddingTop: 20,
+              marginTop: 24,
+              paddingTop: 18,
               borderTop: '1px solid rgba(201,146,58,0.1)',
               fontFamily: 'Inter, sans-serif',
               fontSize: 11,
               color: '#f0ede0',
-              opacity: 0.35,
+              opacity: 0.3,
               textAlign: 'center',
               letterSpacing: '0.05em',
             }}
@@ -713,43 +878,3 @@ export default function PosonCard({ onClose }: { onClose?: () => void }) {
     </>
   );
 }
-
-// ─── Inline Icons ─────────────────────────────────────────────────────────────
-const WhatsAppIcon = () => (
-  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-  </svg>
-);
-
-const FacebookIcon = () => (
-  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-  </svg>
-);
-
-const TwitterIcon = () => (
-  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-  </svg>
-);
-
-const LinkIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/>
-    <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/>
-  </svg>
-);
-
-const CheckIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <polyline points="20 6 9 17 4 12"/>
-  </svg>
-);
-
-const ShareIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
-    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
-    <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
-  </svg>
-);
