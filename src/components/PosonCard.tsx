@@ -37,10 +37,10 @@ const FALLBACK_TEMPLATES: Template[] = Array.from({ length: 19 }, (_, index) => 
 });
 
 const MESSAGES = [
-  "May the light of the Dhamma guide your path.",
-  "Wishing you peace, wisdom & compassion.",
-  "Sādhu • Sādhu • Sādhu",
-  "May merit flow to all beings.",
+  "May the light of the Dhamma guide your path.\n\n https://happy-poson.vercel.app/",
+  "Wishing you peace, wisdom & compassion.\n\n https://happy-poson.vercel.app/",
+  "Sādhu • Sādhu • Sādhu\n\n https://happy-poson.vercel.app/",
+  "May merit flow to all beings.\n\n https://happy-poson.vercel.app/",
 ];
 
 const GENERATION_STEPS = [
