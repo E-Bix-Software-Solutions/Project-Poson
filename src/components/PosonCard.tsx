@@ -65,7 +65,7 @@ function useTemplates() {
         label:
           filename
             .replace(/\.[^.]+$/, "")
-            .replace(/[_\-]/g, " ")
+            .replace(/[_-]/g, " ")
             .replace(/\d{12,}/g, "")
             .trim()
             .slice(0, 28) || `Card ${i + 1}`,
@@ -116,7 +116,7 @@ const DharmaWheel = ({ size = 32, color = "#c9923a" }: { size?: number; color?: 
 // ─── Card Preview ─────────────────────────────────────────────────────────────
 // Uses a real <img> tag so the image fills 100% width/height with no gaps,
 // and html2canvas can capture it correctly for download.
-const CardPreview = ({ template, message }: { template: Template; message: string }) => (
+const CardPreview = ({ template }: { template: Template; message: string }) => (
   <div
     style={{
       width: "100%",
