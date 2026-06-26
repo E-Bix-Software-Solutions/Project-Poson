@@ -408,7 +408,6 @@ const MobileMenu = ({
           }}
         />
 
-        {/* Language toggle in mobile menu */}
         <div
           style={{
             opacity: open ? 1 : 0,
@@ -473,10 +472,115 @@ const MobileMenu = ({
   );
 };
 
+// ─── 3D Loader Overlay ────────────────────────────────────────────────────────
+const LoaderOverlay = ({ progress }: { progress: number }) => (
+  <div
+    style={{
+      position: "fixed",
+      top: 0,
+      left: 0,
+      width: "100vw",
+      height: "100vh",
+      backgroundColor: "#060d1fc0",
+      backdropFilter: "blur(12px)",
+      WebkitBackdropFilter: "blur(12px)",
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+      alignItems: "center",
+      zIndex: 200,
+      fontFamily: "sans-serif",
+      color: "#ffffff",
+    }}
+  >
+    {/* Spiritual/Cultural Loading Accent Ring */}
+    <div style={{ position: "relative", marginBottom: "24px" }}>
+      <div
+        style={{
+          width: "64px",
+          height: "64px",
+          borderRadius: "50%",
+          border: "3px solid rgba(245, 158, 11, 0.1)",
+          borderTop: "3px solid #f59e0b",
+          animation: "spin 1s linear infinite",
+        }}
+      />
+      <span
+        style={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          fontSize: "20px",
+        }}
+      >
+        🪷
+      </span>
+    </div>
+
+    <h2
+      style={{
+        fontSize: "18px",
+        fontWeight: 600,
+        letterSpacing: "0.1em",
+        textTransform: "uppercase",
+        color: "#f3f4f6",
+        margin: "0 0 8px 0",
+      }}
+    >
+      Initializing Engine
+    </h2>
+    <p
+      style={{
+        fontSize: "12px",
+        color: "#9ca3af",
+        margin: "0 0 20px 0",
+        fontFamily: "monospace",
+      }}
+    >
+      Assembling 3D Heritage Matrix Layer...
+    </p>
+
+    {/* Progress Bar */}
+    <div
+      style={{
+        width: "200px",
+        height: "4px",
+        backgroundColor: "rgba(255, 255, 255, 0.05)",
+        borderRadius: "999px",
+        overflow: "hidden",
+      }}
+    >
+      <div
+        style={{
+          width: `${progress}%`,
+          height: "100%",
+          background: "linear-gradient(90deg, #f59e0b, #eab308)",
+          boxShadow: "0 0 12px #f59e0b",
+          transition: "width 0.2s ease-out",
+        }}
+      />
+    </div>
+
+    <span
+      style={{
+        fontSize: "11px",
+        fontFamily: "monospace",
+        color: "#eab308",
+        marginTop: "8px",
+        fontWeight: "bold",
+      }}
+    >
+      {progress}%
+    </span>
+  </div>
+);
+
 // ─── Main App ─────────────────────────────────────────────────────────────────
 export default function App() {
   const [scrollY, setScrollY] = useState(0);
-  const [loaded, setLoaded] = useState(false);
+  const [sceneLoaded, setSceneLoaded] = useState(false);
+  const [sceneProgress, setSceneProgress] = useState(0);
   const [showShareCard, setShowShareCard] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [lang, setLang] = useState<Lang>("si");
@@ -497,7 +601,7 @@ export default function App() {
   }, [mobileMenuOpen]);
 
   useEffect(() => {
-    const timer = setTimeout(() => setLoaded(true), 300);
+    const timer = setTimeout(() => {}, 300);
     const onScroll = () => setScrollY(window.scrollY);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => {
@@ -514,7 +618,6 @@ export default function App() {
 
   const heroOpacity = Math.max(0, 1 - scrollY / 300);
 
-  if (!loaded) return <h1>Loading...</h1>;
 
   return (
     <LangContext.Provider value={{ lang, toggle, t }}>
@@ -546,6 +649,10 @@ export default function App() {
           @keyframes spinSlow {
             from { transform: rotate(0deg); }
             to   { transform: rotate(360deg); }
+          }
+          @keyframes spin {
+            0%   { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
           }
           @keyframes floatLantern {
             0%, 100% { transform: translateY(0px) rotate(-2deg); }
@@ -645,9 +752,15 @@ export default function App() {
           }
         `}</style>
 
+        {/* ── 3D Scene Loader Overlay ── */}
+        {!sceneLoaded && <LoaderOverlay progress={sceneProgress} />}
+
         {/* ── Fixed 3D Canvas ── */}
         <div style={{ position: "fixed", inset: 0, zIndex: 0 }}>
-          <ThreeCanvas />
+          <ThreeCanvas
+            onProgress={setSceneProgress}
+            onLoaded={() => setSceneLoaded(true)}
+          />
         </div>
 
         {/* ── Share Card Modal ── */}
@@ -713,7 +826,6 @@ export default function App() {
 
             {/* Desktop right actions */}
             <div className="nav-desktop" style={{ gap: 8, alignItems: "center" }}>
-              {/* Language toggle */}
               <LangToggle />
 
               <button

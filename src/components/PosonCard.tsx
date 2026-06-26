@@ -16,33 +16,23 @@ interface CardVariant {
 // ─── Constants ────────────────────────────────────────────────────────────────
 const ACCENT_CYCLE = ["#f5c26b", "#f5c26b", "#8ef5c0", "#a8d8ea", "#f5c26b"];
 
-
-// 1. Define your custom labels in order (add more or let them fallback)
 const TEMPLATE_LABELS = [
   "Poson Poya",
   "Blessed Day",
   "Lotus Garden",
   "Dhamma Light",
   "Peaceful Mind",
-  // You can add unique labels up to 19 here. 
-  // If there are fewer labels than images, the code below will provide a fallback.
 ];
 
-// 2. Dynamically generate the 19 templates
 const FALLBACK_TEMPLATES: Template[] = Array.from({ length: 19 }, (_, index) => {
   const idNum = index + 1;
-  
-  // Cycle through your accent colors safely
   const accent = ACCENT_CYCLE[index % ACCENT_CYCLE.length];
-  
-  // Pick a label if defined, otherwise fallback to a generic one
   const label = TEMPLATE_LABELS[index] || `Greeting ${idNum}`;
-
   return {
     id: `greeting${idNum}`,
-    label: label,
+    label,
     image: `/greetings/${idNum}.jpeg`,
-    accent: accent,
+    accent,
   };
 });
 
@@ -52,6 +42,36 @@ const MESSAGES = [
   "Sādhu • Sādhu • Sādhu",
   "May merit flow to all beings.",
 ];
+
+const GENERATION_STEPS = [
+  {
+    icon: "☸️",
+    headline: "Invoking the Dhamma…",
+    sub: "Reaching into 2,500 years of sacred tradition",
+  },
+  {
+    icon: "🪷",
+    headline: "Gathering lotus light…",
+    sub: "Selecting the blessing meant for you",
+  },
+  {
+    icon: "🌕",
+    headline: "Aligning with the Poya moon…",
+    sub: "As Mahinda descended upon Mihintale",
+  },
+  {
+    icon: "🏮",
+    headline: "Lighting your lantern…",
+    sub: "Atapattam colors warming the night sky",
+  },
+  {
+    icon: "🙏",
+    headline: "Your card is almost ready…",
+    sub: "May this greeting carry merit to all who receive it",
+  },
+];
+
+const STEP_DURATION = 900;
 
 // ─── Dynamic template loader ──────────────────────────────────────────────────
 function useTemplates() {
@@ -113,14 +133,136 @@ const DharmaWheel = ({ size = 32, color = "#c9923a" }: { size?: number; color?: 
   </svg>
 );
 
+// ─── Generation Stage ─────────────────────────────────────────────────────────
+const GenerationStage = ({ stepIndex }: { stepIndex: number }) => {
+  const step = GENERATION_STEPS[Math.min(stepIndex, GENERATION_STEPS.length - 1)];
+  const progress = Math.round(((stepIndex + 1) / GENERATION_STEPS.length) * 100);
+
+  return (
+    <div
+      style={{
+        width: "100%",
+        aspectRatio: "3/4",
+        borderRadius: 12,
+        border: "1px solid rgba(201,146,58,0.25)",
+        background: "rgba(6,13,31,0.8)",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 0,
+        padding: "32px 28px",
+        position: "relative",
+        overflow: "hidden",
+      }}
+    >
+      <div
+        style={{
+          position: "absolute",
+          width: 160,
+          height: 160,
+          borderRadius: "50%",
+          background: "radial-gradient(circle, rgba(201,146,58,0.12) 0%, transparent 70%)",
+          animation: "glowPulse 1.8s ease-in-out infinite",
+          pointerEvents: "none",
+        }}
+      />
+      <div
+        key={`icon-${stepIndex}`}
+        style={{
+          fontSize: 44,
+          marginBottom: 20,
+          animation: "stepFadeIn 0.4s ease both",
+          position: "relative",
+          zIndex: 1,
+          filter: "drop-shadow(0 0 12px rgba(201,146,58,0.5))",
+        }}
+      >
+        {step.icon}
+      </div>
+      <p
+        key={`hl-${stepIndex}`}
+        style={{
+          fontFamily: "Cinzel, serif",
+          fontWeight: 600,
+          fontSize: "clamp(0.75rem, 4vw, 1rem)",
+          color: "#f5c26b",
+          textAlign: "center",
+          marginBottom: 10,
+          letterSpacing: "0.03em",
+          lineHeight: 1.35,
+          animation: "stepFadeIn 0.4s ease both",
+          position: "relative",
+          zIndex: 1,
+        }}
+      >
+        {step.headline}
+      </p>
+      <p
+        key={`sub-${stepIndex}`}
+        style={{
+          fontFamily: "Inter, sans-serif",
+          fontSize: "clamp(0.65rem, 3vw, 0.8rem)",
+          color: "#f0ede0",
+          opacity: 0.45,
+          textAlign: "center",
+          lineHeight: 1.6,
+          letterSpacing: "0.04em",
+          marginBottom: 32,
+          maxWidth: 260,
+          animation: "stepFadeIn 0.5s 0.08s ease both",
+          position: "relative",
+          zIndex: 1,
+        }}
+      >
+        {step.sub}
+      </p>
+      <div
+        style={{
+          position: "absolute",
+          bottom: 28,
+          left: 28,
+          right: 28,
+          zIndex: 2,
+        }}
+      >
+        <div style={{ display: "flex", justifyContent: "center", gap: 6, marginBottom: 10 }}>
+          {GENERATION_STEPS.map((_, i) => (
+            <div
+              key={i}
+              style={{
+                width: i === stepIndex ? 18 : 6,
+                height: 6,
+                borderRadius: 99,
+                background: i <= stepIndex ? "#f5c26b" : "rgba(245,194,107,0.2)",
+                transition: "width 0.35s ease, background 0.35s ease",
+              }}
+            />
+          ))}
+        </div>
+        <div style={{ height: 2, borderRadius: 99, background: "rgba(201,146,58,0.15)", overflow: "hidden" }}>
+          <div
+            style={{
+              height: "100%",
+              width: `${progress}%`,
+              background: "linear-gradient(90deg, #c9923a, #f5c26b)",
+              boxShadow: "0 0 8px rgba(245,194,107,0.6)",
+              borderRadius: 99,
+              transition: "width 0.8s ease",
+            }}
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // ─── Card Preview ─────────────────────────────────────────────────────────────
-// Uses a real <img> tag so the image fills 100% width/height with no gaps,
-// and html2canvas can capture it correctly for download.
 const CardPreview = ({ template }: { template: Template; message: string }) => (
   <div
     style={{
       width: "100%",
-      aspectRatio: "3 / 4",        // matches 896×1200 portrait images exactly
+      aspectRatio: "3 / 4",
       borderRadius: 12,
       overflow: "hidden",
       position: "relative",
@@ -130,7 +272,6 @@ const CardPreview = ({ template }: { template: Template; message: string }) => (
       userSelect: "none",
     }}
   >
-    {/* Full-bleed image — fills entire card, no gaps, no letterbox */}
     <img
       src={template.image}
       alt={template.label}
@@ -140,13 +281,11 @@ const CardPreview = ({ template }: { template: Template; message: string }) => (
         inset: 0,
         width: "100%",
         height: "100%",
-        objectFit: "fill",       // fills card completely
+        objectFit: "fill",
         objectPosition: "center",
         display: "block",
       }}
     />
-
-    {/* Company name bar — pinned to bottom, over the image */}
     <div
       style={{
         position: "absolute",
@@ -168,7 +307,7 @@ const CardPreview = ({ template }: { template: Template; message: string }) => (
         <span
           style={{
             fontFamily: "Inter, sans-serif",
-            fontSize: "clamp(8px, 1.8vw, 11px)",
+            fontSize: "clamp(7px, 2.5vw, 11px)",
             fontWeight: 600,
             letterSpacing: "0.12em",
             textTransform: "uppercase",
@@ -181,13 +320,13 @@ const CardPreview = ({ template }: { template: Template; message: string }) => (
       <span
         style={{
           fontFamily: "Inter, sans-serif",
-          fontSize: "clamp(7px, 1.4vw, 9px)",
+          fontSize: "clamp(6px, 2vw, 9px)",
           color: "#f0ede0",
           opacity: 0.45,
           letterSpacing: "0.05em",
         }}
       >
-        Poson Poya 2025
+        Poson Poya 2026
       </span>
     </div>
   </div>
@@ -207,15 +346,19 @@ const ShareBtn = ({
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
-        display: "flex", alignItems: "center", gap: 8,
-        padding: "10px 18px", borderRadius: 6,
+        display: "flex", alignItems: "center", justifyContent: "center", gap: 7,
+        padding: "11px 14px", borderRadius: 6,
         background: hovered ? `${color}22` : "rgba(255,255,255,0.04)",
         border: `1px solid ${hovered ? color : "rgba(255,255,255,0.1)"}`,
         color: hovered ? color : "#f0ede0",
         cursor: disabled ? "not-allowed" : "pointer",
-        fontSize: 13, fontFamily: "Inter, sans-serif", fontWeight: 500,
+        fontSize: "clamp(11px, 3vw, 13px)",
+        fontFamily: "Inter, sans-serif", fontWeight: 500,
         letterSpacing: "0.04em", transition: "all 0.18s ease",
         whiteSpace: "nowrap", opacity: disabled ? 0.5 : 1,
+        minHeight: 44,
+        flex: "1 1 auto",
+        touchAction: "manipulation",
       }}
     >
       {icon}{label}
@@ -226,7 +369,7 @@ const ShareBtn = ({
 // ─── Spinner ──────────────────────────────────────────────────────────────────
 const Spinner = ({ color = "#c9923a" }: { color?: string }) => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-    style={{ animation: "spinFast 0.7s linear infinite" }}>
+    style={{ animation: "spinFast 0.7s linear infinite", flexShrink: 0 }}>
     <circle cx="12" cy="12" r="10" stroke={color} strokeWidth="3"
       strokeDasharray="40 20" strokeLinecap="round" />
   </svg>
@@ -272,6 +415,14 @@ const DownloadIcon = () => (
   </svg>
 );
 
+const NativeShareIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+    <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+  </svg>
+);
+
 // ─── Main PosonCard Component ─────────────────────────────────────────────────
 export default function PosonCard({ onClose }: { onClose?: () => void }) {
   const { templates, loading: templatesLoading } = useTemplates();
@@ -284,18 +435,21 @@ export default function PosonCard({ onClose }: { onClose?: () => void }) {
     return deck;
   }, [templates]);
 
-  const [currentCard, setCurrentCard] = useState<CardVariant | null>(null);
+  const [currentCard, setCurrentCard]   = useState<CardVariant | null>(null);
   const [usedIndices, setUsedIndices]   = useState<number[]>([]);
   const [generated,   setGenerated]     = useState(false);
   const [generating,  setGenerating]    = useState(false);
+  const [genStep,     setGenStep]       = useState(0);
   const [retrying,    setRetrying]      = useState(false);
   const [copied,      setCopied]        = useState(false);
-  const [capturing,   setCapturing]     = useState(false);
+  // Track which share button is loading (whatsapp | facebook | twitter | native | download)
+  const [sharingPlatform, setSharingPlatform] = useState<string | null>(null);
   const [toastMsg,    setToastMsg]      = useState("");
   const [toastType,   setToastType]     = useState<"success" | "error">("success");
 
-  const cardRef   = useRef<HTMLDivElement>(null);
+  const cardRef    = useRef<HTMLDivElement>(null);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const stepTimer  = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const showToast = useCallback((msg: string, type: "success" | "error" = "success") => {
     setToastMsg(msg);
@@ -315,16 +469,41 @@ export default function PosonCard({ onClose }: { onClose?: () => void }) {
     [DECK]
   );
 
+  const startStepTicker = useCallback(() => {
+    setGenStep(0);
+    let step = 0;
+    if (stepTimer.current) clearInterval(stepTimer.current);
+    stepTimer.current = setInterval(() => {
+      step += 1;
+      if (step >= GENERATION_STEPS.length) {
+        clearInterval(stepTimer.current!);
+        return;
+      }
+      setGenStep(step);
+    }, STEP_DURATION);
+  }, []);
+
+  const stopStepTicker = useCallback(() => {
+    if (stepTimer.current) {
+      clearInterval(stepTimer.current);
+      stepTimer.current = null;
+    }
+  }, []);
+
+  useEffect(() => () => { stopStepTicker(); }, [stopStepTicker]);
+
   const handleGenerate = () => {
     if (DECK.length === 0) return;
     setGenerating(true);
+    startStepTicker();
     setTimeout(() => {
       const { variant, newUsed } = pickRandom(usedIndices);
       setCurrentCard(variant);
       setUsedIndices(newUsed);
       setGenerated(true);
       setGenerating(false);
-    }, 550);
+      stopStepTicker();
+    }, 7000);
   };
 
   const handleRetry = () => {
@@ -336,12 +515,12 @@ export default function PosonCard({ onClose }: { onClose?: () => void }) {
       setCurrentCard(variant);
       setUsedIndices(newUsed);
       setRetrying(false);
-    }, 380);
+    }, 7000);
   };
 
-  // Capture the card div as a PNG blob using html2canvas
-  const captureCard = async (): Promise<Blob | null> => {
-    if (!cardRef.current) return null;
+  // ─── Core: capture card to Blob ──────────────────────────────────────────────
+  const captureCard = async (): Promise<Blob> => {
+    if (!cardRef.current) throw new Error("Card element not found");
     const { default: html2canvas } = await import("html2canvas");
     const canvas = await html2canvas(cardRef.current, {
       scale: 2,
@@ -349,19 +528,20 @@ export default function PosonCard({ onClose }: { onClose?: () => void }) {
       allowTaint: false,
       backgroundColor: "#060d1f",
       logging: false,
-      // Make canvas match the exact rendered size of the card element
       width:  cardRef.current.offsetWidth,
       height: cardRef.current.offsetHeight,
     });
-    return new Promise(resolve => canvas.toBlob(b => resolve(b), "image/png"));
+    return new Promise((resolve, reject) =>
+      canvas.toBlob(b => b ? resolve(b) : reject(new Error("Blob conversion failed")), "image/png")
+    );
   };
 
+  // ─── Download ────────────────────────────────────────────────────────────────
   const handleDownload = async () => {
     if (!generated || !currentCard) return;
-    setCapturing(true);
+    setSharingPlatform("download");
     try {
       const blob = await captureCard();
-      if (!blob) throw new Error("Capture failed");
       const link = document.createElement("a");
       link.download = `Poson-Greeting-${currentCard.template.id}.png`;
       link.href = URL.createObjectURL(blob);
@@ -371,26 +551,128 @@ export default function PosonCard({ onClose }: { onClose?: () => void }) {
     } catch {
       showToast("Download failed. Please try again.", "error");
     } finally {
-      setCapturing(false);
+      setSharingPlatform(null);
     }
   };
 
-  const handleWhatsApp = () => {
+  // ─── Native Share (Web Share API) ────────────────────────────────────────────
+  const handleNativeShare = async () => {
     if (!currentCard) return;
-    const text = `🪷 *Poson Poya Greetings* 🌕\n\n"${currentCard.message}"\n\nLearn about Poson Poya — the sacred full moon that brought the Dhamma to Sri Lanka.\n${window.location.href}`;
-    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank");
+    setSharingPlatform("native");
+    try {
+      const blob = await captureCard();
+      const file = new File([blob], `Poson-Poya-${currentCard.template.id}.png`, { type: "image/png" });
+
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          files: [file],
+          title: "Poson Poya Greetings 🪷",
+          text: `🌕 "${currentCard.message}"\n\nWishing you a blessed Poson Poya! #PosonPoya #Buddhism #SriLanka`,
+        });
+        showToast("Shared successfully!");
+      } else if (navigator.share) {
+        await navigator.share({
+          title: "Poson Poya Greetings 🪷",
+          text: `🌕 "${currentCard.message}"\n\nWishing you a blessed Poson Poya! #PosonPoya #Buddhism #SriLanka`,
+          url: window.location.href,
+        });
+        showToast("Shared successfully!");
+      } else {
+        const link = document.createElement("a");
+        link.download = `Poson-Poya-${currentCard.template.id}.png`;
+        link.href = URL.createObjectURL(blob);
+        link.click();
+        URL.revokeObjectURL(link.href);
+        showToast("Image saved — share it from your files!");
+      }
+    } catch (err: unknown) {
+      if (err instanceof Error && err.name !== "AbortError") {
+        showToast("Sharing failed. Try downloading instead.", "error");
+      }
+    } finally {
+      setSharingPlatform(null);
+    }
   };
 
+  // ─── WhatsApp ────────────────────────────────────────────────────────────────
+  const handleWhatsApp = async () => {
+    if (!currentCard) return;
+    setSharingPlatform("whatsapp");
+    try {
+      const blob = await captureCard();
+      const file = new File([blob], "Poson-Poya.png", { type: "image/png" });
+
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          files: [file],
+          title: "Poson Poya Greetings",
+          text: `🪷 *Poson Poya Greetings* 🌕\n\n"${currentCard.message}"\n\n${window.location.href}\n\n#PosonPoya #Buddhism #SriLanka`,
+        });
+        showToast("Opened share sheet!");
+      } else {
+        const text = `🪷 *Poson Poya Greetings* 🌕\n\n"${currentCard.message}"\n\n ${window.location.href}\n\n#PosonPoya #Buddhism #SriLanka`;
+        window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank");
+        showToast("Tip: Download the image and attach it in WhatsApp!");
+      }
+    } catch (err: unknown) {
+      if (err instanceof Error && err.name !== "AbortError") {
+        const text = `🪷 *Poson Poya Greetings* 🌕\n\n"${currentCard.message}"\n\n${window.location.href}`;
+        window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank");
+      }
+    } finally {
+      setSharingPlatform(null);
+    }
+  };
+
+  // ─── Facebook ────────────────────────────────────────────────────────────────
   const handleFacebook = () => {
-    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`, "_blank");
-  };
-
-  const handleTwitter = () => {
     if (!currentCard) return;
-    const text = `🌕 Poson Poya — the full moon that brought Buddhism to Sri Lanka.\n\n"${currentCard.message}"\n\n#PosonPoya #Buddhism #SriLanka`;
-    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(window.location.href)}`, "_blank");
+    const shareUrl = `${window.location.origin}${window.location.pathname}?card=poson&theme=${currentCard.template.id}&msg=${encodeURIComponent(currentCard.message)}`;
+    window.open(
+      `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`,
+      "_blank",
+      "width=600,height=400"
+    );
+    showToast("Tip: Download the image and post it directly for best results!");
   };
 
+  // ─── Twitter / X ─────────────────────────────────────────────────────────────
+  const handleTwitter = async () => {
+    if (!currentCard) return;
+
+    if (navigator.canShare) {
+      setSharingPlatform("twitter");
+      try {
+        const blob = await captureCard();
+        const file = new File([blob], "Poson-Poya.png", { type: "image/png" });
+        if (navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            files: [file],
+            title: "Poson Poya Greetings",
+            text: `🌕 Poson Poya — the full moon that brought Buddhism to Sri Lanka.\n\n"${currentCard.message}"\n\n#PosonPoya #Buddhism #SriLanka`,
+          });
+          setSharingPlatform(null);
+          return;
+        }
+      } catch (err: unknown) {
+        if (err instanceof Error && err.name === "AbortError") {
+          setSharingPlatform(null);
+          return;
+        }
+      } finally {
+        setSharingPlatform(null);
+      }
+    }
+
+    const text = `🌕 Poson Poya — the full moon that brought Buddhism to Sri Lanka.\n\n"${currentCard.message}"\n\n#PosonPoya #Buddhism #SriLanka`;
+    window.open(
+      `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(window.location.href)}`,
+      "_blank",
+      "width=600,height=400"
+    );
+  };
+
+  // ─── Copy Link ────────────────────────────────────────────────────────────────
   const handleCopyLink = () => {
     if (!currentCard) return;
     const url = `${window.location.origin}${window.location.pathname}?card=poson&msg=${encodeURIComponent(currentCard.message)}&theme=${currentCard.template.id}`;
@@ -401,65 +683,128 @@ export default function PosonCard({ onClose }: { onClose?: () => void }) {
     });
   };
 
+  const isSharing = sharingPlatform !== null;
+  const canNativeShare = typeof navigator !== "undefined" && !!navigator.share;
+
   return (
     <>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Inter:wght@300;400;500&display=swap');
         * { box-sizing: border-box; }
         @keyframes slideUp    { from { opacity:0; transform:translateY(40px) scale(0.97); } to { opacity:1; transform:translateY(0) scale(1); } }
+        @keyframes slideUpMobile { from { opacity:0; transform:translateY(60px); } to { opacity:1; transform:translateY(0); } }
         @keyframes backdropIn { from { opacity:0; } to { opacity:1; } }
         @keyframes spinSlow   { from { transform:rotate(0deg); } to { transform:rotate(360deg); } }
         @keyframes spinFast   { from { transform:rotate(0deg); } to { transform:rotate(360deg); } }
         @keyframes fadeInUp   { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes stepFadeIn { from { opacity:0; transform:translateY(10px) scale(0.96); } to { opacity:1; transform:translateY(0) scale(1); } }
+        @keyframes glowPulse  { 0%,100% { opacity:0.5; transform:scale(1); } 50% { opacity:1; transform:scale(1.15); } }
         .modal-anim    { animation: slideUp 0.45s cubic-bezier(.22,.68,0,1.15) both; }
         .backdrop-anim { animation: backdropIn 0.3s ease both; }
         .toast-anim    { animation: fadeInUp 0.22s ease both; }
-        .share-btn-row { display:flex; gap:10px; flex-wrap:wrap; }
         ::-webkit-scrollbar { width:4px; }
         ::-webkit-scrollbar-track { background:transparent; }
         ::-webkit-scrollbar-thumb { background:rgba(201,146,58,0.3); border-radius:99px; }
         .retry-btn:hover    { background:rgba(255,255,255,0.08) !important; border-color:rgba(255,255,255,0.25) !important; }
         .generate-btn:hover { filter:brightness(1.08); }
         .generate-btn:active{ transform:scale(0.99); }
+
+        /* ── Share buttons: 2-col grid on mobile, wrap naturally on desktop ── */
+        .share-btn-row {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 8px;
+        }
+        @media (min-width: 480px) {
+          .share-btn-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+          }
+        }
+
+        /* ── Native share spans full width on mobile ── */
+        .share-btn-native {
+          grid-column: 1 / -1;
+        }
+        @media (min-width: 480px) {
+          .share-btn-native {
+            grid-column: auto;
+          }
+        }
+
+        /* ── Primary action buttons stack on mobile ── */
+        .primary-actions {
+          display: flex;
+          gap: 12px;
+          flex-direction: column;
+        }
+        @media (min-width: 420px) {
+          .primary-actions {
+            flex-direction: row;
+          }
+        }
+
+        /* ── Modal bottom-sheet on mobile ── */
+        @media (max-width: 480px) {
+          .poson-backdrop {
+            align-items: flex-end !important;
+            padding: 0 !important;
+          }
+          .poson-modal {
+            border-bottom-left-radius: 0 !important;
+            border-bottom-right-radius: 0 !important;
+            margin-top: 0 !important;
+            margin-bottom: 0 !important;
+            max-height: 96dvh !important;
+            animation: slideUpMobile 0.4s cubic-bezier(.22,.68,0,1.15) both !important;
+          }
+        }
       `}</style>
 
       {/* Backdrop */}
       <div
-        className="backdrop-anim"
+        className="backdrop-anim poson-backdrop"
         onClick={onClose}
         style={{
-          position:"fixed", inset:0, zIndex:200,
-          background:"rgba(6,13,31,0.88)",
-          backdropFilter:"blur(8px)", WebkitBackdropFilter:"blur(8px)",
-          display:"flex", alignItems:"flex-start", justifyContent:"center",
-          padding:"24px 16px 40px", overflowY:"auto",
+          position: "fixed", inset: 0, zIndex: 200,
+          background: "rgba(6,13,31,0.88)",
+          backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          padding: "24px 16px 40px", overflowY: "auto",
+          WebkitOverflowScrolling: "touch",
         }}
       >
         {/* Modal */}
         <div
-          className="modal-anim"
+          className="modal-anim poson-modal"
           onClick={e => e.stopPropagation()}
           style={{
-            background:"rgba(8,16,36,0.97)",
-            border:"1px solid rgba(201,146,58,0.25)",
-            borderRadius:16, width:"100%", maxWidth:680,
-            padding:"clamp(24px,4vw,44px)", position:"relative",
-            boxShadow:"0 32px 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(201,146,58,0.08)",
-            marginTop:"auto", marginBottom:"auto",
+            background: "rgba(8,16,36,0.97)",
+            border: "1px solid rgba(201,146,58,0.25)",
+            borderRadius: 16, width: "100%", maxWidth: 680,
+            padding: "clamp(20px,4vw,44px)", position: "relative",
+            boxShadow: "0 32px 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(201,146,58,0.08)",
+            marginTop: "auto", marginBottom: "auto",
+            maxHeight: "100dvh",
+            overflowY: "auto",
+            WebkitOverflowScrolling: "touch",
           }}
         >
           {/* Close */}
           {onClose && (
             <button
               onClick={onClose}
+              aria-label="Close"
               style={{
-                position:"absolute", top:16, right:16,
-                width:32, height:32, borderRadius:"50%",
-                background:"rgba(255,255,255,0.06)",
-                border:"1px solid rgba(255,255,255,0.1)",
-                color:"#f0ede0", cursor:"pointer", fontSize:16,
-                display:"flex", alignItems:"center", justifyContent:"center",
-                transition:"background 0.15s",
+                position: "absolute", top: 14, right: 14,
+                width: 36, height: 36, borderRadius: "50%",
+                background: "rgba(255,255,255,0.06)",
+                border: "1px solid rgba(255,255,255,0.1)",
+                color: "#f0ede0", cursor: "pointer", fontSize: 16,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                transition: "background 0.15s", zIndex: 10,
+                touchAction: "manipulation",
               }}
               onMouseEnter={e => (e.currentTarget.style.background = "rgba(255,255,255,0.12)")}
               onMouseLeave={e => (e.currentTarget.style.background = "rgba(255,255,255,0.06)")}
@@ -467,15 +812,24 @@ export default function PosonCard({ onClose }: { onClose?: () => void }) {
           )}
 
           {/* Header */}
-          <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:28 }}>
-            <div style={{ animation:"spinSlow 18s linear infinite", display:"flex" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 28, paddingRight: 44 }}>
+            <div style={{ animation: "spinSlow 18s linear infinite", display: "flex", flexShrink: 0 }}>
               <DharmaWheel size={28} color="#c9923a" />
             </div>
-            <div>
-              <h2 style={{ fontFamily:"Cinzel,serif", fontWeight:700, fontSize:"clamp(1.1rem,3vw,1.45rem)", color:"#f5c26b", lineHeight:1.1, marginBottom:3 }}>
+            <div style={{ minWidth: 0 }}>
+              <h2 style={{
+                fontFamily: "Cinzel,serif", fontWeight: 700,
+                fontSize: "clamp(1rem, 4vw, 1.45rem)",
+                color: "#f5c26b", lineHeight: 1.1, marginBottom: 3,
+                overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+              }}>
                 Poson Poya Greeting Card
               </h2>
-              <p style={{ fontFamily:"Inter,sans-serif", fontSize:12, color:"#f0ede0", opacity:0.45, letterSpacing:"0.05em" }}>
+              <p style={{
+                fontFamily: "Inter,sans-serif",
+                fontSize: "clamp(10px, 2.5vw, 12px)",
+                color: "#f0ede0", opacity: 0.45, letterSpacing: "0.05em",
+              }}>
                 {templatesLoading
                   ? "Loading cards…"
                   : `${templates.length} images · ${DECK.length} combinations · share the Dhamma's light`}
@@ -484,37 +838,52 @@ export default function PosonCard({ onClose }: { onClose?: () => void }) {
           </div>
 
           {/* Card Stage */}
-          <div style={{ marginBottom:28, display:"flex", flexDirection:"column", alignItems:"center", gap:10 }}>
-            {/* cardRef wraps ONLY the CardPreview so html2canvas captures just the card */}
-            <div ref={cardRef} style={{ width:"100%", maxWidth:400, position:"relative" }}>
-              {generated && currentCard ? (
-                <div style={{ position:"relative" }}>
+          <div style={{ marginBottom: 28, display: "flex", flexDirection: "column", alignItems: "center", gap: 10 }}>
+            <div
+              ref={cardRef}
+              style={{
+                width: "100%",
+                maxWidth: "min(400px, 78vw)",
+                position: "relative",
+              }}
+            >
+              {generating && <GenerationStage stepIndex={genStep} />}
+
+              {!generating && generated && currentCard && (
+                <div style={{ position: "relative" }}>
                   <CardPreview template={currentCard.template} message={currentCard.message} />
                   {retrying && (
                     <div style={{
-                      position:"absolute", inset:0, borderRadius:12,
-                      background:"rgba(6,13,31,0.75)",
-                      display:"flex", alignItems:"center", justifyContent:"center",
-                      backdropFilter:"blur(2px)",
+                      position: "absolute", inset: 0, borderRadius: 12,
+                      background: "rgba(6,13,31,0.75)",
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      backdropFilter: "blur(2px)",
                     }}>
                       <Spinner color="#f5c26b" />
                     </div>
                   )}
                 </div>
-              ) : (
+              )}
+
+              {!generating && !generated && (
                 <div style={{
-                  width:"100%", aspectRatio:"3/4", borderRadius:12,
-                  border:"1px dashed rgba(201,146,58,0.25)",
-                  background:"rgba(201,146,58,0.04)",
-                  display:"flex", flexDirection:"column",
-                  alignItems:"center", justifyContent:"center", gap:10,
+                  width: "100%", aspectRatio: "3/4", borderRadius: 12,
+                  border: "1px dashed rgba(201,146,58,0.25)",
+                  background: "rgba(201,146,58,0.04)",
+                  display: "flex", flexDirection: "column",
+                  alignItems: "center", justifyContent: "center", gap: 10,
                 }}>
-                  {generating || templatesLoading ? (
+                  {templatesLoading ? (
                     <Spinner color="#f5c26b" />
                   ) : (
                     <>
                       <DharmaWheel size={32} color="rgba(201,146,58,0.3)" />
-                      <p style={{ fontFamily:"Inter,sans-serif", fontSize:12, color:"rgba(240,237,224,0.3)", letterSpacing:"0.1em", textTransform:"uppercase", textAlign:"center", padding:"0 20px" }}>
+                      <p style={{
+                        fontFamily: "Inter,sans-serif",
+                        fontSize: "clamp(10px, 2.5vw, 12px)",
+                        color: "rgba(240,237,224,0.3)", letterSpacing: "0.1em",
+                        textTransform: "uppercase", textAlign: "center", padding: "0 20px",
+                      }}>
                         Your card will appear here
                       </p>
                     </>
@@ -523,34 +892,49 @@ export default function PosonCard({ onClose }: { onClose?: () => void }) {
               )}
             </div>
 
-            {generated && currentCard && (
-              <p style={{ fontFamily:"Inter,sans-serif", fontSize:11, color:"rgba(240,237,224,0.35)", letterSpacing:"0.08em", textAlign:"center" }}>
+            {generated && !generating && currentCard && (
+              <p style={{
+                fontFamily: "Inter,sans-serif",
+                fontSize: "clamp(9px, 2vw, 11px)",
+                color: "rgba(240,237,224,0.35)", letterSpacing: "0.08em", textAlign: "center",
+              }}>
                 Card {usedIndices.length} · {currentCard.template.label} · {DECK.length} combinations
               </p>
             )}
           </div>
 
           {/* Primary actions */}
-          <div style={{ display:"flex", gap:12, marginBottom:24 }}>
+          <div className="primary-actions" style={{ marginBottom: 24 }}>
             {!generated && (
               <button
                 className="generate-btn"
                 onClick={handleGenerate}
                 disabled={generating || templatesLoading}
                 style={{
-                  flex:1, padding:"14px 24px", borderRadius:8, border:"none",
-                  background:"linear-gradient(135deg,#c9923a 0%,#f5c26b 50%,#c9923a 100%)",
-                  color:"#1a0a00", fontFamily:"Inter,sans-serif", fontWeight:700,
-                  fontSize:14, letterSpacing:"0.06em", textTransform:"uppercase",
+                  flex: 1, padding: "14px 24px", borderRadius: 8, border: "none",
+                  background: "linear-gradient(135deg,#c9923a 0%,#f5c26b 50%,#c9923a 100%)",
+                  color: "#1a0a00", fontFamily: "Inter,sans-serif", fontWeight: 700,
+                  fontSize: "clamp(12px, 3.5vw, 14px)", letterSpacing: "0.06em", textTransform: "uppercase",
                   cursor: generating || templatesLoading ? "not-allowed" : "pointer",
                   opacity: generating || templatesLoading ? 0.7 : 1,
-                  display:"flex", alignItems:"center", justifyContent:"center", gap:8,
-                  transition:"all 0.15s ease",
-                  boxShadow:"0 4px 20px rgba(201,146,58,0.35)",
+                  display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+                  transition: "all 0.15s ease",
+                  boxShadow: "0 4px 20px rgba(201,146,58,0.35)",
+                  minHeight: 52, touchAction: "manipulation",
                 }}
               >
-                {generating || templatesLoading ? <Spinner color="#1a0a00" /> : "✨"}
-                {templatesLoading ? "Loading images…" : generating ? "Generating…" : "Generate your Poson card"}
+                {generating ? (
+                  <>
+                    <Spinner color="#1a0a00" />
+                    <span key={genStep} style={{ animation: "stepFadeIn 0.3s ease both" }}>
+                      {GENERATION_STEPS[genStep]?.headline ?? "Generating…"}
+                    </span>
+                  </>
+                ) : templatesLoading ? (
+                  <><Spinner color="#1a0a00" /> Loading images…</>
+                ) : (
+                  "✨ Generate your Poson card"
+                )}
               </button>
             )}
 
@@ -559,41 +943,43 @@ export default function PosonCard({ onClose }: { onClose?: () => void }) {
                 <button
                   className="retry-btn"
                   onClick={handleRetry}
-                  disabled={retrying}
+                  disabled={retrying || isSharing}
                   style={{
-                    flex:1, padding:"13px 18px", borderRadius:8,
-                    border:"1px solid rgba(255,255,255,0.15)",
-                    background:"rgba(255,255,255,0.04)", color:"#f0ede0",
-                    fontFamily:"Inter,sans-serif", fontWeight:500, fontSize:13,
-                    letterSpacing:"0.04em",
-                    cursor: retrying ? "not-allowed" : "pointer",
-                    opacity: retrying ? 0.6 : 1,
-                    display:"flex", alignItems:"center", justifyContent:"center", gap:8,
-                    transition:"all 0.15s ease",
+                    flex: 1, padding: "13px 18px", borderRadius: 8,
+                    border: "1px solid rgba(255,255,255,0.15)",
+                    background: "rgba(255,255,255,0.04)", color: "#f0ede0",
+                    fontFamily: "Inter,sans-serif", fontWeight: 500,
+                    fontSize: "clamp(12px, 3vw, 13px)", letterSpacing: "0.04em",
+                    cursor: retrying || isSharing ? "not-allowed" : "pointer",
+                    opacity: retrying || isSharing ? 0.6 : 1,
+                    display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+                    transition: "all 0.15s ease",
+                    minHeight: 48, touchAction: "manipulation",
                   }}
                 >
-                  <span style={{ display:"inline-block", animation: retrying ? "spinFast 0.6s linear infinite" : "none", fontSize:16 }}>↺</span>
+                  <span style={{ display: "inline-block", animation: retrying ? "spinFast 0.6s linear infinite" : "none", fontSize: 16 }}>↺</span>
                   Try another
                 </button>
 
                 <button
                   className="generate-btn"
                   onClick={handleDownload}
-                  disabled={capturing}
+                  disabled={isSharing}
                   style={{
-                    flex:1, padding:"13px 18px", borderRadius:8, border:"none",
-                    background:"linear-gradient(135deg,#c9923a 0%,#f5c26b 50%,#c9923a 100%)",
-                    color:"#1a0a00", fontFamily:"Inter,sans-serif", fontWeight:700,
-                    fontSize:13, letterSpacing:"0.05em", textTransform:"uppercase",
-                    cursor: capturing ? "not-allowed" : "pointer",
-                    opacity: capturing ? 0.7 : 1,
-                    display:"flex", alignItems:"center", justifyContent:"center", gap:8,
-                    transition:"all 0.15s ease",
-                    boxShadow:"0 4px 20px rgba(201,146,58,0.3)",
+                    flex: 1, padding: "13px 18px", borderRadius: 8, border: "none",
+                    background: "linear-gradient(135deg,#c9923a 0%,#f5c26b 50%,#c9923a 100%)",
+                    color: "#1a0a00", fontFamily: "Inter,sans-serif", fontWeight: 700,
+                    fontSize: "clamp(12px, 3vw, 13px)", letterSpacing: "0.05em", textTransform: "uppercase",
+                    cursor: isSharing ? "not-allowed" : "pointer",
+                    opacity: isSharing ? 0.7 : 1,
+                    display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+                    transition: "all 0.15s ease",
+                    boxShadow: "0 4px 20px rgba(201,146,58,0.3)",
+                    minHeight: 48, touchAction: "manipulation",
                   }}
                 >
-                  {capturing ? <Spinner color="#1a0a00" /> : <DownloadIcon />}
-                  {capturing ? "Preparing…" : "Download card"}
+                  {sharingPlatform === "download" ? <Spinner color="#1a0a00" /> : <DownloadIcon />}
+                  {sharingPlatform === "download" ? "Preparing…" : "Download card"}
                 </button>
               </>
             )}
@@ -601,32 +987,72 @@ export default function PosonCard({ onClose }: { onClose?: () => void }) {
 
           {/* Social share row */}
           {generated && (
-            <div style={{ marginBottom:24 }}>
+            <div style={{ marginBottom: 24 }}>
               <label style={{
-                display:"block", fontFamily:"Inter,sans-serif", fontSize:11,
-                fontWeight:500, letterSpacing:"0.2em", textTransform:"uppercase",
-                color:"#c9923a", marginBottom:12, opacity:0.8,
+                display: "block", fontFamily: "Inter,sans-serif",
+                fontSize: "clamp(9px, 2.5vw, 11px)",
+                fontWeight: 500, letterSpacing: "0.2em", textTransform: "uppercase",
+                color: "#c9923a", marginBottom: 12, opacity: 0.8,
               }}>
                 Share via
               </label>
               <div className="share-btn-row">
-                <ShareBtn icon={<WhatsAppIcon />} label="WhatsApp"   onClick={handleWhatsApp}  color="#25d366" />
-                <ShareBtn icon={<FacebookIcon />} label="Facebook"   onClick={handleFacebook}  color="#1877f2" />
-                <ShareBtn icon={<TwitterIcon />}  label="X / Twitter" onClick={handleTwitter}  color="#1da1f2" />
+
+                {canNativeShare && (
+                  <div className="share-btn-native">
+                    <ShareBtn
+                      icon={sharingPlatform === "native" ? <Spinner color="#f5c26b" /> : <NativeShareIcon />}
+                      label={sharingPlatform === "native" ? "Sharing…" : "Share image"}
+                      onClick={handleNativeShare}
+                      color="#f5c26b"
+                      disabled={isSharing}
+                    />
+                  </div>
+                )}
+
+                <ShareBtn
+                  icon={sharingPlatform === "whatsapp" ? <Spinner color="#25d366" /> : <WhatsAppIcon />}
+                  label="WhatsApp"
+                  onClick={handleWhatsApp}
+                  color="#25d366"
+                  disabled={isSharing}
+                />
+
+                <ShareBtn
+                  icon={<FacebookIcon />}
+                  label="Facebook"
+                  onClick={handleFacebook}
+                  color="#1877f2"
+                  disabled={isSharing}
+                />
+
+                <ShareBtn
+                  icon={sharingPlatform === "twitter" ? <Spinner color="#1da1f2" /> : <TwitterIcon />}
+                  label="X / Twitter"
+                  onClick={handleTwitter}
+                  color="#1da1f2"
+                  disabled={isSharing}
+                />
+
                 <ShareBtn
                   icon={copied ? <CheckIcon /> : <LinkIcon />}
                   label={copied ? "Copied!" : "Copy link"}
                   onClick={handleCopyLink}
                   color={copied ? "#8ef5c0" : "#c9923a"}
+                  disabled={isSharing}
                 />
-                <ShareBtn
-                  icon={capturing ? <Spinner color="#c9923a" /> : <DownloadIcon />}
-                  label={capturing ? "Saving…" : "Download"}
-                  onClick={handleDownload}
-                  color="#c9923a"
-                  disabled={capturing}
-                />
+
               </div>
+
+              <p style={{
+                marginTop: 10,
+                fontFamily: "Inter,sans-serif",
+                fontSize: "clamp(9px, 2.5vw, 11px)",
+                color: "rgba(240,237,224,0.3)", letterSpacing: "0.03em", lineHeight: 1.6,
+              }}>
+                💡 For Facebook & X, download the image first and attach it manually for full image sharing.
+                {canNativeShare ? " Use Share image on mobile to send the actual image file." : ""}
+              </p>
             </div>
           )}
 
@@ -635,12 +1061,14 @@ export default function PosonCard({ onClose }: { onClose?: () => void }) {
             <div
               className="toast-anim"
               style={{
-                display:"flex", alignItems:"center", gap:10,
-                padding:"11px 16px", borderRadius:8, marginBottom:4,
+                display: "flex", alignItems: "center", gap: 10,
+                padding: "11px 16px", borderRadius: 8, marginBottom: 4,
                 background: toastType === "success" ? "rgba(142,245,192,0.1)" : "rgba(245,100,100,0.1)",
                 border: `1px solid ${toastType === "success" ? "rgba(142,245,192,0.3)" : "rgba(245,100,100,0.3)"}`,
                 color: toastType === "success" ? "#8ef5c0" : "#f58080",
-                fontFamily:"Inter,sans-serif", fontSize:13, fontWeight:500,
+                fontFamily: "Inter,sans-serif",
+                fontSize: "clamp(11px, 3vw, 13px)",
+                fontWeight: 500,
               }}
             >
               <span>{toastType === "success" ? "✓" : "✕"}</span>
@@ -650,10 +1078,11 @@ export default function PosonCard({ onClose }: { onClose?: () => void }) {
 
           {/* Footer */}
           <p style={{
-            marginTop:24, paddingTop:18,
-            borderTop:"1px solid rgba(201,146,58,0.1)",
-            fontFamily:"Inter,sans-serif", fontSize:11,
-            color:"#f0ede0", opacity:0.3, textAlign:"center", letterSpacing:"0.05em",
+            marginTop: 24, paddingTop: 18,
+            borderTop: "1px solid rgba(201,146,58,0.1)",
+            fontFamily: "Inter,sans-serif",
+            fontSize: "clamp(9px, 2.5vw, 11px)",
+            color: "#f0ede0", opacity: 0.3, textAlign: "center", letterSpacing: "0.05em",
           }}>
             Poson Poya · ශ්‍රී ලංකා · Sādhu Sādhu Sādhu 🙏
           </p>
