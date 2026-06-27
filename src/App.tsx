@@ -445,9 +445,6 @@ const MobileMenu = ({
   onShareCard: () => void;
 }) => {
   const { t, lang } = useLang();
-  const links = [
-    { href: "#about", label: t.navAbout },
-  ];
 
   return (
     <div
@@ -488,53 +485,6 @@ const MobileMenu = ({
       </div>
 
       <nav style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8, width: "100%", maxWidth: 320 }}>
-        {links.map(({ href, label }, idx) => (
-          <a
-            key={href}
-            href={href}
-            onClick={onClose}
-            style={{
-              display: "block",
-              width: "100%",
-              textAlign: "center",
-              padding: "16px 24px",
-              fontFamily: lang === "si" ? "'Noto Serif Sinhala', serif" : "Cinzel",
-              fontWeight: 600,
-              fontSize: "1.1rem",
-              letterSpacing: lang === "si" ? "0.05em" : "0.15em",
-              textTransform: lang === "si" ? "none" : "uppercase",
-              color: "#f0ede0",
-              textDecoration: "none",
-              borderRadius: 6,
-              border: "1px solid rgba(201,146,58,0.12)",
-              background: "rgba(201,146,58,0.04)",
-              opacity: open ? 1 : 0,
-              transform: open ? "translateY(0)" : "translateY(16px)",
-              transition: `opacity 0.35s ${0.18 + idx * 0.07}s, transform 0.35s ${0.18 + idx * 0.07}s, background 0.2s, color 0.2s`,
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = "rgba(201,146,58,0.12)";
-              e.currentTarget.style.color = "#f5c26b";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = "rgba(201,146,58,0.04)";
-              e.currentTarget.style.color = "#f0ede0";
-            }}
-          >
-            {label}
-          </a>
-        ))}
-
-        <div
-          style={{
-            width: "100%",
-            height: 1,
-            background: "linear-gradient(90deg, transparent, rgba(201,146,58,0.3), transparent)",
-            margin: "12px 0",
-            opacity: open ? 1 : 0,
-            transition: "opacity 0.3s 0.42s",
-          }}
-        />
 
         <div
           style={{
@@ -946,16 +896,6 @@ export default function App() {
               </span>
             </div>
 
-            {/* Desktop nav links */}
-            <div className="nav-desktop" style={{ gap: 36 }}>
-              {[
-                { href: "#about", label: t.navAbout },
-              ].map(({ href, label }) => (
-                <a key={href} href={href} className={lang === "si" ? "nav-link-si" : "nav-link"}>
-                  {label}
-                </a>
-              ))}
-            </div>
 
             {/* Desktop right actions */}
             <div className="nav-desktop" style={{ gap: 8, alignItems: "center" }}>
