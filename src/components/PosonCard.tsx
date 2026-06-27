@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback, useEffect, useMemo } from "react";
+import { GenerationStage, GENERATION_STEPS, STEP_DURATION } from "./GenerationStage";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface Template {
@@ -42,36 +43,6 @@ const MESSAGES = [
   "Sādhu • Sādhu • Sādhu\n\n https://happy-poson.vercel.app/",
   "May merit flow to all beings.\n\n https://happy-poson.vercel.app/",
 ];
-
-const GENERATION_STEPS = [
-  {
-    icon: "☸️",
-    headline: "Invoking the Dhamma…",
-    sub: "Reaching into 2,500 years of sacred tradition",
-  },
-  {
-    icon: "🪷",
-    headline: "Gathering lotus light…",
-    sub: "Selecting the blessing meant for you",
-  },
-  {
-    icon: "🌕",
-    headline: "Aligning with the Poya moon…",
-    sub: "As Mahinda descended upon Mihintale",
-  },
-  {
-    icon: "🏮",
-    headline: "Lighting your lantern…",
-    sub: "Atapattam colors warming the night sky",
-  },
-  {
-    icon: "🙏",
-    headline: "Your card is almost ready…",
-    sub: "May this greeting carry merit to all who receive it",
-  },
-];
-
-const STEP_DURATION = 900;
 
 // ─── Dynamic template loader ──────────────────────────────────────────────────
 function useTemplates() {
@@ -133,129 +104,6 @@ const DharmaWheel = ({ size = 32, color = "#c9923a" }: { size?: number; color?: 
   </svg>
 );
 
-// ─── Generation Stage ─────────────────────────────────────────────────────────
-const GenerationStage = ({ stepIndex }: { stepIndex: number }) => {
-  const step = GENERATION_STEPS[Math.min(stepIndex, GENERATION_STEPS.length - 1)];
-  const progress = Math.round(((stepIndex + 1) / GENERATION_STEPS.length) * 100);
-
-  return (
-    <div
-      style={{
-        width: "100%",
-        aspectRatio: "3/4",
-        borderRadius: 12,
-        border: "1px solid rgba(201,146,58,0.25)",
-        background: "rgba(6,13,31,0.8)",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        gap: 0,
-        padding: "32px 28px",
-        position: "relative",
-        overflow: "hidden",
-      }}
-    >
-      <div
-        style={{
-          position: "absolute",
-          width: 160,
-          height: 160,
-          borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(201,146,58,0.12) 0%, transparent 70%)",
-          animation: "glowPulse 1.8s ease-in-out infinite",
-          pointerEvents: "none",
-        }}
-      />
-      <div
-        key={`icon-${stepIndex}`}
-        style={{
-          fontSize: 44,
-          marginBottom: 20,
-          animation: "stepFadeIn 0.4s ease both",
-          position: "relative",
-          zIndex: 1,
-          filter: "drop-shadow(0 0 12px rgba(201,146,58,0.5))",
-        }}
-      >
-        {step.icon}
-      </div>
-      <p
-        key={`hl-${stepIndex}`}
-        style={{
-          fontFamily: "Cinzel, serif",
-          fontWeight: 600,
-          fontSize: "clamp(0.75rem, 4vw, 1rem)",
-          color: "#f5c26b",
-          textAlign: "center",
-          marginBottom: 10,
-          letterSpacing: "0.03em",
-          lineHeight: 1.35,
-          animation: "stepFadeIn 0.4s ease both",
-          position: "relative",
-          zIndex: 1,
-        }}
-      >
-        {step.headline}
-      </p>
-      <p
-        key={`sub-${stepIndex}`}
-        style={{
-          fontFamily: "Inter, sans-serif",
-          fontSize: "clamp(0.65rem, 3vw, 0.8rem)",
-          color: "#f0ede0",
-          opacity: 0.45,
-          textAlign: "center",
-          lineHeight: 1.6,
-          letterSpacing: "0.04em",
-          marginBottom: 32,
-          maxWidth: 260,
-          animation: "stepFadeIn 0.5s 0.08s ease both",
-          position: "relative",
-          zIndex: 1,
-        }}
-      >
-        {step.sub}
-      </p>
-      <div
-        style={{
-          position: "absolute",
-          bottom: 28,
-          left: 28,
-          right: 28,
-          zIndex: 2,
-        }}
-      >
-        <div style={{ display: "flex", justifyContent: "center", gap: 6, marginBottom: 10 }}>
-          {GENERATION_STEPS.map((_, i) => (
-            <div
-              key={i}
-              style={{
-                width: i === stepIndex ? 18 : 6,
-                height: 6,
-                borderRadius: 99,
-                background: i <= stepIndex ? "#f5c26b" : "rgba(245,194,107,0.2)",
-                transition: "width 0.35s ease, background 0.35s ease",
-              }}
-            />
-          ))}
-        </div>
-        <div style={{ height: 2, borderRadius: 99, background: "rgba(201,146,58,0.15)", overflow: "hidden" }}>
-          <div
-            style={{
-              height: "100%",
-              width: `${progress}%`,
-              background: "linear-gradient(90deg, #c9923a, #f5c26b)",
-              boxShadow: "0 0 8px rgba(245,194,107,0.6)",
-              borderRadius: 99,
-              transition: "width 0.8s ease",
-            }}
-          />
-        </div>
-      </div>
-    </div>
-  );
-};
 
 // ─── Card Preview ─────────────────────────────────────────────────────────────
 const CardPreview = ({ template }: { template: Template; message: string }) => (
@@ -440,7 +288,6 @@ export default function PosonCard({ onClose }: { onClose?: () => void }) {
   const [generated,   setGenerated]     = useState(false);
   const [generating,  setGenerating]    = useState(false);
   const [genStep,     setGenStep]       = useState(0);
-  const [retrying,    setRetrying]      = useState(false);
   const [copied,      setCopied]        = useState(false);
   // Track which share button is loading (whatsapp | facebook | twitter | native | download)
   const [sharingPlatform, setSharingPlatform] = useState<string | null>(null);
@@ -508,13 +355,15 @@ export default function PosonCard({ onClose }: { onClose?: () => void }) {
 
   const handleRetry = () => {
     if (DECK.length === 0) return;
-    setRetrying(true);
+    setGenerating(true);
+    startStepTicker();
     setToastMsg("");
     setTimeout(() => {
       const { variant, newUsed } = pickRandom(usedIndices);
       setCurrentCard(variant);
       setUsedIndices(newUsed);
-      setRetrying(false);
+      setGenerating(false);
+      stopStepTicker();
     }, 7000);
   };
 
@@ -852,16 +701,6 @@ export default function PosonCard({ onClose }: { onClose?: () => void }) {
               {!generating && generated && currentCard && (
                 <div style={{ position: "relative" }}>
                   <CardPreview template={currentCard.template} message={currentCard.message} />
-                  {retrying && (
-                    <div style={{
-                      position: "absolute", inset: 0, borderRadius: 12,
-                      background: "rgba(6,13,31,0.75)",
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                      backdropFilter: "blur(2px)",
-                    }}>
-                      <Spinner color="#f5c26b" />
-                    </div>
-                  )}
                 </div>
               )}
 
@@ -905,60 +744,70 @@ export default function PosonCard({ onClose }: { onClose?: () => void }) {
 
           {/* Primary actions */}
           <div className="primary-actions" style={{ marginBottom: 24 }}>
-            {!generated && (
+            {generating ? (
               <button
                 className="generate-btn"
-                onClick={handleGenerate}
-                disabled={generating || templatesLoading}
+                disabled
                 style={{
                   flex: 1, padding: "14px 24px", borderRadius: 8, border: "none",
                   background: "linear-gradient(135deg,#c9923a 0%,#f5c26b 50%,#c9923a 100%)",
                   color: "#1a0a00", fontFamily: "Inter,sans-serif", fontWeight: 700,
                   fontSize: "clamp(12px, 3.5vw, 14px)", letterSpacing: "0.06em", textTransform: "uppercase",
-                  cursor: generating || templatesLoading ? "not-allowed" : "pointer",
-                  opacity: generating || templatesLoading ? 0.7 : 1,
+                  opacity: 0.7,
+                  display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+                  boxShadow: "0 4px 20px rgba(201,146,58,0.35)",
+                  minHeight: 52, touchAction: "manipulation",
+                }}
+              >
+                <Spinner color="#1a0a00" />
+                <span key={genStep} style={{ animation: "stepFadeIn 0.3s ease both" }}>
+                  {GENERATION_STEPS[genStep]?.headline ?? "Generating…"}
+                </span>
+              </button>
+            ) : !generated ? (
+              <button
+                className="generate-btn"
+                onClick={handleGenerate}
+                disabled={templatesLoading}
+                style={{
+                  flex: 1, padding: "14px 24px", borderRadius: 8, border: "none",
+                  background: "linear-gradient(135deg,#c9923a 0%,#f5c26b 50%,#c9923a 100%)",
+                  color: "#1a0a00", fontFamily: "Inter,sans-serif", fontWeight: 700,
+                  fontSize: "clamp(12px, 3.5vw, 14px)", letterSpacing: "0.06em", textTransform: "uppercase",
+                  cursor: templatesLoading ? "not-allowed" : "pointer",
                   display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
                   transition: "all 0.15s ease",
                   boxShadow: "0 4px 20px rgba(201,146,58,0.35)",
                   minHeight: 52, touchAction: "manipulation",
                 }}
               >
-                {generating ? (
-                  <>
-                    <Spinner color="#1a0a00" />
-                    <span key={genStep} style={{ animation: "stepFadeIn 0.3s ease both" }}>
-                      {GENERATION_STEPS[genStep]?.headline ?? "Generating…"}
-                    </span>
-                  </>
-                ) : templatesLoading ? (
+                {templatesLoading ? (
                   <><Spinner color="#1a0a00" /> Loading images…</>
                 ) : (
                   "✨ Generate your Poson card"
                 )}
               </button>
-            )}
-
-            {generated && (
+            ) : (
               <>
                 <button
                   className="retry-btn"
                   onClick={handleRetry}
-                  disabled={retrying || isSharing}
+                  disabled={isSharing}
                   style={{
                     flex: 1, padding: "13px 18px", borderRadius: 8,
                     border: "1px solid rgba(255,255,255,0.15)",
                     background: "rgba(255,255,255,0.04)", color: "#f0ede0",
                     fontFamily: "Inter,sans-serif", fontWeight: 500,
                     fontSize: "clamp(12px, 3vw, 13px)", letterSpacing: "0.04em",
-                    cursor: retrying || isSharing ? "not-allowed" : "pointer",
-                    opacity: retrying || isSharing ? 0.6 : 1,
+                    cursor: isSharing ? "not-allowed" : "pointer",
+                    opacity: isSharing ? 0.6 : 1,
                     display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
                     transition: "all 0.15s ease",
                     minHeight: 48, touchAction: "manipulation",
                   }}
                 >
-                  <span style={{ display: "inline-block", animation: retrying ? "spinFast 0.6s linear infinite" : "none", fontSize: 16 }}>↺</span>
-                  Try another
+                  <span style={{ display: "inline-block", fontSize: 16 }}>↺</span>
+                  Try again
                 </button>
 
                 <button
