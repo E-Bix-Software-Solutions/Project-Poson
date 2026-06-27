@@ -447,8 +447,6 @@ const MobileMenu = ({
   const { t, lang } = useLang();
   const links = [
     { href: "#about", label: t.navAbout },
-    { href: "#significance", label: t.navSignificance },
-    { href: "#observe", label: t.navObserve },
   ];
 
   return (
@@ -952,8 +950,6 @@ export default function App() {
             <div className="nav-desktop" style={{ gap: 36 }}>
               {[
                 { href: "#about", label: t.navAbout },
-                { href: "#significance", label: t.navSignificance },
-                { href: "#observe", label: t.navObserve },
               ].map(({ href, label }) => (
                 <a key={href} href={href} className={lang === "si" ? "nav-link-si" : "nav-link"}>
                   {label}
@@ -1188,163 +1184,6 @@ export default function App() {
                     </div>
                   </div>
                 ))}
-              </div>
-            </div>
-          </section>
-
-          {/* ── SIGNIFICANCE ── */}
-          <section id="significance" style={{ padding: "60px 24px 100px", display: "flex", justifyContent: "center" }}>
-            <div style={{ maxWidth: 860, width: "100%" }}>
-              <div style={{ textAlign: "center", marginBottom: 52 }}>
-                <span
-                  key={`sig-label-${lang}`}
-                  className="lang-switch"
-                  style={{ fontFamily: labelFont, fontSize: 11, fontWeight: 500, letterSpacing: "0.22em", textTransform: "uppercase", color: "#c9923a", display: "block", marginBottom: 12 }}
-                >
-                  {t.sigLabel}
-                </span>
-                <h2
-                  key={`sig-title-${lang}`}
-                  className="lang-switch"
-                  style={{ fontFamily: headingFont, fontWeight: 700, fontSize: "clamp(1.5rem, 4vw, 2.2rem)", color: "#f5c26b", lineHeight: 1.2 }}
-                >
-                  {t.sigTitle}
-                </h2>
-                <div className="section-divider" />
-              </div>
-
-              <div className="info-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 20 }}>
-                {t.sig.map(({ color, icon, title, desc }) => (
-                  <div key={title} className="glass info-card" style={{ borderRadius: 8, padding: "28px 24px", border: `1px solid ${color}30`, borderTop: `3px solid ${color}` }}>
-                    <div style={{ fontSize: 28, marginBottom: 12 }}>{icon}</div>
-                    <h3
-                      key={`sig-card-title-${lang}-${title}`}
-                      className="lang-switch"
-                      style={{ fontFamily: headingFont, fontWeight: 600, fontSize: "1rem", color, marginBottom: 10 }}
-                    >
-                      {title}
-                    </h3>
-                    <p
-                      key={`sig-card-desc-${lang}-${title}`}
-                      className="lang-switch"
-                      style={{ fontFamily: lang === "si" ? sinhalaFont : "inherit", fontSize: "0.875rem", lineHeight: 1.75, opacity: 0.7 }}
-                    >
-                      {desc}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
-
-          {/* ── OBSERVE ── */}
-          <section id="observe" style={{ padding: "60px 24px 120px", display: "flex", justifyContent: "center" }}>
-            <div className="glass" style={{ maxWidth: 860, width: "100%", borderRadius: 8, padding: "clamp(32px, 5vw, 60px)" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 32 }}>
-                <DharmaWheel size={22} color="#c9923a" />
-                <span
-                  key={`obs-label-${lang}`}
-                  className="lang-switch"
-                  style={{ fontFamily: labelFont, fontSize: 11, fontWeight: 500, letterSpacing: "0.22em", textTransform: "uppercase", color: "#c9923a" }}
-                >
-                  {t.obsLabel}
-                </span>
-              </div>
-
-              <h2
-                key={`obs-title-${lang}`}
-                className="lang-switch"
-                style={{ fontFamily: headingFont, fontWeight: 700, fontSize: "clamp(1.6rem, 4vw, 2.4rem)", color: "#f5c26b", marginBottom: 40, lineHeight: 1.2 }}
-              >
-                {t.obsTitle}
-              </h2>
-
-              <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
-                {t.obs.map(({ time, act, desc, color }, i) => (
-                  <div key={act} style={{ display: "flex", gap: 24, paddingBottom: i < 3 ? 28 : 0, borderBottom: i < 3 ? "1px solid rgba(201,146,58,0.12)" : "none" }}>
-                    <div style={{ flexShrink: 0, paddingTop: 2 }}>
-                      <div style={{
-                        width: 52, height: 52, borderRadius: "50%",
-                        background: `${color}18`, border: `1.5px solid ${color}55`,
-                        display: "flex", alignItems: "center", justifyContent: "center",
-                      }}>
-                        <span
-                          key={`obs-time-${lang}-${act}`}
-                          className="lang-switch"
-                          style={{ fontFamily: lang === "si" ? sinhalaFont : "Cinzel", fontSize: 9, fontWeight: 700, color, letterSpacing: "0.05em", textTransform: "uppercase", textAlign: "center", lineHeight: 1.3 }}
-                        >
-                          {time}
-                        </span>
-                      </div>
-                    </div>
-                    <div>
-                      <h3
-                        key={`obs-act-${lang}-${act}`}
-                        className="lang-switch"
-                        style={{ fontFamily: headingFont, fontWeight: 600, fontSize: "1.05rem", color, marginBottom: 8 }}
-                      >
-                        {act}
-                      </h3>
-                      <p
-                        key={`obs-desc-${lang}-${act}`}
-                        className="lang-switch"
-                        style={{ fontFamily: lang === "si" ? sinhalaFont : "inherit", lineHeight: 1.8, opacity: 0.75, fontSize: "0.92rem" }}
-                      >
-                        {desc}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Share nudge */}
-              <div style={{
-                marginTop: 48, padding: "20px 24px",
-                background: "rgba(212,132,154,0.06)",
-                border: "1px solid rgba(212,132,154,0.2)",
-                borderRadius: 8,
-                display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 16,
-              }}>
-                <div>
-                  <p
-                    key={`obs-share-title-${lang}`}
-                    className="lang-switch"
-                    style={{ fontFamily: headingFont, fontSize: 14, color: "#d4849a", marginBottom: 4 }}
-                  >
-                    {t.obsShareTitle}
-                  </p>
-                  <p
-                    key={`obs-share-desc-${lang}`}
-                    className="lang-switch"
-                    style={{ fontFamily: lang === "si" ? sinhalaFont : "Inter, sans-serif", fontSize: 12, opacity: 0.6, lineHeight: 1.5 }}
-                  >
-                    {t.obsShareDesc}
-                  </p>
-                </div>
-                <button
-                  onClick={() => setShowShareCard(true)}
-                  style={{
-                    display: "inline-flex", alignItems: "center", gap: 8,
-                    padding: "11px 22px", borderRadius: 4,
-                    background: "rgba(212,132,154,0.14)", color: "#d4849a",
-                    fontFamily: headingFont, fontWeight: 700, fontSize: 12,
-                    letterSpacing: lang === "si" ? "0.02em" : "0.1em",
-                    textTransform: lang === "si" ? "none" : "uppercase",
-                    border: "1px solid rgba(212,132,154,0.4)",
-                    cursor: "pointer", transition: "all 0.2s", flexShrink: 0,
-                    whiteSpace: "nowrap",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = "rgba(212,132,154,0.22)";
-                    e.currentTarget.style.transform = "translateY(-1px)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = "rgba(212,132,154,0.14)";
-                    e.currentTarget.style.transform = "";
-                  }}
-                >
-                  {t.obsShareBtn}
-                </button>
               </div>
             </div>
           </section>
