@@ -733,7 +733,7 @@ export default function App() {
           .lantern-float:nth-child(2) { animation-delay: -1.3s; }
           .lantern-float:nth-child(3) { animation-delay: -2.6s; }
 
-          .share-card-btn { animation: sharePulse 2.5s ease-in-out 1.5s 3; }
+          .share-card-btn { animation: sharePulse 2.5s ease-in-out 1.5s infinite; }
 
           .nav-desktop { display: flex; }
           .nav-hamburger { display: none; }
@@ -931,6 +931,46 @@ export default function App() {
             >
               {t.heroSubtitle}
             </p>
+
+            <button
+              onClick={() => setShowShareCard(true)}
+              className="fade-up delay-2 share-card-btn"
+              style={{
+                background: "linear-gradient(135deg, #d4849a 0%, #b25870 100%)",
+                border: "1px solid rgba(255, 255, 255, 0.15)",
+                borderRadius: 99,
+                color: "#ffffff",
+                fontFamily: headingFont,
+                fontSize: "clamp(13px, 3.5vw, 16px)",
+                fontWeight: 700,
+                letterSpacing: lang === "si" ? "0.02em" : "0.12em",
+                textTransform: lang === "si" ? "none" : "uppercase",
+                padding: "16px 36px",
+                cursor: "pointer",
+                transition: "all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)",
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 12,
+                whiteSpace: "nowrap",
+                pointerEvents: "auto",
+                boxShadow: "0 10px 30px rgba(212, 132, 154, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.2)",
+                position: "relative",
+                zIndex: 1,
+                marginBottom: 40,
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "translateY(-3px)";
+                e.currentTarget.style.boxShadow = "0 15px 35px rgba(212, 132, 154, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.3)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "none";
+                e.currentTarget.style.boxShadow = "0 10px 30px rgba(212, 132, 154, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.2)";
+              }}
+            >
+              <span style={{ fontSize: "1.2rem", filter: "drop-shadow(0 0 4px rgba(255,255,255,0.6))" }}>🪷</span>
+              {t.navShareCard}
+            </button>
 
             <div
               style={{
