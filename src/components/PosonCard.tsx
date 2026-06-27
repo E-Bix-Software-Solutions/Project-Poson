@@ -150,8 +150,8 @@ const CardPreview = ({ template }: { template: Template; message: string }) => (
         <span
           style={{
             fontFamily: "Inter, sans-serif",
-            fontSize: "clamp(7px, 2.5vw, 11px)",
-            fontWeight: 600,
+            fontSize: "clamp(6px, 2vw, 9px)",
+            fontWeight: 400,
             letterSpacing: "0.12em",
             textTransform: "uppercase",
             color: template.accent,
