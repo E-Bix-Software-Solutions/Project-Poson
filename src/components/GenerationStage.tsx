@@ -1,31 +1,4 @@
-// ─── Constants ────────────────────────────────────────────────────────────────
-export const GENERATION_STEPS = [
-  {
-    icon: "☸️",
-    headline: "Invoking the Dhamma…",
-    sub: "Reaching into 2,500 years of sacred tradition",
-  },
-  {
-    icon: "🎇",
-    headline: "Gathering lotus light…",
-    sub: "Selecting the blessing meant for you",
-  },
-  {
-    icon: "🌕",
-    headline: "Aligning with the Poya moon…",
-    sub: "As Mahinda descended upon Mihintale",
-  },
-  {
-    icon: "🏮",
-    headline: "Lighting your lantern…",
-    sub: "Atapattam colors warming the night sky",
-  },
-  {
-    icon: "🙏",
-    headline: "Your card is almost ready…",
-    sub: "May this greeting carry merit to all who receive it",
-  },
-];
+import { useLang } from "../App";
 
 export const STEP_DURATION = 900;
 
@@ -35,8 +8,14 @@ interface GenerationStageProps {
 }
 
 export function GenerationStage({ stepIndex }: GenerationStageProps) {
-  const step = GENERATION_STEPS[Math.min(stepIndex, GENERATION_STEPS.length - 1)];
-  const progress = Math.round(((stepIndex + 1) / GENERATION_STEPS.length) * 100);
+  const { lang, t } = useLang();
+  const steps = t.genSteps;
+  const step = steps[Math.min(stepIndex, steps.length - 1)];
+  const progress = Math.round(((stepIndex + 1) / steps.length) * 100);
+
+  const sinhalaFont = "'Noto Serif Sinhala', serif";
+  const headingFont = lang === "si" ? sinhalaFont : "Cinzel, serif";
+  const bodyFont = lang === "si" ? sinhalaFont : "Inter, sans-serif";
 
   return (
     <div
@@ -83,7 +62,7 @@ export function GenerationStage({ stepIndex }: GenerationStageProps) {
       <p
         key={`hl-${stepIndex}`}
         style={{
-          fontFamily: "Cinzel, serif",
+          fontFamily: headingFont,
           fontWeight: 600,
           fontSize: "clamp(0.75rem, 4vw, 1rem)",
           color: "#f5c26b",
@@ -101,7 +80,7 @@ export function GenerationStage({ stepIndex }: GenerationStageProps) {
       <p
         key={`sub-${stepIndex}`}
         style={{
-          fontFamily: "Inter, sans-serif",
+          fontFamily: bodyFont,
           fontSize: "clamp(0.65rem, 3vw, 0.8rem)",
           color: "#f0ede0",
           opacity: 0.45,
@@ -127,7 +106,7 @@ export function GenerationStage({ stepIndex }: GenerationStageProps) {
         }}
       >
         <div style={{ display: "flex", justifyContent: "center", gap: 6, marginBottom: 10 }}>
-          {GENERATION_STEPS.map((_, i) => (
+          {steps.map((_, i) => (
             <div
               key={i}
               style={{

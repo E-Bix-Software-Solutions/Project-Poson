@@ -3,7 +3,7 @@ import ThreeCanvas from "./components/ThreeCanvas";
 import PosonCardShare from "./components/PosonCard";
 
 // ─── Language Types & Translations ───────────────────────────────────────────
-type Lang = "en" | "si";
+export type Lang = "en" | "si";
 
 const translations = {
   en: {
@@ -25,13 +25,17 @@ const translations = {
     aboutTitle: "The Arrival of the Dhamma",
     aboutP1: (
       <>
-        In the 3rd century BCE, the Arahant Mahinda — son of Emperor Ashoka — descended upon the sacred hill of{" "}
-        <strong style={{ color: "#f5c26b" }}>Mihintale</strong> and met King Devanampiya Tissa on the first full moon of the month of Poson. That meeting marked the moment Buddhism was established in Sri Lanka, transforming the island nation into the jewel of Theravāda Buddhism.
+        <strong>Poson</strong>, also known as <strong>Poson Poya</strong>, is an annual festival held by Sri Lankan Buddhists celebrating the arrival of Buddhism in Sri Lanka in the 3rd century BC. The festival is the most important Poya (full moon) holiday of the year and the second most important Buddhist holiday of the year, being surpassed in importance only by Vesak. Poson is celebrated throughout the island, with the most important ceremonies of the festival being held in <strong style={{ color: "#f5c26b" }}>Anuradhapura</strong> and <strong style={{ color: "#f5c26b" }}>Mihintale</strong>. The festival is held in early June, coinciding with the June full moon.
       </>
     ),
     aboutP2: (
       <>
-        Today, Poson Poya is observed island-wide with <em>dansals</em> (food almsgivings), white-clad pilgrims climbing Mihintale by moonlight, sil observances, and the iconic multi-colored <em>atapattam</em> lanterns that illuminate the night sky.
+        Poson is celebrated to commemorate the introduction of Buddhism to Sri Lanka by <strong>Mahinda Thero</strong> in 236 BC. The focal point of the religious festival is the Buddhist monastic complex on the mountain of <strong style={{ color: "#f5c26b" }}>Mihintale</strong>, where Arahath Mahinda Thero preached Buddhism to King Devanampiyatissa. Celebrations are also centered around Buddhist sites in Anuradhapura, which was one of the first cities in Sri Lanka to convert to Buddhism. During Poson, these locations attract thousands of pilgrims clad in white who worship at these spiritual locales and spend hours in quiet contemplation to honor the traditions of Buddhism.
+      </>
+    ),
+    aboutP3: (
+      <>
+        The festival is celebrated island-wide, featuring huge electronically lit <strong>Pandols</strong> showcased in various city centres, and <strong>dansals</strong> (free food stalls organized by communities). Houses are decorated with lanterns and lights to commemorate the day in a festive manner. The celebrations continue for five days to a week starting from the full moon poya day. In respect of the spiritual nature of the festival, some parts of Sri Lanka prohibit the sale of meat and alcohol during this period.
       </>
     ),
     stat1Num: "236 BCE",
@@ -67,6 +71,67 @@ const translations = {
 
     // Footer
     footerRegion: "ශ්‍රී ලංකා · Sri Lanka",
+
+    // Card modal translation strings
+    cardTitle: "Poson Poya Greeting Card",
+    cardLoading: "Loading cards…",
+    cardStats: "{templates} images · {combinations} combinations · share the Dhamma's light",
+    cardPlaceholder: "Your card will appear here",
+    cardIndexInfo: "Card {index} · {label} · {combinations} combinations",
+    cardGenerateBtn: "✨ Generate your Poson card",
+    cardLoadingImages: "Loading images…",
+    cardTryAgain: "Try again",
+    cardDownloadBtn: "Download card",
+    cardPreparing: "Preparing…",
+    cardShareLabel: "Share card",
+    cardShareImgBtn: "Share image",
+    cardSharing: "Sharing…",
+    cardCopyLinkBtn: "Copy link",
+    cardCopiedBtn: "Copied!",
+    cardTip: "💡 Use \"Share image\" to share directly, or copy the link to send it to anyone.",
+    cardDownloadedSuccess: "Card downloaded successfully!",
+    cardDownloadFailed: "Download failed. Please try again.",
+    cardSharedSuccess: "Shared successfully!",
+    cardShareSaved: "Image saved — share it from your files!",
+    cardShareFailed: "Sharing failed. Try downloading instead.",
+    cardCopiedSuccess: "Link copied to clipboard!",
+    cardFooter: "Poson Poya · ශ්‍රී ලංකා · Sādhu Sādhu Sādhu 🙏",
+
+    // Generation stage translation strings
+    genSteps: [
+      {
+        icon: "☸️",
+        headline: "Invoking the Dhamma…",
+        sub: "Reaching into 2,500 years of sacred tradition",
+      },
+      {
+        icon: "🎇",
+        headline: "Gathering lotus light…",
+        sub: "Selecting the blessing meant for you",
+      },
+      {
+        icon: "🌕",
+        headline: "Aligning with the Poya moon…",
+        sub: "As Mahinda descended upon Mihintale",
+      },
+      {
+        icon: "🏮",
+        headline: "Lighting your lantern…",
+        sub: "Atapattam colors warming the night sky",
+      },
+      {
+        icon: "🙏",
+        headline: "Your card is almost ready…",
+        sub: "May this greeting carry merit to all who receive it",
+      },
+    ],
+
+    cardMessages: [
+      "May the light of the Dhamma guide your path.\n\n https://happy-poson.vercel.app/",
+      "Wishing you peace, wisdom & compassion.\n\n https://happy-poson.vercel.app/",
+      "Sādhu • Sādhu • Sādhu\n\n https://happy-poson.vercel.app/",
+      "May merit flow to all beings.\n\n https://happy-poson.vercel.app/",
+    ],
   },
 
   si: {
@@ -88,13 +153,17 @@ const translations = {
     aboutTitle: "ධර්මය ලංකාවට පැමිණීම",
     aboutP1: (
       <>
-        ක්‍රි.පූ. 3 වන සියවසේදී, සම්‍රාට් අශෝකගේ පුත් අරහත් මිහිඳු මහ රහතන් වහන්සේ{" "}
-        <strong style={{ color: "#f5c26b" }}>මිහිඳු මලා</strong> ශුද්ධ ගිරිය මත ප්‍රථම පොහොය දිනයේ රජ දේවානම්පිය තිස්ස රජතුමා හමු වූහ. එම හමුවීම ශ්‍රී ලංකාවේ බෞද්ධ ශ්‍රාසනය ස්ථාපිත වූ ශ්‍රේෂ්ඨ මොහොත ලෙස ඉතිහාසයේ සටහන් ය.
+        <strong>පොසොන් පොහොය</strong> ලෙසද හැඳින්වෙන පොසොන් උත්සවය, ක්‍රි.පූ. 3 වන සියවසේදී ශ්‍රී ලංකාවට බුදුදහම පැමිණීම නිමිත්තෙන් ශ්‍රී ලාංකික බෞද්ධයන් විසින් පවත්වනු ලබන වාර්ෂික උත්සවයකි. මෙම උත්සවය වෙසක් උත්සවයට පමණක් දෙවැනි වන, වසරේ වඩාත්ම වැදගත් පුන් පොහෝ දිනය වන අතර වසරේ දෙවන වැදගත්ම බෞද්ධ උත්සවය වේ. දිවයින පුරා පොසොන් උත්සවය සමරනු ලබන අතර, මෙහි වඩාත්ම වැදගත් ආගමික වතාවත් <strong style={{ color: "#f5c26b" }}>අනුරාධපුරය</strong> සහ <strong style={{ color: "#f5c26b" }}>මිහින්තලය</strong> කේන්ද්‍ර කරගනිමින් පැවැත්වේ. ජූනි මාසයේ පුන් පොහෝ දිනයට සමගාමීව ජූනි මස මුල් භාගයේදී මෙම උත්සවය පැවැත්වේ.
       </>
     ),
     aboutP2: (
       <>
-        අද, ලංකා දිවයින පුරා <em>දාන සාල්</em>, සිල් ගෙවීම, සුදු ඇදුම් ලාල්ලෝ මිහිඳු ගලේ නැඟීම, සහ <em>අෂ්ටාපතම්</em> ලාම්පු දල්වා පොසොන් පොහොය සමරන්නෝ ය.
+        ක්‍රි.පූ. 236 දී <strong>මිහිඳු මහ රහතන් වහන්සේ</strong> විසින් ශ්‍රී ලංකාවට බුදුදහම හඳුන්වා දීම සිහිපත් කිරීම සඳහා පොසොන් උත්සවය සමරනු ලැබේ. මෙම ආගමික උත්සවයේ කේන්ද්‍රස්ථානය වන්නේ <strong style={{ color: "#f5c26b" }}>මිහින්තල</strong> කඳු මුදුනේ පිහිටි බෞද්ධ විහාර සංකීර්ණය වන අතර, එහිදී අරහත් මිහිඳු මහ රහතන් වහන්සේ ශ්‍රී ලංකාවේ එවකට රජ කළ දේවානම්පියතිස්ස රජතුමාට ධර්මය දේශනා කළහ. ශ්‍රී ලංකාවේ බුදුදහම වැළඳගත් මුල්ම නගරවලින් එකක් වන අනුරාධපුරයේ පිහිටි පූජනීය බෞද්ධ සිද්ධස්ථාන කේන්ද්‍ර කරගනිමින් ද සැමරුම් පැවැත්වේ. පොසොන් සමයේදී මෙම ස්ථාන ද්විත්වය වෙත ශ්‍රී ලංකාව පුරා වෙසෙන දහස් සංඛ්‍යාත වන්දනාකරුවෝ සුදු පැහැති වතින් සැරසී පැමිණ වන්දනාමාන කරන අතර බුදුදහමේ උතුම් ප්‍රතිපත්තිවලට ගරු කරමින් පැය ගණනාවක් නිහඬව භාවනාවෙහි නිරත වෙති.
+      </>
+    ),
+    aboutP3: (
+      <>
+        පොසොන් උත්සවය දිවයින පුරා සමරනු ලබන අතර, විවිධ නගර මධ්‍යස්ථානවල විදුලි ආලෝකයෙන් විචිත්‍රවත් වූ දැවැන්ත <strong>තොරණ</strong> ප්‍රදර්ශනය කෙරේ. එමෙන්ම විවිධ ප්‍රජාවන් විසින් සංවිධානය කරනු ලබන <strong>දන්සැල්</strong> (නොමිලේ ආහාර පාන ලබා දෙන කුටි) ක්‍රියාත්මක වේ. උත්සව ශ්‍රීයෙන් දිනය සැමරීම සඳහා නිවාස පහන් සහ කූඩුවලින් අලංකාර කෙරේ. පුර පසළොස්වක පොහොය දින සිට දින 5ක් හෝ සතියක් පුරා මෙම සැමරුම් පැවැත්වේ. උත්සවය අතරතුර ශ්‍රී ලංකාවේ සමහර ප්‍රදේශවල මස් පිණිස සතුන් මැරීම, මස් විකිණීම සහ මත්පැන් අලෙවි කිරීම සපුරා තහනම් වේ.
       </>
     ),
     stat1Num: "ක්‍රි.පූ. 236",
@@ -130,11 +199,72 @@ const translations = {
 
     // Footer
     footerRegion: "ශ්‍රී ලංකා · Sri Lanka",
+
+    // Card modal translation strings
+    cardTitle: "පොසොන් ආශිර්වාද කාඩ්පත",
+    cardLoading: "කාඩ්පත් පූරණය වෙමින් පවතී...",
+    cardStats: "පින්තූර {templates} ක් · සංයෝජන {combinations} ක් · ශ්‍රී සද්ධර්මයේ ආලෝකය බෙදා හරින්න",
+    cardPlaceholder: "ඔබේ ආශිර්වාද කාඩ්පත මෙහි දර්ශනය වනු ඇත",
+    cardIndexInfo: "කාඩ්පත {index} · {label} · සංයෝජන {combinations} ක්",
+    cardGenerateBtn: "✨ ඔබේ පොසොන් ආශිර්වාද කාඩ්පත සාදා ගන්න",
+    cardLoadingImages: "පින්තූර පූරණය වෙමින්...",
+    cardTryAgain: "නැවත උත්සාහ කරන්න",
+    cardDownloadBtn: "කාඩ්පත බාගත කරන්න",
+    cardPreparing: "සූදානම් වෙමින්...",
+    cardShareLabel: "කාඩ්පත බෙදා ගන්න",
+    cardShareImgBtn: "රූපය බෙදා ගන්න",
+    cardSharing: "බෙදා ගනිමින්...",
+    cardCopyLinkBtn: "ලින්ක් එක කොපි කරන්න",
+    cardCopiedBtn: "කොපි කෙරුණා!",
+    cardTip: "💡 සෘජුවම බෙදා ගැනීමට \"රූපය බෙදා ගන්න\" ක්ලික් කරන්න, නැතහොත් ඕනෑම අයෙකුට යැවීමට ලින්ක් එක කොපි කරන්න.",
+    cardDownloadedSuccess: "කාඩ්පත සාර්ථකව බාගත කරන ලදී!",
+    cardDownloadFailed: "බාගත කිරීම අසාර්ථක විය. කරුණාකර නැවත උත්සාහ කරන්න.",
+    cardSharedSuccess: "සාර්ථකව බෙදා ගන්නා ලදී!",
+    cardShareSaved: "රූපය සුරැකිණි — ඔබගේ ගොනු තුලින් එය බෙදා ගන්න!",
+    cardShareFailed: "බෙදා ගැනීම අසාර්ථක විය. කරුණාකර බාගත කර ගැනීමට උත්සාහ කරන්න.",
+    cardCopiedSuccess: "ලින්ක් එක සාර්ථකව කොපි කරන ලදී!",
+    cardFooter: "පොසොන් පොහොය · ශ්‍රී ලංකා · සාදු සාදු සාදු 🙏",
+
+    // Generation stage translation strings
+    genSteps: [
+      {
+        icon: "☸️",
+        headline: "ශ්‍රී සද්ධර්මය සිහිපත් කරමින්...",
+        sub: "වසර 2,500ක උදාර ආගමික ඉතිහාසයකට ප්‍රවේශ වෙමින්",
+      },
+      {
+        icon: "🎇",
+        headline: "නෙළුම් මල් ආලෝකය එක් රැස් කරමින්...",
+        sub: "ඔබ වෙනුවෙන්ම වෙන්වූ උතුම් ආශිර්වාදය තෝරා ගනිමින්",
+      },
+      {
+        icon: "🌕",
+        headline: "පොසොන් සඳෙහි ආලෝකය හා සමපාත වෙමින්...",
+        sub: "මිහිඳු මහ රහතන් වහන්සේ මිහින්තලයට වැඩම කළ සේක",
+      },
+      {
+        icon: "🏮",
+        headline: "ඔබේ පොසොන් කූඩුව දල්වමින්...",
+        sub: "අෂ්ටාපතම් වර්ණවලින් රාත්‍රී අහස ඒකාලෝක කරමින්",
+      },
+      {
+        icon: "🙏",
+        headline: "ආශිර්වාද කාඩ්පත සූදානම් වෙමින් පවතී...",
+        sub: "මෙම සුබපැතුම ලබන සැමටම මහත් වූ පින් අත්පත් වේවා",
+      },
+    ],
+
+    cardMessages: [
+      "උතුම් දහම් ආලෝකය ඔබේ ජීවිතය ඒකාලෝක කරත්වා! පින්බර පොසොන් මංගල්‍යයක් වේවා!\n\n https://happy-poson.vercel.app/",
+      "ඔබට සාමය, ප්‍රඥාව සහ කරුණාව පිරි වාසනාවන්ත පොසොන් පොහෝ දිනයක් වේවා!\n\n https://happy-poson.vercel.app/",
+      "සාදු • සාදු • සාදු! උතුම් පොසොන් මංගල්‍යයේ ආශිර්වාදය ලැබේවා!\n\n https://happy-poson.vercel.app/",
+      "සියලු සත්වයෝ සුවපත් වෙත්වා! රැස් කළ පින් සියලු ලෝකයාටම අත්වේවා!\n\n https://happy-poson.vercel.app/",
+    ],
   },
 } as const;
 
 // ─── Language Context ─────────────────────────────────────────────────────────
-const LangContext = createContext<{
+export const LangContext = createContext<{
   lang: Lang;
   toggle: () => void;
   t: typeof translations.en | typeof translations.si;
@@ -144,7 +274,7 @@ const LangContext = createContext<{
   t: translations.si,
 });
 
-const useLang = () => useContext(LangContext);
+export const useLang = () => useContext(LangContext);
 
 // ─── Language Toggle Button ───────────────────────────────────────────────────
 const LangToggle = ({ compact = false }: { compact?: boolean }) => {
@@ -610,6 +740,13 @@ export default function App() {
     };
   }, []);
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("card") === "poson") {
+      setShowShareCard(true);
+    }
+  }, []);
+
   // Font family helpers
   const sinhalaFont = "'Noto Serif Sinhala', serif";
   const headingFont = lang === "si" ? sinhalaFont : "Cinzel";
@@ -1018,8 +1155,12 @@ export default function App() {
                 {t.aboutP1}
               </p>
 
-              <p key={`about-p2-${lang}`} className="lang-switch" style={{ fontFamily: lang === "si" ? sinhalaFont : "inherit", lineHeight: 1.85, opacity: 0.78, fontSize: "1.02rem", marginBottom: 32 }}>
+              <p key={`about-p2-${lang}`} className="lang-switch" style={{ fontFamily: lang === "si" ? sinhalaFont : "inherit", lineHeight: 1.85, opacity: 0.78, fontSize: "1.02rem", marginBottom: 20 }}>
                 {t.aboutP2}
+              </p>
+
+              <p key={`about-p3-${lang}`} className="lang-switch" style={{ fontFamily: lang === "si" ? sinhalaFont : "inherit", lineHeight: 1.85, opacity: 0.78, fontSize: "1.02rem", marginBottom: 32 }}>
+                {t.aboutP3}
               </p>
 
               <FlagStripes />

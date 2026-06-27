@@ -1,5 +1,6 @@
 import { useState, useRef, useCallback, useEffect, useMemo } from "react";
-import { GenerationStage, GENERATION_STEPS, STEP_DURATION } from "./GenerationStage";
+import { GenerationStage, STEP_DURATION } from "./GenerationStage";
+import { useLang } from "../App";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface Template {
@@ -12,6 +13,7 @@ interface Template {
 interface CardVariant {
   template: Template;
   message: string;
+  messageIndex: number;
 }
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -36,13 +38,6 @@ const FALLBACK_TEMPLATES: Template[] = Array.from({ length: 19 }, (_, index) => 
     accent,
   };
 });
-
-const MESSAGES = [
-  "May the light of the Dhamma guide your path.\n\n https://happy-poson.vercel.app/",
-  "Wishing you peace, wisdom & compassion.\n\n https://happy-poson.vercel.app/",
-  "Sādhu • Sādhu • Sādhu\n\n https://happy-poson.vercel.app/",
-  "May merit flow to all beings.\n\n https://happy-poson.vercel.app/",
-];
 
 // ─── Dynamic template loader ──────────────────────────────────────────────────
 function useTemplates() {
@@ -258,14 +253,21 @@ const NativeShareIcon = () => (
 // ─── Main PosonCard Component ─────────────────────────────────────────────────
 export default function PosonCard({ onClose }: { onClose?: () => void }) {
   const { templates, loading: templatesLoading } = useTemplates();
+  const { lang, t } = useLang();
+
+  const sinhalaFont = "'Noto Serif Sinhala', serif";
+  const headingFont = lang === "si" ? sinhalaFont : "Cinzel, serif";
+  const bodyFont = lang === "si" ? sinhalaFont : "Inter, sans-serif";
 
   const DECK = useMemo<CardVariant[]>(() => {
     const deck: CardVariant[] = [];
-    for (const template of templates)
-      for (const message of MESSAGES)
-        deck.push({ template, message });
+    for (const template of templates) {
+      t.cardMessages.forEach((message, messageIndex) => {
+        deck.push({ template, message, messageIndex });
+      });
+    }
     return deck;
-  }, [templates]);
+  }, [templates, t.cardMessages]);
 
   const [currentCard, setCurrentCard]   = useState<CardVariant | null>(null);
   const [usedIndices, setUsedIndices]   = useState<number[]>([]);
@@ -277,6 +279,10 @@ export default function PosonCard({ onClose }: { onClose?: () => void }) {
   const [sharingPlatform, setSharingPlatform] = useState<string | null>(null);
   const [toastMsg,    setToastMsg]      = useState("");
   const [toastType,   setToastType]     = useState<"success" | "error">("success");
+
+  const activeMessage = currentCard 
+    ? (t.cardMessages[currentCard.messageIndex] || currentCard.message)
+    : "";
 
   const cardRef    = useRef<HTMLDivElement>(null);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -306,13 +312,13 @@ export default function PosonCard({ onClose }: { onClose?: () => void }) {
     if (stepTimer.current) clearInterval(stepTimer.current);
     stepTimer.current = setInterval(() => {
       step += 1;
-      if (step >= GENERATION_STEPS.length) {
+      if (step >= t.genSteps.length) {
         clearInterval(stepTimer.current!);
         return;
       }
       setGenStep(step);
     }, STEP_DURATION);
-  }, []);
+  }, [t.genSteps.length]);
 
   const stopStepTicker = useCallback(() => {
     if (stepTimer.current) {
@@ -322,6 +328,42 @@ export default function PosonCard({ onClose }: { onClose?: () => void }) {
   }, []);
 
   useEffect(() => () => { stopStepTicker(); }, [stopStepTicker]);
+
+  useEffect(() => {
+    if (templatesLoading || templates.length === 0) return;
+    const params = new URLSearchParams(window.location.search);
+    const themeParam = params.get("theme");
+    const msgParam = params.get("msg");
+    if (themeParam && msgParam) {
+      const template = templates.find(t => t.id === themeParam) || templates[0];
+      
+      const enMessages = [
+        "May the light of the Dhamma guide your path.\n\n https://happy-poson.vercel.app/",
+        "Wishing you peace, wisdom & compassion.\n\n https://happy-poson.vercel.app/",
+        "Sādhu • Sādhu • Sādhu\n\n https://happy-poson.vercel.app/",
+        "May merit flow to all beings.\n\n https://happy-poson.vercel.app/",
+      ];
+      
+      const siMessages = [
+        "උතුම් දහම් ආලෝකය ඔබේ ජීවිතය ඒකාලෝක කරත්වා! පින්බර පොසොන් මංගල්‍යයක් වේවා!\n\n https://happy-poson.vercel.app/",
+        "ඔබට සාමය, ප්‍රඥාව සහ කරුණාව පිරි වාසනාවන්ත පොසොන් පොහෝ දිනයක් වේවා!\n\n https://happy-poson.vercel.app/",
+        "සාදු • සාදු • සාදු! උතුම් පොසොන් මංගල්‍යයේ ආශිර්වාදය ලැබේවා!\n\n https://happy-poson.vercel.app/",
+        "සියලු සත්වයෝ සුවපත් වෙත්වා! රැස් කළ පින් සියලු ලෝකයාටම අත්වේවා!\n\n https://happy-poson.vercel.app/",
+      ];
+
+      let msgIndex = enMessages.indexOf(msgParam);
+      if (msgIndex === -1) {
+        msgIndex = siMessages.indexOf(msgParam);
+      }
+
+      setCurrentCard({
+        template,
+        message: msgParam,
+        messageIndex: msgIndex !== -1 ? msgIndex : 0,
+      });
+      setGenerated(true);
+    }
+  }, [templates, templatesLoading]);
 
   const handleGenerate = () => {
     if (DECK.length === 0) return;
@@ -380,9 +422,9 @@ export default function PosonCard({ onClose }: { onClose?: () => void }) {
       link.href = URL.createObjectURL(blob);
       link.click();
       URL.revokeObjectURL(link.href);
-      showToast("Card downloaded successfully!");
+      showToast(t.cardDownloadedSuccess);
     } catch {
-      showToast("Download failed. Please try again.", "error");
+      showToast(t.cardDownloadFailed, "error");
     } finally {
       setSharingPlatform(null);
     }
@@ -396,50 +438,51 @@ export default function PosonCard({ onClose }: { onClose?: () => void }) {
       const blob = await captureCard();
       const file = new File([blob], `Poson-Poya-${currentCard.template.id}.png`, { type: "image/png" });
 
+      const isSi = lang === "si";
+      const shareTitle = isSi ? "පොසොන් ආශිර්වාද සුබපැතුම් 🪷" : "Poson Poya Greetings 🪷";
+      const shareText = `🌕 "${activeMessage}"\n\n${isSi ? "පින්බර පොසොන් පෝයක් වේවා!" : "Wishing you a blessed Poson Poya!"} #PosonPoya #Buddhism #SriLanka`;
+
       if (navigator.canShare && navigator.canShare({ files: [file] })) {
         await navigator.share({
           files: [file],
-          title: "Poson Poya Greetings 🪷",
-          text: `🌕 "${currentCard.message}"\n\nWishing you a blessed Poson Poya! #PosonPoya #Buddhism #SriLanka`,
+          title: shareTitle,
+          text: shareText,
         });
-        showToast("Shared successfully!");
+        showToast(t.cardSharedSuccess);
       } else if (navigator.share) {
         await navigator.share({
-          title: "Poson Poya Greetings 🪷",
-          text: `🌕 "${currentCard.message}"\n\nWishing you a blessed Poson Poya! #PosonPoya #Buddhism #SriLanka`,
+          title: shareTitle,
+          text: shareText,
           url: window.location.href,
         });
-        showToast("Shared successfully!");
+        showToast(t.cardSharedSuccess);
       } else {
         const link = document.createElement("a");
         link.download = `Poson-Poya-${currentCard.template.id}.png`;
         link.href = URL.createObjectURL(blob);
         link.click();
         URL.revokeObjectURL(link.href);
-        showToast("Image saved — share it from your files!");
+        showToast(t.cardShareSaved);
       }
     } catch (err: unknown) {
       if (err instanceof Error && err.name !== "AbortError") {
-        showToast("Sharing failed. Try downloading instead.", "error");
+        showToast(t.cardShareFailed, "error");
       }
     } finally {
       setSharingPlatform(null);
     }
   };
 
-
-
   // ─── Copy Link ────────────────────────────────────────────────────────────────
   const handleCopyLink = () => {
     if (!currentCard) return;
-    const url = `${window.location.origin}${window.location.pathname}?card=poson&msg=${encodeURIComponent(currentCard.message)}&theme=${currentCard.template.id}`;
+    const url = `${window.location.origin}${window.location.pathname}?card=poson&msg=${encodeURIComponent(activeMessage)}&theme=${currentCard.template.id}`;
     navigator.clipboard.writeText(url).then(() => {
       setCopied(true);
-      showToast("Link copied to clipboard!");
+      showToast(t.cardCopiedSuccess);
       setTimeout(() => setCopied(false), 2000);
     });
   };
-
   const isSharing = sharingPlatform !== null;
 
   return (
@@ -557,21 +600,23 @@ export default function PosonCard({ onClose }: { onClose?: () => void }) {
             </div>
             <div style={{ minWidth: 0 }}>
               <h2 style={{
-                fontFamily: "Cinzel,serif", fontWeight: 700,
+                fontFamily: headingFont, fontWeight: 700,
                 fontSize: "clamp(1rem, 4vw, 1.45rem)",
                 color: "#f5c26b", lineHeight: 1.1, marginBottom: 3,
                 overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
               }}>
-                Poson Poya Greeting Card
+                {t.cardTitle}
               </h2>
               <p style={{
-                fontFamily: "Inter,sans-serif",
+                fontFamily: bodyFont,
                 fontSize: "clamp(10px, 2.5vw, 12px)",
                 color: "#f0ede0", opacity: 0.45, letterSpacing: "0.05em",
               }}>
                 {templatesLoading
-                  ? "Loading cards…"
-                  : `${templates.length} images · ${DECK.length} combinations · share the Dhamma's light`}
+                  ? t.cardLoading
+                  : t.cardStats
+                      .replace("{templates}", String(templates.length))
+                      .replace("{combinations}", String(DECK.length))}
               </p>
             </div>
           </div>
@@ -590,7 +635,7 @@ export default function PosonCard({ onClose }: { onClose?: () => void }) {
 
               {!generating && generated && currentCard && (
                 <div style={{ position: "relative" }}>
-                  <CardPreview template={currentCard.template} message={currentCard.message} />
+                  <CardPreview template={currentCard.template} message={activeMessage} />
                 </div>
               )}
 
@@ -608,12 +653,12 @@ export default function PosonCard({ onClose }: { onClose?: () => void }) {
                     <>
                       <DharmaWheel size={32} color="rgba(201,146,58,0.3)" />
                       <p style={{
-                        fontFamily: "Inter,sans-serif",
+                        fontFamily: bodyFont,
                         fontSize: "clamp(10px, 2.5vw, 12px)",
                         color: "rgba(240,237,224,0.3)", letterSpacing: "0.1em",
                         textTransform: "uppercase", textAlign: "center", padding: "0 20px",
                       }}>
-                        Your card will appear here
+                        {t.cardPlaceholder}
                       </p>
                     </>
                   )}
@@ -623,11 +668,14 @@ export default function PosonCard({ onClose }: { onClose?: () => void }) {
 
             {generated && !generating && currentCard && (
               <p style={{
-                fontFamily: "Inter,sans-serif",
+                fontFamily: bodyFont,
                 fontSize: "clamp(9px, 2vw, 11px)",
                 color: "rgba(240,237,224,0.35)", letterSpacing: "0.08em", textAlign: "center",
               }}>
-                Card {usedIndices.length} · {currentCard.template.label} · {DECK.length} combinations
+                {t.cardIndexInfo
+                  .replace("{index}", String(usedIndices.length))
+                  .replace("{label}", currentCard.template.label)
+                  .replace("{combinations}", String(DECK.length))}
               </p>
             )}
           </div>
@@ -641,7 +689,7 @@ export default function PosonCard({ onClose }: { onClose?: () => void }) {
                 style={{
                   flex: 1, padding: "14px 24px", borderRadius: 8, border: "none",
                   background: "linear-gradient(135deg,#c9923a 0%,#f5c26b 50%,#c9923a 100%)",
-                  color: "#1a0a00", fontFamily: "Inter,sans-serif", fontWeight: 700,
+                  color: "#1a0a00", fontFamily: bodyFont, fontWeight: 700,
                   fontSize: "clamp(12px, 3.5vw, 14px)", letterSpacing: "0.06em", textTransform: "uppercase",
                   opacity: 0.7,
                   display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
@@ -651,7 +699,7 @@ export default function PosonCard({ onClose }: { onClose?: () => void }) {
               >
                 <Spinner color="#1a0a00" />
                 <span key={genStep} style={{ animation: "stepFadeIn 0.3s ease both" }}>
-                  {GENERATION_STEPS[genStep]?.headline ?? "Generating…"}
+                  {t.genSteps[genStep]?.headline ?? (lang === "si" ? "සාදමින්..." : "Generating…")}
                 </span>
               </button>
             ) : !generated ? (
@@ -662,7 +710,7 @@ export default function PosonCard({ onClose }: { onClose?: () => void }) {
                 style={{
                   flex: 1, padding: "14px 24px", borderRadius: 8, border: "none",
                   background: "linear-gradient(135deg,#c9923a 0%,#f5c26b 50%,#c9923a 100%)",
-                  color: "#1a0a00", fontFamily: "Inter,sans-serif", fontWeight: 700,
+                  color: "#1a0a00", fontFamily: bodyFont, fontWeight: 700,
                   fontSize: "clamp(12px, 3.5vw, 14px)", letterSpacing: "0.06em", textTransform: "uppercase",
                   cursor: templatesLoading ? "not-allowed" : "pointer",
                   display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
@@ -672,9 +720,9 @@ export default function PosonCard({ onClose }: { onClose?: () => void }) {
                 }}
               >
                 {templatesLoading ? (
-                  <><Spinner color="#1a0a00" /> Loading images…</>
+                  <><Spinner color="#1a0a00" /> {t.cardLoadingImages}</>
                 ) : (
-                  "✨ Generate your Poson card"
+                  t.cardGenerateBtn
                 )}
               </button>
             ) : (
@@ -687,7 +735,7 @@ export default function PosonCard({ onClose }: { onClose?: () => void }) {
                     flex: 1, padding: "13px 18px", borderRadius: 8,
                     border: "1px solid rgba(255,255,255,0.15)",
                     background: "rgba(255,255,255,0.04)", color: "#f0ede0",
-                    fontFamily: "Inter,sans-serif", fontWeight: 500,
+                    fontFamily: bodyFont, fontWeight: 500,
                     fontSize: "clamp(12px, 3vw, 13px)", letterSpacing: "0.04em",
                     cursor: isSharing ? "not-allowed" : "pointer",
                     opacity: isSharing ? 0.6 : 1,
@@ -697,7 +745,7 @@ export default function PosonCard({ onClose }: { onClose?: () => void }) {
                   }}
                 >
                   <span style={{ display: "inline-block", fontSize: 16 }}>↺</span>
-                  Try again
+                  {t.cardTryAgain}
                 </button>
 
                 <button
@@ -707,7 +755,7 @@ export default function PosonCard({ onClose }: { onClose?: () => void }) {
                   style={{
                     flex: 1, padding: "13px 18px", borderRadius: 8, border: "none",
                     background: "linear-gradient(135deg,#c9923a 0%,#f5c26b 50%,#c9923a 100%)",
-                    color: "#1a0a00", fontFamily: "Inter,sans-serif", fontWeight: 700,
+                    color: "#1a0a00", fontFamily: bodyFont, fontWeight: 700,
                     fontSize: "clamp(12px, 3vw, 13px)", letterSpacing: "0.05em", textTransform: "uppercase",
                     cursor: isSharing ? "not-allowed" : "pointer",
                     opacity: isSharing ? 0.7 : 1,
@@ -718,7 +766,7 @@ export default function PosonCard({ onClose }: { onClose?: () => void }) {
                   }}
                 >
                   {sharingPlatform === "download" ? <Spinner color="#1a0a00" /> : <DownloadIcon />}
-                  {sharingPlatform === "download" ? "Preparing…" : "Download card"}
+                  {sharingPlatform === "download" ? t.cardPreparing : t.cardDownloadBtn}
                 </button>
               </>
             )}
@@ -728,17 +776,17 @@ export default function PosonCard({ onClose }: { onClose?: () => void }) {
           {generated && (
             <div style={{ marginBottom: 18 }}>
               <label style={{
-                display: "block", fontFamily: "Inter,sans-serif",
+                display: "block", fontFamily: bodyFont,
                 fontSize: "clamp(9px, 2.5vw, 11px)",
                 fontWeight: 500, letterSpacing: "0.2em", textTransform: "uppercase",
                 color: "#c9923a", marginBottom: 10, opacity: 0.8,
               }}>
-                Share card
+                {t.cardShareLabel}
               </label>
               <div className="share-btn-row">
                 <ShareBtn
                   icon={sharingPlatform === "native" ? <Spinner color="#f5c26b" /> : <NativeShareIcon />}
-                  label={sharingPlatform === "native" ? "Sharing…" : "Share image"}
+                  label={sharingPlatform === "native" ? t.cardSharing : t.cardShareImgBtn}
                   onClick={handleNativeShare}
                   color="#f5c26b"
                   disabled={isSharing}
@@ -746,7 +794,7 @@ export default function PosonCard({ onClose }: { onClose?: () => void }) {
 
                 <ShareBtn
                   icon={copied ? <CheckIcon /> : <LinkIcon />}
-                  label={copied ? "Copied!" : "Copy link"}
+                  label={copied ? t.cardCopiedBtn : t.cardCopyLinkBtn}
                   onClick={handleCopyLink}
                   color={copied ? "#8ef5c0" : "#c9923a"}
                   disabled={isSharing}
@@ -755,11 +803,11 @@ export default function PosonCard({ onClose }: { onClose?: () => void }) {
 
               <p style={{
                 marginTop: 10,
-                fontFamily: "Inter,sans-serif",
+                fontFamily: bodyFont,
                 fontSize: "clamp(9px, 2.5vw, 11px)",
                 color: "rgba(240,237,224,0.3)", letterSpacing: "0.03em", lineHeight: 1.6,
               }}>
-                💡 Use "Share image" to share directly, or copy the link to send it to anyone.
+                {t.cardTip}
               </p>
             </div>
           )}
@@ -774,7 +822,7 @@ export default function PosonCard({ onClose }: { onClose?: () => void }) {
                 background: toastType === "success" ? "rgba(142,245,192,0.1)" : "rgba(245,100,100,0.1)",
                 border: `1px solid ${toastType === "success" ? "rgba(142,245,192,0.3)" : "rgba(245,100,100,0.3)"}`,
                 color: toastType === "success" ? "#8ef5c0" : "#f58080",
-                fontFamily: "Inter,sans-serif",
+                fontFamily: bodyFont,
                 fontSize: "clamp(11px, 3vw, 13px)",
                 fontWeight: 500,
               }}
@@ -788,11 +836,11 @@ export default function PosonCard({ onClose }: { onClose?: () => void }) {
           <p style={{
             marginTop: 24, paddingTop: 18,
             borderTop: "1px solid rgba(201,146,58,0.1)",
-            fontFamily: "Inter,sans-serif",
+            fontFamily: bodyFont,
             fontSize: "clamp(9px, 2.5vw, 11px)",
             color: "#f0ede0", opacity: 0.3, textAlign: "center", letterSpacing: "0.05em",
           }}>
-            Poson Poya · ශ්‍රී ලංකා · Sādhu Sādhu Sādhu 🙏
+            {t.cardFooter}
           </p>
         </div>
       </div>
