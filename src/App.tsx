@@ -359,7 +359,7 @@ const translations = {
     cardShareLabel: "කාඩ්පත බෙදා ගන්න",
     cardShareImgBtn: "රූපය බෙදා ගන්න",
     cardSharing: "බෙදා ගනිමින්...",
-    cardCopyLinkBtn: "ලින්ක් එක කොපි කරන්න",
+    cardCopyLinkBtn: "කොපි කරන්න",
     cardCopiedBtn: "කොපි කෙරුණා!",
     cardTip:
       '💡 සෘජුවම බෙදා ගැනීමට "රූපය බෙදා ගන්න" ක්ලික් කරන්න, නැතහොත් ඕනෑම අයෙකුට යැවීමට ලින්ක් එක කොපි කරන්න.',
