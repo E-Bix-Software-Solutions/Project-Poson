@@ -279,6 +279,8 @@ export default function PosonCard({ onClose }: { onClose?: () => void }) {
   const [sharingPlatform, setSharingPlatform] = useState<string | null>(null);
   const [toastMsg,    setToastMsg]      = useState("");
   const [toastType,   setToastType]     = useState<"success" | "error">("success");
+  const [preRenderedFile, setPreRenderedFile] = useState<File | null>(null);
+  const [preRenderedBlob, setPreRenderedBlob] = useState<Blob | null>(null);
 
   const activeMessage = currentCard 
     ? (t.cardMessages[currentCard.messageIndex] || currentCard.message)
@@ -365,6 +367,30 @@ export default function PosonCard({ onClose }: { onClose?: () => void }) {
     }
   }, [templates, templatesLoading]);
 
+  // Pre-render generated card to avoid asynchronous delay (User Gesture timeout) on mobile sharing
+  useEffect(() => {
+    if (generated && !generating && currentCard && cardRef.current) {
+      setPreRenderedFile(null);
+      setPreRenderedBlob(null);
+
+      const timer = setTimeout(async () => {
+        try {
+          const blob = await captureCard();
+          const file = new File([blob], `Poson-Poya-${currentCard.template.id}.png`, { type: "image/png" });
+          setPreRenderedBlob(blob);
+          setPreRenderedFile(file);
+        } catch (err) {
+          console.error("Pre-rendering failed:", err);
+        }
+      }, 600); // Allow DOM elements & images to fully settle
+
+      return () => clearTimeout(timer);
+    } else {
+      setPreRenderedFile(null);
+      setPreRenderedBlob(null);
+    }
+  }, [currentCard, generated, generating]);
+
   const handleGenerate = () => {
     if (DECK.length === 0) return;
     setGenerating(true);
@@ -416,7 +442,10 @@ export default function PosonCard({ onClose }: { onClose?: () => void }) {
     if (!generated || !currentCard) return;
     setSharingPlatform("download");
     try {
-      const blob = await captureCard();
+      let blob = preRenderedBlob;
+      if (!blob) {
+        blob = await captureCard();
+      }
       const link = document.createElement("a");
       link.download = `Poson-Greeting-${currentCard.template.id}.png`;
       link.href = URL.createObjectURL(blob);
@@ -435,8 +464,12 @@ export default function PosonCard({ onClose }: { onClose?: () => void }) {
     if (!currentCard) return;
     setSharingPlatform("native");
     try {
-      const blob = await captureCard();
-      const file = new File([blob], `Poson-Poya-${currentCard.template.id}.png`, { type: "image/png" });
+      let file = preRenderedFile;
+      let blob = preRenderedBlob;
+      if (!file || !blob) {
+        blob = await captureCard();
+        file = new File([blob], `Poson-Poya-${currentCard.template.id}.png`, { type: "image/png" });
+      }
 
       const isSi = lang === "si";
       const shareTitle = isSi ? "පොසොන් ආශිර්වාද සුබපැතුම් 🪷" : "Poson Poya Greetings 🪷";
