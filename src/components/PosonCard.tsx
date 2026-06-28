@@ -554,6 +554,7 @@ export default function PosonCard({ onClose }: { onClose?: () => void }) {
           gap: 12px;
           flex-direction: column;
         }
+      
         @media (min-width: 420px) {
           .primary-actions {
             flex-direction: row;
@@ -564,7 +565,7 @@ export default function PosonCard({ onClose }: { onClose?: () => void }) {
         @media (max-width: 480px) {
           .poson-backdrop {
             align-items: flex-end !important;
-            padding: 0 !important;
+            padding: 10px 20px !important;
           }
           .poson-modal {
             border-bottom-left-radius: 0 !important;
