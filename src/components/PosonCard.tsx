@@ -573,6 +573,7 @@ export default function PosonCard({ onClose }: { onClose?: () => void }) {
             margin-bottom: 0 !important;
             max-height: 96dvh !important;
             animation: slideUpMobile 0.4s cubic-bezier(.22,.68,0,1.15) both !important;
+            margin: 10px !important;
           }
         }
       `}</style>

@@ -25,17 +25,42 @@ const translations = {
     aboutTitle: "The Arrival of the Dhamma",
     aboutP1: (
       <>
-        <strong>Poson</strong>, also known as <strong>Poson Poya</strong>, is an annual festival held by Sri Lankan Buddhists celebrating the arrival of Buddhism in Sri Lanka in the 3rd century BC. The festival is the most important Poya (full moon) holiday of the year and the second most important Buddhist holiday of the year, being surpassed in importance only by Vesak. Poson is celebrated throughout the island, with the most important ceremonies of the festival being held in <strong style={{ color: "#f5c26b" }}>Anuradhapura</strong> and <strong style={{ color: "#f5c26b" }}>Mihintale</strong>. The festival is held in early June, coinciding with the June full moon.
+        <strong>Poson</strong>, also known as <strong>Poson Poya</strong>, is an
+        annual festival held by Sri Lankan Buddhists celebrating the arrival of
+        Buddhism in Sri Lanka in the 3rd century BC. The festival is the most
+        important Poya (full moon) holiday of the year and the second most
+        important Buddhist holiday of the year, being surpassed in importance
+        only by Vesak. Poson is celebrated throughout the island, with the most
+        important ceremonies of the festival being held in{" "}
+        <strong style={{ color: "#f5c26b" }}>Anuradhapura</strong> and{" "}
+        <strong style={{ color: "#f5c26b" }}>Mihintale</strong>. The festival is
+        held in early June, coinciding with the June full moon.
       </>
     ),
     aboutP2: (
       <>
-        Poson is celebrated to commemorate the introduction of Buddhism to Sri Lanka by <strong>Mahinda Thero</strong> in 236 BC. The focal point of the religious festival is the Buddhist monastic complex on the mountain of <strong style={{ color: "#f5c26b" }}>Mihintale</strong>, where Arahath Mahinda Thero preached Buddhism to King Devanampiyatissa. Celebrations are also centered around Buddhist sites in Anuradhapura, which was one of the first cities in Sri Lanka to convert to Buddhism. During Poson, these locations attract thousands of pilgrims clad in white who worship at these spiritual locales and spend hours in quiet contemplation to honor the traditions of Buddhism.
+        Poson is celebrated to commemorate the introduction of Buddhism to Sri
+        Lanka by <strong>Mahinda Thero</strong> in 236 BC. The focal point of
+        the religious festival is the Buddhist monastic complex on the mountain
+        of <strong style={{ color: "#f5c26b" }}>Mihintale</strong>, where
+        Arahath Mahinda Thero preached Buddhism to King Devanampiyatissa.
+        Celebrations are also centered around Buddhist sites in Anuradhapura,
+        which was one of the first cities in Sri Lanka to convert to Buddhism.
+        During Poson, these locations attract thousands of pilgrims clad in
+        white who worship at these spiritual locales and spend hours in quiet
+        contemplation to honor the traditions of Buddhism.
       </>
     ),
     aboutP3: (
       <>
-        The festival is celebrated island-wide, featuring huge electronically lit <strong>Pandols</strong> showcased in various city centres, and <strong>dansals</strong> (free food stalls organized by communities). Houses are decorated with lanterns and lights to commemorate the day in a festive manner. The celebrations continue for five days to a week starting from the full moon poya day. In respect of the spiritual nature of the festival, some parts of Sri Lanka prohibit the sale of meat and alcohol during this period.
+        The festival is celebrated island-wide, featuring huge electronically
+        lit <strong>Pandols</strong> showcased in various city centres, and{" "}
+        <strong>dansals</strong> (free food stalls organized by communities).
+        Houses are decorated with lanterns and lights to commemorate the day in
+        a festive manner. The celebrations continue for five days to a week
+        starting from the full moon poya day. In respect of the spiritual nature
+        of the festival, some parts of Sri Lanka prohibit the sale of meat and
+        alcohol during this period.
       </>
     ),
     stat1Num: "236 BCE",
@@ -49,24 +74,70 @@ const translations = {
     sigLabel: "The Five Buddhist Flag Colors",
     sigTitle: "Symbols of the Poya",
     sig: [
-      { color: "#1a4fd4", icon: "☸️", title: "Nīla — Blue", desc: "The compassionate, loving kindness in the Buddha's aura, representing the purity of the Dhamma." },
-      { color: "#e6b800", icon: "🌕", title: "Pīta — Gold", desc: "The middle path free of extremes — the golden hue of the full Poya moon blessing Sri Lanka." },
-      { color: "#e63c00", icon: "🔥", title: "Lohita — Red", desc: "The blessing of achievement, wisdom, virtue and fortune on the sacred Poson night." },
-      { color: "#d4849a", icon: "🪷", title: "Odāta — White", desc: "The purity of the Dhamma — devotees don white on Poya day in observance and reverence." },
-      { color: "#e87c2a", icon: "🏮", title: "Mañjeṭṭha — Saffron", desc: "The essence of these colors combined, representing the all-encompassing radiance of the Buddha." },
+      {
+        color: "#1a4fd4",
+        icon: "☸️",
+        title: "Nīla — Blue",
+        desc: "The compassionate, loving kindness in the Buddha's aura, representing the purity of the Dhamma.",
+      },
+      {
+        color: "#e6b800",
+        icon: "🌕",
+        title: "Pīta — Gold",
+        desc: "The middle path free of extremes — the golden hue of the full Poya moon blessing Sri Lanka.",
+      },
+      {
+        color: "#e63c00",
+        icon: "🔥",
+        title: "Lohita — Red",
+        desc: "The blessing of achievement, wisdom, virtue and fortune on the sacred Poson night.",
+      },
+      {
+        color: "#d4849a",
+        icon: "🪷",
+        title: "Odāta — White",
+        desc: "The purity of the Dhamma — devotees don white on Poya day in observance and reverence.",
+      },
+      {
+        color: "#e87c2a",
+        icon: "🏮",
+        title: "Mañjeṭṭha — Saffron",
+        desc: "The essence of these colors combined, representing the all-encompassing radiance of the Buddha.",
+      },
     ],
 
     // Observe section
     obsLabel: "Sacred Observances",
     obsTitle: "How Poson is Observed",
     obs: [
-      { time: "Dawn", act: "Sil Observance", desc: "Devotees take eight precepts (Attha Sila) at their local temple, dedicating the full moon day to meditation, chanting and Dhamma study.", color: "#8da1cd" },
-      { time: "Day", act: "Dansal & Almsgiving", desc: "Temporary pavilions line streets across the country, offering free food, drinks and merit to all passersby — an act of collective dāna.", color: "#f5c26b" },
-      { time: "Dusk", act: "Atapattam Lanterns", desc: "Families light and hang the iconic octagonal paper lanterns in Buddhist flag colors, their amber glow painting every street and garden.", color: "#c9923a" },
-      { time: "Night", act: "Pilgrimage to Mihintale", desc: "Tens of thousands of white-clad pilgrims ascend the 1818 granite steps of Mihintale by moonlight, reenacting Mahinda's sacred descent.", color: "#d4849a" },
+      {
+        time: "Dawn",
+        act: "Sil Observance",
+        desc: "Devotees take eight precepts (Attha Sila) at their local temple, dedicating the full moon day to meditation, chanting and Dhamma study.",
+        color: "#8da1cd",
+      },
+      {
+        time: "Day",
+        act: "Dansal & Almsgiving",
+        desc: "Temporary pavilions line streets across the country, offering free food, drinks and merit to all passersby — an act of collective dāna.",
+        color: "#f5c26b",
+      },
+      {
+        time: "Dusk",
+        act: "Atapattam Lanterns",
+        desc: "Families light and hang the iconic octagonal paper lanterns in Buddhist flag colors, their amber glow painting every street and garden.",
+        color: "#c9923a",
+      },
+      {
+        time: "Night",
+        act: "Pilgrimage to Mihintale",
+        desc: "Tens of thousands of white-clad pilgrims ascend the 1818 granite steps of Mihintale by moonlight, reenacting Mahinda's sacred descent.",
+        color: "#d4849a",
+      },
     ],
     obsShareTitle: "Spread the Dhamma 🪷",
-    obsShareDesc: "Send a blessed Poson greeting card to your family and friends.",
+    obsShareDesc:
+      "Send a blessed Poson greeting card to your family and friends.",
     obsShareBtn: "Share a Card",
 
     // Footer
@@ -75,7 +146,8 @@ const translations = {
     // Card modal translation strings
     cardTitle: "Poson Poya Greeting Card",
     cardLoading: "Loading cards…",
-    cardStats: "{templates} images · {combinations} combinations · share the Dhamma's light",
+    cardStats:
+      "{templates} images · {combinations} combinations · share the Dhamma's light",
     cardPlaceholder: "Your card will appear here",
     cardIndexInfo: "Card {index} · {label} · {combinations} combinations",
     cardGenerateBtn: "✨ Generate your Poson card",
@@ -88,7 +160,8 @@ const translations = {
     cardSharing: "Sharing…",
     cardCopyLinkBtn: "Copy link",
     cardCopiedBtn: "Copied!",
-    cardTip: "💡 Use \"Share image\" to share directly, or copy the link to send it to anyone.",
+    cardTip:
+      '💡 Use "Share image" to share directly, or copy the link to send it to anyone.',
     cardDownloadedSuccess: "Card downloaded successfully!",
     cardDownloadFailed: "Download failed. Please try again.",
     cardSharedSuccess: "Shared successfully!",
@@ -146,24 +219,50 @@ const translations = {
     // Hero
     heroTitle: "පින්බර පොසොන් මංගල්‍යයක් වේවා!",
     heroSubtitle: "පොසොන් පොහොය දිනය! ආලෝකය රකිමු 🙏",
-    heroScrollHint: "පහතට අනුරූ කරන්න",
+    heroScrollHint: "ඉතිහාසය බලන්න",
 
     // About section
     aboutLabel: "ශ්‍රී ලංකා ධර්ම ඉතිහාසය",
     aboutTitle: "ධර්මය ලංකාවට පැමිණීම",
     aboutP1: (
       <>
-        <strong>පොසොන් පොහොය</strong> ලෙසද හැඳින්වෙන පොසොන් උත්සවය, ක්‍රි.පූ. 3 වන සියවසේදී ශ්‍රී ලංකාවට බුදුදහම පැමිණීම නිමිත්තෙන් ශ්‍රී ලාංකික බෞද්ධයන් විසින් පවත්වනු ලබන වාර්ෂික උත්සවයකි. මෙම උත්සවය වෙසක් උත්සවයට පමණක් දෙවැනි වන, වසරේ වඩාත්ම වැදගත් පුන් පොහෝ දිනය වන අතර වසරේ දෙවන වැදගත්ම බෞද්ධ උත්සවය වේ. දිවයින පුරා පොසොන් උත්සවය සමරනු ලබන අතර, මෙහි වඩාත්ම වැදගත් ආගමික වතාවත් <strong style={{ color: "#f5c26b" }}>අනුරාධපුරය</strong> සහ <strong style={{ color: "#f5c26b" }}>මිහින්තලය</strong> කේන්ද්‍ර කරගනිමින් පැවැත්වේ. ජූනි මාසයේ පුන් පොහෝ දිනයට සමගාමීව ජූනි මස මුල් භාගයේදී මෙම උත්සවය පැවැත්වේ.
+        <strong>පොසොන් පොහොය</strong> ලෙසද හැඳින්වෙන පොසොන් උත්සවය, ක්‍රි.පූ. 3
+        වන සියවසේදී ශ්‍රී ලංකාවට බුදුදහම පැමිණීම නිමිත්තෙන් ශ්‍රී ලාංකික
+        බෞද්ධයන් විසින් පවත්වනු ලබන වාර්ෂික උත්සවයකි. මෙම උත්සවය වෙසක් උත්සවයට
+        පමණක් දෙවැනි වන, වසරේ වඩාත්ම වැදගත් පුන් පොහෝ දිනය වන අතර වසරේ දෙවන
+        වැදගත්ම බෞද්ධ උත්සවය වේ. දිවයින පුරා පොසොන් උත්සවය සමරනු ලබන අතර, මෙහි
+        වඩාත්ම වැදගත් ආගමික වතාවත්{" "}
+        <strong style={{ color: "#f5c26b" }}>අනුරාධපුරය</strong> සහ{" "}
+        <strong style={{ color: "#f5c26b" }}>මිහින්තලය</strong> කේන්ද්‍ර
+        කරගනිමින් පැවැත්වේ. ජූනි මාසයේ පුන් පොහෝ දිනයට සමගාමීව ජූනි මස මුල්
+        භාගයේදී මෙම උත්සවය පැවැත්වේ.
       </>
     ),
     aboutP2: (
       <>
-        ක්‍රි.පූ. 236 දී <strong>මිහිඳු මහ රහතන් වහන්සේ</strong> විසින් ශ්‍රී ලංකාවට බුදුදහම හඳුන්වා දීම සිහිපත් කිරීම සඳහා පොසොන් උත්සවය සමරනු ලැබේ. මෙම ආගමික උත්සවයේ කේන්ද්‍රස්ථානය වන්නේ <strong style={{ color: "#f5c26b" }}>මිහින්තල</strong> කඳු මුදුනේ පිහිටි බෞද්ධ විහාර සංකීර්ණය වන අතර, එහිදී අරහත් මිහිඳු මහ රහතන් වහන්සේ ශ්‍රී ලංකාවේ එවකට රජ කළ දේවානම්පියතිස්ස රජතුමාට ධර්මය දේශනා කළහ. ශ්‍රී ලංකාවේ බුදුදහම වැළඳගත් මුල්ම නගරවලින් එකක් වන අනුරාධපුරයේ පිහිටි පූජනීය බෞද්ධ සිද්ධස්ථාන කේන්ද්‍ර කරගනිමින් ද සැමරුම් පැවැත්වේ. පොසොන් සමයේදී මෙම ස්ථාන ද්විත්වය වෙත ශ්‍රී ලංකාව පුරා වෙසෙන දහස් සංඛ්‍යාත වන්දනාකරුවෝ සුදු පැහැති වතින් සැරසී පැමිණ වන්දනාමාන කරන අතර බුදුදහමේ උතුම් ප්‍රතිපත්තිවලට ගරු කරමින් පැය ගණනාවක් නිහඬව භාවනාවෙහි නිරත වෙති.
+        ක්‍රි.පූ. 236 දී <strong>මිහිඳු මහ රහතන් වහන්සේ</strong> විසින් ශ්‍රී
+        ලංකාවට බුදුදහම හඳුන්වා දීම සිහිපත් කිරීම සඳහා පොසොන් උත්සවය සමරනු ලැබේ.
+        මෙම ආගමික උත්සවයේ කේන්ද්‍රස්ථානය වන්නේ{" "}
+        <strong style={{ color: "#f5c26b" }}>මිහින්තල</strong> කඳු මුදුනේ පිහිටි
+        බෞද්ධ විහාර සංකීර්ණය වන අතර, එහිදී අරහත් මිහිඳු මහ රහතන් වහන්සේ ශ්‍රී
+        ලංකාවේ එවකට රජ කළ දේවානම්පියතිස්ස රජතුමාට ධර්මය දේශනා කළහ. ශ්‍රී ලංකාවේ
+        බුදුදහම වැළඳගත් මුල්ම නගරවලින් එකක් වන අනුරාධපුරයේ පිහිටි පූජනීය බෞද්ධ
+        සිද්ධස්ථාන කේන්ද්‍ර කරගනිමින් ද සැමරුම් පැවැත්වේ. පොසොන් සමයේදී මෙම
+        ස්ථාන ද්විත්වය වෙත ශ්‍රී ලංකාව පුරා වෙසෙන දහස් සංඛ්‍යාත වන්දනාකරුවෝ සුදු
+        පැහැති වතින් සැරසී පැමිණ වන්දනාමාන කරන අතර බුදුදහමේ උතුම් ප්‍රතිපත්තිවලට
+        ගරු කරමින් පැය ගණනාවක් නිහඬව භාවනාවෙහි නිරත වෙති.
       </>
     ),
     aboutP3: (
       <>
-        පොසොන් උත්සවය දිවයින පුරා සමරනු ලබන අතර, විවිධ නගර මධ්‍යස්ථානවල විදුලි ආලෝකයෙන් විචිත්‍රවත් වූ දැවැන්ත <strong>තොරණ</strong> ප්‍රදර්ශනය කෙරේ. එමෙන්ම විවිධ ප්‍රජාවන් විසින් සංවිධානය කරනු ලබන <strong>දන්සැල්</strong> (නොමිලේ ආහාර පාන ලබා දෙන කුටි) ක්‍රියාත්මක වේ. උත්සව ශ්‍රීයෙන් දිනය සැමරීම සඳහා නිවාස පහන් සහ කූඩුවලින් අලංකාර කෙරේ. පුර පසළොස්වක පොහොය දින සිට දින 5ක් හෝ සතියක් පුරා මෙම සැමරුම් පැවැත්වේ. උත්සවය අතරතුර ශ්‍රී ලංකාවේ සමහර ප්‍රදේශවල මස් පිණිස සතුන් මැරීම, මස් විකිණීම සහ මත්පැන් අලෙවි කිරීම සපුරා තහනම් වේ.
+        පොසොන් උත්සවය දිවයින පුරා සමරනු ලබන අතර, විවිධ නගර මධ්‍යස්ථානවල විදුලි
+        ආලෝකයෙන් විචිත්‍රවත් වූ දැවැන්ත <strong>තොරණ</strong> ප්‍රදර්ශනය කෙරේ.
+        එමෙන්ම විවිධ ප්‍රජාවන් විසින් සංවිධානය කරනු ලබන <strong>දන්සැල්</strong>{" "}
+        (නොමිලේ ආහාර පාන ලබා දෙන කුටි) ක්‍රියාත්මක වේ. උත්සව ශ්‍රීයෙන් දිනය
+        සැමරීම සඳහා නිවාස පහන් සහ කූඩුවලින් අලංකාර කෙරේ. පුර පසළොස්වක පොහොය දින
+        සිට දින 5ක් හෝ සතියක් පුරා මෙම සැමරුම් පැවැත්වේ. උත්සවය අතරතුර ශ්‍රී
+        ලංකාවේ සමහර ප්‍රදේශවල මස් පිණිස සතුන් මැරීම, මස් විකිණීම සහ මත්පැන්
+        අලෙවි කිරීම සපුරා තහනම් වේ.
       </>
     ),
     stat1Num: "ක්‍රි.පූ. 236",
@@ -177,21 +276,66 @@ const translations = {
     sigLabel: "බෞද්ධ කොඩියේ වර්ණ පහ",
     sigTitle: "පොහොයේ සංකේත",
     sig: [
-      { color: "#1a4fd4", icon: "☸️", title: "නීල — නිල්", desc: "බුද්ධ රශ්මිය නියෝජනය කරන කරුණා, මෛත්‍රී, ධර්ම ශුද්ධතාවය." },
-      { color: "#e6b800", icon: "🌕", title: "පීත — රන්", desc: "ශ්‍රේෂ්ඨ මධ්‍යම ප්‍රතිපදාව — ශ්‍රී ලංකාව ආශිර්වාද කරන පොහොය සඳ රන් දීප්තිය." },
-      { color: "#e63c00", icon: "🔥", title: "ලෝහිත — රතු", desc: "ශ්‍රේෂ්ඨ පොසොන් රාත්‍රියේ ගුණ, ප්‍රඥා, ශ්‍රේෂ්ඨ ජය." },
-      { color: "#d4849a", icon: "🪷", title: "ඔදාත — සුදු", desc: "ධර්ම ශුද්ධතාවය — පොහොය දිනයේ දෙව් ජනයා සුදු ඇදුම් ඇඳ ගෙවීම් කරයි." },
-      { color: "#e87c2a", icon: "🏮", title: "මඤ්ජෙෂ්ඨ — කහ", desc: "ඉහත වර්ණ සියල්ලෙහි සාරය — බුදු රජාණන්ගේ සර්වබලගතු ශ්‍රේෂ්ඨ ආලෝකය." },
+      {
+        color: "#1a4fd4",
+        icon: "☸️",
+        title: "නීල — නිල්",
+        desc: "බුද්ධ රශ්මිය නියෝජනය කරන කරුණා, මෛත්‍රී, ධර්ම ශුද්ධතාවය.",
+      },
+      {
+        color: "#e6b800",
+        icon: "🌕",
+        title: "පීත — රන්",
+        desc: "ශ්‍රේෂ්ඨ මධ්‍යම ප්‍රතිපදාව — ශ්‍රී ලංකාව ආශිර්වාද කරන පොහොය සඳ රන් දීප්තිය.",
+      },
+      {
+        color: "#e63c00",
+        icon: "🔥",
+        title: "ලෝහිත — රතු",
+        desc: "ශ්‍රේෂ්ඨ පොසොන් රාත්‍රියේ ගුණ, ප්‍රඥා, ශ්‍රේෂ්ඨ ජය.",
+      },
+      {
+        color: "#d4849a",
+        icon: "🪷",
+        title: "ඔදාත — සුදු",
+        desc: "ධර්ම ශුද්ධතාවය — පොහොය දිනයේ දෙව් ජනයා සුදු ඇදුම් ඇඳ ගෙවීම් කරයි.",
+      },
+      {
+        color: "#e87c2a",
+        icon: "🏮",
+        title: "මඤ්ජෙෂ්ඨ — කහ",
+        desc: "ඉහත වර්ණ සියල්ලෙහි සාරය — බුදු රජාණන්ගේ සර්වබලගතු ශ්‍රේෂ්ඨ ආලෝකය.",
+      },
     ],
 
     // Observe section
     obsLabel: "ශුද්ධ ආගමික ක්‍රියාමාර්ග",
     obsTitle: "පොසොන් ගෙවීම",
     obs: [
-      { time: "උදෑසන", act: "සිල් ගෙවීම", desc: "දෙව් ජනයා ඔවුන්ගේ දේවාලයේ දී අෂ්ට සිල් ගෙන, සමාධිය, ගාථා කීම, ධර්ම අධ්‍යයනය සඳහා දවස කැප කරයි.", color: "#8da1cd" },
-      { time: "දහවල්", act: "දාන සාල් හා ආහාර දීම", desc: "රටපුරා ජනතාවට නොමිලේ ආහාරපාන, ජලය, හා කුසල් ලබා දෙමින් ජනයා ගොනු කරන 'දාන' ශාලා පිහිටු වෙයි.", color: "#f5c26b" },
-      { time: "සඳාව", act: "අෂ්ටාපතම් ලාම්පු", desc: "පවුල් බෞද්ධ කොඩි වර්ණ ලාම්පු දල්වා, ඒවා ඇසිරූ ලෙස රාත්‍රිය ආලෝකමත් කරයි.", color: "#c9923a" },
-      { time: "රාත්‍රිය", act: "මිහිඳු ගල වැඳීම", desc: "දස දහස් ගණනක් සුදු ඇදුම් ගිය ජනතාව සඳ ආලෝකයෙන් මිහිඳු ගල නගා, රහතන් වහන්සේගේ ලංකාගමනය නැවත ස්ඵරණය කරති.", color: "#d4849a" },
+      {
+        time: "උදෑසන",
+        act: "සිල් ගෙවීම",
+        desc: "දෙව් ජනයා ඔවුන්ගේ දේවාලයේ දී අෂ්ට සිල් ගෙන, සමාධිය, ගාථා කීම, ධර්ම අධ්‍යයනය සඳහා දවස කැප කරයි.",
+        color: "#8da1cd",
+      },
+      {
+        time: "දහවල්",
+        act: "දාන සාල් හා ආහාර දීම",
+        desc: "රටපුරා ජනතාවට නොමිලේ ආහාරපාන, ජලය, හා කුසල් ලබා දෙමින් ජනයා ගොනු කරන 'දාන' ශාලා පිහිටු වෙයි.",
+        color: "#f5c26b",
+      },
+      {
+        time: "සඳාව",
+        act: "අෂ්ටාපතම් ලාම්පු",
+        desc: "පවුල් බෞද්ධ කොඩි වර්ණ ලාම්පු දල්වා, ඒවා ඇසිරූ ලෙස රාත්‍රිය ආලෝකමත් කරයි.",
+        color: "#c9923a",
+      },
+      {
+        time: "රාත්‍රිය",
+        act: "මිහිඳු ගල වැඳීම",
+        desc: "දස දහස් ගණනක් සුදු ඇදුම් ගිය ජනතාව සඳ ආලෝකයෙන් මිහිඳු ගල නගා, රහතන් වහන්සේගේ ලංකාගමනය නැවත ස්ඵරණය කරති.",
+        color: "#d4849a",
+      },
     ],
     obsShareTitle: "ධර්මය බෙදා ගන්න 🪷",
     obsShareDesc: "ඔබේ පවුලට හා මිතුරන්ට ආශිර්වාද පොසොන් කාඩ්පතක් යවන්න.",
@@ -203,7 +347,8 @@ const translations = {
     // Card modal translation strings
     cardTitle: "පොසොන් ආශිර්වාද කාඩ්පත",
     cardLoading: "කාඩ්පත් පූරණය වෙමින් පවතී...",
-    cardStats: "පින්තූර {templates} ක් · සංයෝජන {combinations} ක් · ශ්‍රී සද්ධර්මයේ ආලෝකය බෙදා හරින්න",
+    cardStats:
+      "පින්තූර {templates} ක් · සංයෝජන {combinations} ක් · ශ්‍රී සද්ධර්මයේ ආලෝකය බෙදා හරින්න",
     cardPlaceholder: "ඔබේ ආශිර්වාද කාඩ්පත මෙහි දර්ශනය වනු ඇත",
     cardIndexInfo: "කාඩ්පත {index} · {label} · සංයෝජන {combinations} ක්",
     cardGenerateBtn: "✨ ඔබේ පොසොන් ආශිර්වාද කාඩ්පත සාදා ගන්න",
@@ -216,12 +361,14 @@ const translations = {
     cardSharing: "බෙදා ගනිමින්...",
     cardCopyLinkBtn: "ලින්ක් එක කොපි කරන්න",
     cardCopiedBtn: "කොපි කෙරුණා!",
-    cardTip: "💡 සෘජුවම බෙදා ගැනීමට \"රූපය බෙදා ගන්න\" ක්ලික් කරන්න, නැතහොත් ඕනෑම අයෙකුට යැවීමට ලින්ක් එක කොපි කරන්න.",
+    cardTip:
+      '💡 සෘජුවම බෙදා ගැනීමට "රූපය බෙදා ගන්න" ක්ලික් කරන්න, නැතහොත් ඕනෑම අයෙකුට යැවීමට ලින්ක් එක කොපි කරන්න.',
     cardDownloadedSuccess: "කාඩ්පත සාර්ථකව බාගත කරන ලදී!",
     cardDownloadFailed: "බාගත කිරීම අසාර්ථක විය. කරුණාකර නැවත උත්සාහ කරන්න.",
     cardSharedSuccess: "සාර්ථකව බෙදා ගන්නා ලදී!",
     cardShareSaved: "රූපය සුරැකිණි — ඔබගේ ගොනු තුලින් එය බෙදා ගන්න!",
-    cardShareFailed: "බෙදා ගැනීම අසාර්ථක විය. කරුණාකර බාගත කර ගැනීමට උත්සාහ කරන්න.",
+    cardShareFailed:
+      "බෙදා ගැනීම අසාර්ථක විය. කරුණාකර බාගත කර ගැනීමට උත්සාහ කරන්න.",
     cardCopiedSuccess: "ලින්ක් එක සාර්ථකව කොපි කරන ලදී!",
     cardFooter: "පොසොන් පොහොය · ශ්‍රී ලංකා · සාදු සාදු සාදු 🙏",
 
@@ -331,8 +478,22 @@ const DharmaWheel = ({
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
   >
-    <circle cx="32" cy="32" r="28" stroke={color} strokeWidth="2.5" fill="none" />
-    <circle cx="32" cy="32" r="6" stroke={color} strokeWidth="2.5" fill="none" />
+    <circle
+      cx="32"
+      cy="32"
+      r="28"
+      stroke={color}
+      strokeWidth="2.5"
+      fill="none"
+    />
+    <circle
+      cx="32"
+      cy="32"
+      r="6"
+      stroke={color}
+      strokeWidth="2.5"
+      fill="none"
+    />
     {[0, 45, 90, 135, 180, 225, 270, 315].map((deg, i) => {
       const rad = (deg * Math.PI) / 180;
       const x1 = 32 + 6 * Math.cos(rad);
@@ -342,8 +503,13 @@ const DharmaWheel = ({
       return (
         <line
           key={i}
-          x1={x1} y1={y1} x2={x2} y2={y2}
-          stroke={color} strokeWidth="2" strokeLinecap="round"
+          x1={x1}
+          y1={y1}
+          x2={x2}
+          y2={y2}
+          stroke={color}
+          strokeWidth="2"
+          strokeLinecap="round"
         />
       );
     })}
@@ -352,7 +518,15 @@ const DharmaWheel = ({
 
 // ─── Buddhist Flag Colors Bar ─────────────────────────────────────────────────
 const FlagStripes = () => (
-  <div style={{ display: "flex", width: "100%", height: "4px", borderRadius: "2px", overflow: "hidden" }}>
+  <div
+    style={{
+      display: "flex",
+      width: "100%",
+      height: "4px",
+      borderRadius: "2px",
+      overflow: "hidden",
+    }}
+  >
     {["#1a4fd4", "#e6b800", "#e63c00", "#ffffff", "#e87c2a"].map((c, i) => (
       <div key={i} style={{ flex: 1, background: c }} />
     ))}
@@ -363,11 +537,45 @@ const FlagStripes = () => (
 const LanternIcon = ({ color = "#f5c26b" }: { color?: string }) => (
   <svg width="18" height="28" viewBox="0 0 18 28" fill="none">
     <rect x="6" y="0" width="6" height="3" rx="1" fill={color} opacity="0.7" />
-    <rect x="2" y="3" width="14" height="18" rx="5" fill={color} opacity="0.5" stroke={color} strokeWidth="1.5" />
+    <rect
+      x="2"
+      y="3"
+      width="14"
+      height="18"
+      rx="5"
+      fill={color}
+      opacity="0.5"
+      stroke={color}
+      strokeWidth="1.5"
+    />
     <ellipse cx="9" cy="12" rx="4" ry="5" fill={color} opacity="0.35" />
-    <line x1="7" y1="21" x2="6" y2="28" stroke={color} strokeWidth="1.2" strokeLinecap="round" />
-    <line x1="9" y1="21" x2="9" y2="28" stroke={color} strokeWidth="1.2" strokeLinecap="round" />
-    <line x1="11" y1="21" x2="12" y2="28" stroke={color} strokeWidth="1.2" strokeLinecap="round" />
+    <line
+      x1="7"
+      y1="21"
+      x2="6"
+      y2="28"
+      stroke={color}
+      strokeWidth="1.2"
+      strokeLinecap="round"
+    />
+    <line
+      x1="9"
+      y1="21"
+      x2="9"
+      y2="28"
+      stroke={color}
+      strokeWidth="1.2"
+      strokeLinecap="round"
+    />
+    <line
+      x1="11"
+      y1="21"
+      x2="12"
+      y2="28"
+      stroke={color}
+      strokeWidth="1.2"
+      strokeLinecap="round"
+    />
   </svg>
 );
 
@@ -418,15 +626,15 @@ const HamburgerBtn = ({
           background: "#f5c26b",
           borderRadius: 2,
           transformOrigin: "center",
-          transition: "transform 0.3s cubic-bezier(.22,.68,0,1.2), opacity 0.2s",
-          transform:
-            open
-              ? i === 0
-                ? "translateY(6.5px) rotate(45deg)"
-                : i === 2
+          transition:
+            "transform 0.3s cubic-bezier(.22,.68,0,1.2), opacity 0.2s",
+          transform: open
+            ? i === 0
+              ? "translateY(6.5px) rotate(45deg)"
+              : i === 2
                 ? "translateY(-6.5px) rotate(-45deg)"
                 : "scaleX(0)"
-              : "none",
+            : "none",
           opacity: open && i === 1 ? 0 : 1,
         }}
       />
@@ -468,7 +676,15 @@ const MobileMenu = ({
         pointerEvents: open ? "auto" : "none",
       }}
     >
-      <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "3px" }}>
+      <div
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          height: "3px",
+        }}
+      >
         <FlagStripes />
       </div>
 
@@ -484,8 +700,16 @@ const MobileMenu = ({
         <DharmaWheel size={48} color="#c9923a55" />
       </div>
 
-      <nav style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8, width: "100%", maxWidth: 320 }}>
-
+      <nav
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: 8,
+          width: "100%",
+          maxWidth: 320,
+        }}
+      >
         <div
           style={{
             opacity: open ? 1 : 0,
@@ -500,7 +724,10 @@ const MobileMenu = ({
         </div>
 
         <button
-          onClick={() => { onClose(); onShareCard(); }}
+          onClick={() => {
+            onClose();
+            onShareCard();
+          }}
           style={{
             display: "flex",
             alignItems: "center",
@@ -512,7 +739,8 @@ const MobileMenu = ({
             background: "rgba(212,132,154,0.1)",
             border: "1px solid rgba(212,132,154,0.4)",
             color: "#d4849a",
-            fontFamily: lang === "si" ? "'Noto Serif Sinhala', serif" : "Cinzel",
+            fontFamily:
+              lang === "si" ? "'Noto Serif Sinhala', serif" : "Cinzel",
             fontWeight: 700,
             fontSize: "1rem",
             letterSpacing: lang === "si" ? "0.02em" : "0.12em",
@@ -522,8 +750,12 @@ const MobileMenu = ({
             transform: open ? "translateY(0)" : "translateY(16px)",
             transition: `opacity 0.35s 0.45s, transform 0.35s 0.45s, background 0.2s`,
           }}
-          onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(212,132,154,0.18)"; }}
-          onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(212,132,154,0.1)"; }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = "rgba(212,132,154,0.18)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = "rgba(212,132,154,0.1)";
+          }}
         >
           <span style={{ fontSize: 16 }}>🪷</span>
           {t.navShareCardFull}
@@ -541,7 +773,11 @@ const MobileMenu = ({
         }}
       >
         {[0, 1, 2].map((i) => (
-          <div key={i} className="lantern-float" style={{ animationDelay: `${i * -1.3}s` }}>
+          <div
+            key={i}
+            className="lantern-float"
+            style={{ animationDelay: `${i * -1.3}s` }}
+          >
             <LanternIcon color={["#f5c26b", "#d4849a", "#8da1cd"][i]} />
           </div>
         ))}
@@ -703,7 +939,6 @@ export default function App() {
 
   const heroOpacity = Math.max(0, 1 - scrollY / 300);
 
-
   return (
     <LangContext.Provider value={{ lang, toggle, t }}>
       <>
@@ -849,7 +1084,9 @@ export default function App() {
         </div>
 
         {/* ── Share Card Modal ── */}
-        {showShareCard && <PosonCardShare onClose={() => setShowShareCard(false)} />}
+        {showShareCard && (
+          <PosonCardShare onClose={() => setShowShareCard(false)} />
+        )}
 
         {/* ── Mobile Menu Overlay ── */}
         <MobileMenu
@@ -865,20 +1102,29 @@ export default function App() {
             className="glass"
             style={{
               position: "fixed",
-              top: 0, left: 0, right: 0,
+              top: 0,
+              left: 0,
+              right: 0,
               zIndex: 100,
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
               padding: "14px 24px",
-              borderTop: "none", borderLeft: "none", borderRight: "none",
+              borderTop: "none",
+              borderLeft: "none",
+              borderRight: "none",
               borderBottom: "1px solid rgba(201,146,58,0.18)",
               transition: "background 0.4s",
             }}
           >
             {/* Logo */}
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <div style={{ animation: "spinSlow 20s linear infinite", display: "flex" }}>
+              <div
+                style={{
+                  animation: "spinSlow 20s linear infinite",
+                  display: "flex",
+                }}
+              >
                 <DharmaWheel size={26} color="#c9923a" />
               </div>
               <span
@@ -896,9 +1142,11 @@ export default function App() {
               </span>
             </div>
 
-
             {/* Desktop right actions */}
-            <div className="nav-desktop" style={{ gap: 8, alignItems: "center" }}>
+            <div
+              className="nav-desktop"
+              style={{ gap: 8, alignItems: "center" }}
+            >
               <LangToggle />
 
               <button
@@ -934,14 +1182,21 @@ export default function App() {
               </button>
 
               {[0, 1, 2].map((i) => (
-                <div key={i} className="lantern-float" style={{ display: "flex", animationDelay: `${i * -1.3}s` }}>
+                <div
+                  key={i}
+                  className="lantern-float"
+                  style={{ display: "flex", animationDelay: `${i * -1.3}s` }}
+                >
                   <LanternIcon color={["#f5c26b", "#d4849a", "#8da1cd"][i]} />
                 </div>
               ))}
             </div>
 
             {/* Mobile right: lantern + hamburger */}
-            <div className="nav-hamburger" style={{ alignItems: "center", gap: 12 }}>
+            <div
+              className="nav-hamburger"
+              style={{ alignItems: "center", gap: 12 }}
+            >
               <div className="lantern-float" style={{ display: "flex" }}>
                 <LanternIcon color="#f5c26b" />
               </div>
@@ -973,12 +1228,14 @@ export default function App() {
               style={{
                 fontFamily: heroFont,
                 fontWeight: 900,
-                fontSize: lang === "si"
-                  ? "clamp(2rem, 5.5vw, 4.2rem)"
-                  : "clamp(2.2rem, 6vw, 4.8rem)",
+                fontSize:
+                  lang === "si"
+                    ? "clamp(2rem, 5.5vw, 4.2rem)"
+                    : "clamp(2.2rem, 6vw, 4.8rem)",
                 lineHeight: 1.35,
                 letterSpacing: lang === "si" ? "0.01em" : "0.02em",
-                textShadow: "0 0 15px rgba(245, 194, 107, 0.65), 0 0 30px rgba(245, 194, 107, 0.25)",
+                textShadow:
+                  "0 0 15px rgba(245, 194, 107, 0.65), 0 0 30px rgba(245, 194, 107, 0.25)",
                 color: "#f5c26b",
                 marginBottom: 16,
                 maxWidth: "960px",
@@ -1009,10 +1266,12 @@ export default function App() {
               onClick={() => setShowShareCard(true)}
               className="fade-up delay-2 share-card-btn"
               style={{
-                background: "linear-gradient(135deg, #d4849a 0%, #b25870 100%)",
-                border: "1px solid rgba(255, 255, 255, 0.15)",
+                background: "rgba(212, 132, 154, 0.12)",
+                backdropFilter: "blur(18px) saturate(1.4)",
+                WebkitBackdropFilter: "blur(18px) saturate(1.4)",
+                border: "1px solid rgba(212, 132, 154, 0.4)",
                 borderRadius: 99,
-                color: "#ffffff",
+                color: "#f0ede0",
                 fontFamily: headingFont,
                 fontSize: "clamp(13px, 3.5vw, 16px)",
                 fontWeight: 700,
@@ -1027,23 +1286,82 @@ export default function App() {
                 gap: 12,
                 whiteSpace: "nowrap",
                 pointerEvents: "auto",
-                boxShadow: "0 10px 30px rgba(212, 132, 154, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.2)",
+                boxShadow:
+                  "0 8px 32px rgba(212, 132, 154, 0.2), inset 0 1px 0 rgba(255,255,255,0.08)",
                 position: "relative",
                 zIndex: 1,
                 marginBottom: 40,
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = "translateY(-3px)";
-                e.currentTarget.style.boxShadow = "0 15px 35px rgba(212, 132, 154, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.3)";
+                e.currentTarget.style.background = "rgba(212, 132, 154, 0.22)";
+                e.currentTarget.style.borderColor = "rgba(212, 132, 154, 0.65)";
+                e.currentTarget.style.boxShadow =
+                  "0 12px 40px rgba(212, 132, 154, 0.35), inset 0 1px 0 rgba(255,255,255,0.12)";
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = "none";
-                e.currentTarget.style.boxShadow = "0 10px 30px rgba(212, 132, 154, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.2)";
+                e.currentTarget.style.background = "rgba(212, 132, 154, 0.12)";
+                e.currentTarget.style.borderColor = "rgba(212, 132, 154, 0.4)";
+                e.currentTarget.style.boxShadow =
+                  "0 8px 32px rgba(212, 132, 154, 0.2), inset 0 1px 0 rgba(255,255,255,0.08)";
               }}
             >
-              <span style={{ fontSize: "1.2rem", filter: "drop-shadow(0 0 4px rgba(255,255,255,0.6))" }}>🪷</span>
+              <span style={{ fontSize: "1.2rem" }}>🪷</span>
               {t.navShareCard}
             </button>
+
+            {/* <button
+              onClick={() => {
+                document
+                  .getElementById("about")
+                  ?.scrollIntoView({ behavior: "smooth" });
+              }}
+              className="fade-up delay-3"
+              style={{
+                background: "rgba(201, 146, 58, 0.08)",
+                backdropFilter: "blur(18px) saturate(1.4)",
+                WebkitBackdropFilter: "blur(18px) saturate(1.4)",
+                border: "1px solid rgba(201, 146, 58, 0.28)",
+                borderRadius: 99,
+                color: "#f5c26b",
+                fontFamily: labelFont,
+                fontSize: 11,
+                fontWeight: 500,
+                letterSpacing: "0.22em",
+                textTransform: "uppercase",
+                padding: "10px 24px",
+                cursor: "pointer",
+                transition: "all 0.25s ease",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 8,
+                pointerEvents: "auto",
+                boxShadow:
+                  "0 4px 20px rgba(201, 146, 58, 0.1), inset 0 1px 0 rgba(255,255,255,0.05)",
+                marginBottom: 40,
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = "rgba(201, 146, 58, 0.16)";
+                e.currentTarget.style.borderColor = "rgba(201, 146, 58, 0.5)";
+                e.currentTarget.style.transform = "translateY(-2px)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = "rgba(201, 146, 58, 0.08)";
+                e.currentTarget.style.borderColor = "rgba(201, 146, 58, 0.28)";
+                e.currentTarget.style.transform = "none";
+              }}
+            >
+              {t.heroScrollHint}
+              <span
+                style={{
+                  fontSize: 14,
+                  animation: "shimmer 2s ease-in-out infinite",
+                }}
+              >
+                ↓
+              </span>
+            </button> */}
 
             <div
               style={{
@@ -1058,22 +1376,66 @@ export default function App() {
                 animation: "shimmer 2s ease-in-out infinite",
               }}
             >
-              <span style={{ fontSize: 10, letterSpacing: "0.3em", textTransform: "uppercase", opacity: 0.5, color: "#f0ede0" }}>
+              <span
+                style={{
+                  fontSize: 10,
+                  letterSpacing: "0.3em",
+                  textTransform: "uppercase",
+                  opacity: 0.5,
+                  color: "#f0ede0",
+                }}
+              >
                 {t.heroScrollHint}
               </span>
-              <div style={{ width: 1, height: 50, background: "linear-gradient(180deg, #f5c26b 0%, transparent 100%)" }} />
+              <div
+                style={{
+                  width: 1,
+                  height: 50,
+                  background:
+                    "linear-gradient(180deg, #f5c26b 0%, transparent 100%)",
+                }}
+              />
             </div>
           </section>
 
           {/* ── ABOUT ── */}
-          <section id="about" style={{ padding: "100px 24px", display: "flex", justifyContent: "center" }}>
-            <div className="glass" style={{ maxWidth: 860, width: "100%", borderRadius: 8, padding: "clamp(32px, 5vw, 60px)" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 32 }}>
+          <section
+            id="about"
+            style={{
+              padding: "100px 24px",
+              display: "flex",
+              justifyContent: "center",
+            }}
+          >
+            <div
+              className="glass"
+              style={{
+                maxWidth: 860,
+                width: "100%",
+                borderRadius: 8,
+                padding: "clamp(32px, 5vw, 60px)",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 12,
+                  marginBottom: 32,
+                }}
+              >
                 <DharmaWheel size={22} color="#c9923a" />
                 <span
                   key={`about-label-${lang}`}
                   className="lang-switch"
-                  style={{ fontFamily: labelFont, fontSize: 11, fontWeight: 500, letterSpacing: "0.22em", textTransform: "uppercase", color: "#c9923a" }}
+                  style={{
+                    fontFamily: labelFont,
+                    fontSize: 11,
+                    fontWeight: 500,
+                    letterSpacing: "0.22em",
+                    textTransform: "uppercase",
+                    color: "#c9923a",
+                  }}
                 >
                   {t.aboutLabel}
                 </span>
@@ -1082,43 +1444,109 @@ export default function App() {
               <h2
                 key={`about-title-${lang}`}
                 className="lang-switch"
-                style={{ fontFamily: headingFont, fontWeight: 700, fontSize: "clamp(1.6rem, 4vw, 2.4rem)", color: "#f5c26b", marginBottom: 20, lineHeight: 1.35 }}
+                style={{
+                  fontFamily: headingFont,
+                  fontWeight: 700,
+                  fontSize: "clamp(1.6rem, 4vw, 2.4rem)",
+                  color: "#f5c26b",
+                  marginBottom: 20,
+                  lineHeight: 1.35,
+                }}
               >
                 {t.aboutTitle}
               </h2>
 
-              <p key={`about-p1-${lang}`} className="lang-switch" style={{ fontFamily: lang === "si" ? sinhalaFont : "inherit", lineHeight: 1.85, opacity: 0.78, fontSize: "1.02rem", marginBottom: 20 }}>
+              <p
+                key={`about-p1-${lang}`}
+                className="lang-switch"
+                style={{
+                  fontFamily: lang === "si" ? sinhalaFont : "inherit",
+                  lineHeight: 1.85,
+                  opacity: 0.78,
+                  fontSize: "1.02rem",
+                  marginBottom: 20,
+                }}
+              >
                 {t.aboutP1}
               </p>
 
-              <p key={`about-p2-${lang}`} className="lang-switch" style={{ fontFamily: lang === "si" ? sinhalaFont : "inherit", lineHeight: 1.85, opacity: 0.78, fontSize: "1.02rem", marginBottom: 20 }}>
+              <p
+                key={`about-p2-${lang}`}
+                className="lang-switch"
+                style={{
+                  fontFamily: lang === "si" ? sinhalaFont : "inherit",
+                  lineHeight: 1.85,
+                  opacity: 0.78,
+                  fontSize: "1.02rem",
+                  marginBottom: 20,
+                }}
+              >
                 {t.aboutP2}
               </p>
 
-              <p key={`about-p3-${lang}`} className="lang-switch" style={{ fontFamily: lang === "si" ? sinhalaFont : "inherit", lineHeight: 1.85, opacity: 0.78, fontSize: "1.02rem", marginBottom: 32 }}>
+              <p
+                key={`about-p3-${lang}`}
+                className="lang-switch"
+                style={{
+                  fontFamily: lang === "si" ? sinhalaFont : "inherit",
+                  lineHeight: 1.85,
+                  opacity: 0.78,
+                  fontSize: "1.02rem",
+                  marginBottom: 32,
+                }}
+              >
                 {t.aboutP3}
               </p>
 
               <FlagStripes />
 
-              <div className="info-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20, marginTop: 36 }}>
+              <div
+                className="info-grid"
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(3, 1fr)",
+                  gap: 20,
+                  marginTop: 36,
+                }}
+              >
                 {[
                   { num: t.stat1Num, label: t.stat1Label },
                   { num: t.stat2Num, label: t.stat2Label },
                   { num: t.stat3Num, label: t.stat3Label },
                 ].map(({ num, label }) => (
-                  <div key={num} className="glass info-card" style={{ borderRadius: 6, padding: "24px 20px", textAlign: "center", border: "1px solid rgba(201,146,58,0.2)" }}>
+                  <div
+                    key={num}
+                    className="glass info-card"
+                    style={{
+                      borderRadius: 6,
+                      padding: "24px 20px",
+                      textAlign: "center",
+                      border: "1px solid rgba(201,146,58,0.2)",
+                    }}
+                  >
                     <div
                       key={`stat-num-${lang}-${num}`}
                       className="lang-switch"
-                      style={{ fontFamily: headingFont, fontWeight: 700, fontSize: "clamp(1rem, 3vw, 1.5rem)", color: "#f5c26b", marginBottom: 8 }}
+                      style={{
+                        fontFamily: headingFont,
+                        fontWeight: 700,
+                        fontSize: "clamp(1rem, 3vw, 1.5rem)",
+                        color: "#f5c26b",
+                        marginBottom: 8,
+                      }}
                     >
                       {num}
                     </div>
                     <div
                       key={`stat-label-${lang}-${num}`}
                       className="lang-switch"
-                      style={{ fontFamily: lang === "si" ? sinhalaFont : "inherit", fontSize: 12, opacity: 0.6, letterSpacing: "0.05em", lineHeight: 1.4 }}
+                      style={{
+                        fontFamily: lang === "si" ? sinhalaFont : "inherit",
+                        fontSize: 12,
+                        opacity: 0.6,
+                        letterSpacing: "0.05em",
+                        lineHeight: 1.4,
+                      }}
                     >
                       {label}
                     </div>
@@ -1133,19 +1561,35 @@ export default function App() {
             className="glass"
             style={{
               padding: "28px 32px",
-              display: "flex", alignItems: "center", justifyContent: "space-between",
-              borderBottom: "none", borderLeft: "none", borderRight: "none",
-              flexWrap: "wrap", gap: 12,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              borderBottom: "none",
+              borderLeft: "none",
+              borderRight: "none",
+              flexWrap: "wrap",
+              gap: 12,
             }}
           >
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
               <DharmaWheel size={18} color="#c9923a88" />
-              <span style={{ fontFamily: headingFont, fontSize: 12, color: "#f5c26b", opacity: 0.6 }}>
+              <span
+                style={{
+                  fontFamily: headingFont,
+                  fontSize: 12,
+                  color: "#f5c26b",
+                  opacity: 0.6,
+                }}
+              >
                 {t.navBrand} ·{" "}
               </span>
             </div>
             <FlagStripes />
-            <span style={{ fontSize: 11, opacity: 0.35, letterSpacing: "0.05em" }}>{t.footerRegion}</span>
+            <span
+              style={{ fontSize: 11, opacity: 0.35, letterSpacing: "0.05em" }}
+            >
+              {t.footerRegion}
+            </span>
           </footer>
         </div>
       </>
